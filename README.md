@@ -35,5 +35,5 @@
 | Appium                | https://appium.io/                                 |
 | SQLAlchemy            | https://www.sqlalchemy.org/                        |
 | Element Plus          | https://element-plus.org/zh-CN/                    |
-| Gin                   | https://gin-gonic.com/                             |
+| Gin                   | https://gin-gonic.com/zh-cn/docs/                             |
 
