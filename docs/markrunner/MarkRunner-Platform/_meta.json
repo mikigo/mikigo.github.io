@@ -1,4 +1,5 @@
 [
     "install",
-    "add-menu"
+    "menu-manage",
+    "user-manage"
 ]
