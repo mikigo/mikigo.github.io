@@ -13,8 +13,8 @@
   },
   {
     "type": "dir",
-    "name": "MarkRunner",
-    "label": "MarkRunner",
+    "name": "TestRunner",
+    "label": "TestRunner",
     "collapsed": true,
     "overviewHeaders": [1]
   }
