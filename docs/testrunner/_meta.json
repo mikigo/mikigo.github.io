@@ -6,15 +6,8 @@
   },
   {
     "type": "dir",
-    "name": "MarkRunner-Platform",
-    "label": "MarkRunner-Platform",
-    "collapsed": true,
-    "overviewHeaders": [1]
-  },
-  {
-    "type": "dir",
-    "name": "TestRunner",
-    "label": "TestRunner",
+    "name": "TestRunner-Platform",
+    "label": "TestRunner-Platform",
     "collapsed": true,
     "overviewHeaders": [1]
   }
