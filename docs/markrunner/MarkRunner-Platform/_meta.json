@@ -1,5 +1,6 @@
 [
     "install",
     "menu-manage",
-    "user-manage"
+    "user-manage",
+    "CrudTable"
 ]
