@@ -8,7 +8,18 @@
     "type": "dir",
     "name": "TestRunner-Platform",
     "label": "TestRunner-Platform",
-    "collapsed": true,
+    "overviewHeaders": [1]
+  },
+  {
+    "type": "dir",
+    "name": "Frontend",
+    "label": "Frontend",
+    "overviewHeaders": [1]
+  },
+  {
+    "type": "dir",
+    "name": "Backend",
+    "label": "Backend",
     "overviewHeaders": [1]
   }
 ]

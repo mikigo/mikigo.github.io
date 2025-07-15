@@ -1,4 +1,4 @@
-# mikigo's docs
+# mikigo.site
 
 这是我的个人文档仓库，主要用于记录我的学习、工作和生活。
 

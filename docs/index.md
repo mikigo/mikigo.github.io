@@ -3,7 +3,7 @@
 pageType: home
 
 hero:
-  name: mikigo`s docs
+  name: mikigo.site
   text: |
     记录美好生活
     发现不一样的自己
