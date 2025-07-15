@@ -10,11 +10,6 @@
     "activeMatch": "/program/"
   },
   {
-    "text": "🏃MarkRunner",
-    "link": "/markrunner/index",
-    "activeMatch": "/markrunner/"
-  },
-  {
     "text": "✍\uFE0F博客",
     "link": "/blog/index",
     "activeMatch": "/blog/"
@@ -23,5 +18,10 @@
     "text": "\uD83E\uDDD1\u200D\uD83C\uDF73菜谱",
     "link": "/cookbook/index",
     "activeMatch": "/cookbook/"
+  },
+  {
+    "text": "🏃TestRunner",
+    "link": "/TestRunner/index",
+    "activeMatch": "/testrunner/"
   }
 ]

@@ -1,0 +1,14 @@
+[
+  {
+    "type": "file",
+    "name": "index",
+    "label": "预览"
+  },
+  {
+    "type": "dir",
+    "name": "TestRunner-Platform",
+    "label": "TestRunner-Platform",
+    "collapsed": true,
+    "overviewHeaders": [1]
+  }
+]
