@@ -10,7 +10,7 @@
 | --------------------- | -------------------------------------------------- |
 | YouQu3                | https://youqu.uniontech.com/                       |
 | Pytest                | https://docs.pytest.org/en/stable/                 |
-| Miner                 | https://mineru.readthedocs.io/en/latest/index.html |
+| MinerU                | https://mineru.readthedocs.io/en/latest/index.html |
 | marker                | https://github.com/datalab-to/marker               |
 | Django                | https://docs.djangoproject.com/zh-hans/4.0         |
 | Django REST framework | https://www.django-rest-framework.org/             |
@@ -35,5 +35,6 @@
 | Appium                | https://appium.io/                                 |
 | SQLAlchemy            | https://www.sqlalchemy.org/                        |
 | Element Plus          | https://element-plus.org/zh-CN/                    |
-| Gin                   | https://gin-gonic.com/zh-cn/docs/                             |
+| Gin                   | https://gin-gonic.com/zh-cn/docs/                  |
+| Naive UI              | https://www.naiveui.com/                           |
 
