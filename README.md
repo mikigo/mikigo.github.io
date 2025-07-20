@@ -1,8 +1,8 @@
 # mikigo.site
 
-这是我的个人文档仓库，主要用于记录我的学习、工作和生活。
+这是我的个人网站，用于记录我的学习、工作和生活。
 
-文档地址：[https://mikigo.site](https://mikigo.site)
+在线地址：[https://mikigo.site](https://mikigo.site)
 
 ## 我关注的项目
 
