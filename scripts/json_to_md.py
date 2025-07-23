@@ -47,7 +47,7 @@ for i in os.listdir("./books"):
             phone = content.get("phone")
             for t in trans:
                 # mdf.write(f"**{t.get('descCn')}**\n\n")
-                mdf.write(f"{f'`{phone}` ' if phone else ''}**{t.get('tranCn')}**\n\n")
+                mdf.write(f"{f'`{phone}`  ' if phone else ''}**{t.get('tranCn')}**\n\n")
                 # if t.get('descOther'):
                 #     mdf.write(f"**{t.get('descOther')}**\n\n")
                 #     mdf.write(f"{t.get('tranOther')}\n\n")
@@ -59,7 +59,7 @@ for i in os.listdir("./books"):
                 for p in phrase.get('phrases'):
                     pCn = p.get('pCn')
                     pContent = p.get('pContent')
-                    mdf.write(f"- {pContent} ({pCn})\n\n")
+                    mdf.write(f"- {pContent} （{pCn}）\n\n")
                 mdf.write(f":::\n\n")
 
             # 例句
@@ -67,19 +67,20 @@ for i in os.listdir("./books"):
             if sentence:
                 mdf.write(f":::note{{title=🎤{sentence.get('desc')}}}\n\n")
                 for s in sentence.get('sentences'):
-                    mdf.write(f"- {s.get('sContent')} ({s.get('sCn')})\n\n")
+                    mdf.write(f"- {s.get('sContent')} （{s.get('sCn')}）\n\n")
                 mdf.write(f":::\n\n")
 
             # 同义词
             syno: dict = content.get("syno")
             if syno:
-                mdf.write(f":::warning{{title=🤔{syno.get('desc')}}}\n\n")
+                mdf.write(f":::warning{{title=🤔同义词}}\n\n")
                 for s in syno.get('synos'):
                     hwds = s.get('hwds')
-                    l = ""
+                    l = []
                     for h in hwds:
-                        l += f"{h.get('w')}"
-                    l += f" ({s.get('tran')})"
+                        l.append(h.get('w'))
+                    l = ", ".join(l)
+                    l += f" （{s.get('tran')}）"
                     mdf.write(f"- {l}\n\n")
                 mdf.write(f":::\n\n")
 
