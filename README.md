@@ -2,7 +2,7 @@
 
 这是我的个人网站，用于记录我的学习、工作和生活。
 
-在线地址：[https://mikigo.site](https://mikigo.site)
+在线地址：[https://zeng-yi.com/](https://zeng-yi.com/)
 
 ## 我关注的项目
 
