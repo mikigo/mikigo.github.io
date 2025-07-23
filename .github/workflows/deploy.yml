@@ -9,15 +9,15 @@ on:
       - main
 
 jobs:
-  # Build job
+
   deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Not needed if lastUpdated is not enabled
-      - uses: pnpm/action-setup@v3 # pnpm is optional but recommended, you can also use npm / yarn
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v3
         with:
           version: 8
       - name: Setup Node
@@ -29,9 +29,8 @@ jobs:
         uses: actions/configure-pages@v5
       - name: Install dependencies
         run: pnpm install
-      - name: Build with Rspress
+      - name: Build
         run: pnpm run build
-
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:

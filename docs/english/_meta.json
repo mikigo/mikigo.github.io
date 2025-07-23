@@ -1,0 +1,42 @@
+[
+  {
+    "type": "file",
+    "name": "index",
+    "label": "英语"
+  },
+  {
+    "type": "dir",
+    "name": "小学",
+    "label": "小学",
+    "collapsed": true,
+    "overviewHeaders": [1]
+  },
+  {
+    "type": "dir",
+    "name": "初中",
+    "label": "初中",
+    "collapsed": true,
+    "overviewHeaders": [1]
+  },
+  {
+    "type": "dir",
+    "name": "高中",
+    "label": "高中",
+    "collapsed": true,
+    "overviewHeaders": [1]
+  },
+  {
+    "type": "dir",
+    "name": "四级",
+    "label": "四级",
+    "collapsed": true,
+    "overviewHeaders": [1]
+  },
+  {
+    "type": "dir",
+    "name": "六级",
+    "label": "六级",
+    "collapsed": true,
+    "overviewHeaders": [1]
+  }
+]
