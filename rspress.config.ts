@@ -40,7 +40,7 @@ export default defineConfig({
       {
         icon: 'github',
         mode: 'link',
-        content: 'https://github.com/mikigo/mikigo.github.io',
+        content: 'https://github.com/mikigo/',
       }
     ],
   },
