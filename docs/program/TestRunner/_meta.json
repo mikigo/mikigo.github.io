@@ -1,0 +1,17 @@
+[
+  {
+    "type": "dir",
+    "name": "Introduction",
+    "label": "Introduction"
+  },
+  {
+    "type": "dir",
+    "name": "Frontend",
+    "label": "Frontend"
+  },
+  {
+    "type": "dir",
+    "name": "Backend",
+    "label": "Backend"
+  }
+]

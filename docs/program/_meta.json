@@ -52,5 +52,12 @@
     "label": "技术文档",
     "collapsed": true,
     "overviewHeaders": [1]
+  },
+  {
+    "type": "dir",
+    "name": "TestRunner",
+    "label": "TestRunner",
+    "collapsed": true,
+    "overviewHeaders": [1]
   }
 ]

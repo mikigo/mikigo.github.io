@@ -23,10 +23,5 @@
     "text": "\uD83E\uDDD1\u200D\uD83C\uDF73菜谱",
     "link": "/cookbook/index",
     "activeMatch": "/cookbook/"
-  },
-  {
-    "text": "🏃TestRunner",
-    "link": "/testrunner/index",
-    "activeMatch": "/testrunner/"
   }
 ]
