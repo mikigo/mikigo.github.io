@@ -46,10 +46,10 @@ features:
   - title: pdocr-rpc
     details: 基于 PaddleOCR 封装的 RPC 服务，包含客户端和服务端。
     link: https://linuxdeepin.github.io/pdocr-rpc/
-  - title: Let Me Go
+  - title: LetMeGo
     details: 一个控制 Python 函数执行的技术方案。
     link: https://linuxdeepin.github.io/letmego/
   - title: PyPKG
-    details: 一键创建 Python 工程，自动生成Python包目录结果、PyPI发布相关配置文件，支持一键发布。
+    details: 一键创建 Python 工程，自动生成 Python 包目录结果、PyPI 发布相关配置文件，支持一键发布。
     link: https://gitee.com/deepin-autotest/pypkg/
 ---
