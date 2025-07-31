@@ -20,9 +20,6 @@ export default defineConfig({
       message: `
         <a href="https://beian.miit.gov.cn/" target="_blank">蜀ICP备2024104386号</a>
          版权所有 © 2020-${new Date().getFullYear()} mikigo
-        <span style="display: inline-flex; align-items: center;">
-          | 访问量：<img src="https://w.saobby.com/w/dbbsuky7" alt="访问统计" width="25" style="vertical-align: middle;"/>
-        </span>
       `,
     },
     hideNavbar: 'auto',
