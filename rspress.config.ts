@@ -46,16 +46,6 @@ export default defineConfig({
     plugins: [
         sitemap({
             domain: "https://mikigo.site",
-            customMaps: {
-                "/sample": {
-                    loc: "/sample",
-                    lastmod: "2025-08-27T07:44:43.422Z",
-                    priority: "0.7",
-                    changefreq: "always",
-                },
-            },
-            defaultChangeFreq: "monthly",
-            defaultPriority: "0.5",
         }),
     ],
 });
