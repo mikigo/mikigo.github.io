@@ -39,7 +39,7 @@ features:
     link: https://github.com/mikigo/pytest-plugin-list/
   - title: SailWind Docs
     details: Paizi EDA Sailwind Docs. （国产EDA软件-SaiWind 中文文档）
-    link: https://github.com/mikigo/sailwind_docs/
+    link: https://mikigo.site/sailwind_docs/
   - title: FunnyLog
     details: 一个简单易用、功能强大的日志工具。
     link: https://linuxdeepin.github.io/funnylog/
