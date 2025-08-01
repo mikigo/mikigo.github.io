@@ -38,7 +38,7 @@ else:
     SIGALRM: Signals
 ```
 
-因此走的是 `thread` 的方法
+因此 Windows 下走的是 `thread` 的方法。
 
 ```python
 @pytest.hookimpl(trylast=True)
