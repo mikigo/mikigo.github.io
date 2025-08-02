@@ -10,11 +10,6 @@
     "activeMatch": "/program/"
   },
   {
-    "text": "☺\uFE0F英语",
-    "link": "/english/index",
-    "activeMatch": "/english/"
-  },
-  {
     "text": "✍\uFE0F博客",
     "link": "/blog/index",
     "activeMatch": "/blog/"

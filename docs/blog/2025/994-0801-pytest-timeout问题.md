@@ -1,10 +1,14 @@
-# 0801-pytest-timeout问题
+# 0801-pytest-timeout 问题
 
 昨天群里有个同学问了一个问题，关于 Pytest 的 timeout 问题。
 
 ![](/blog/2025/994/1.png)
 
-我用 pytest-timeout 很长时间了，之前没有遇到过这个问题。而且我确定之前的行为是用例级别的超时只会影响单调用例。这就魔幻了~~😂
+我用 pytest-timeout 很长时间了，之前没有遇到过这个问题。
+
+而且我确定之前的行为是用例级别的超时只会影响单调用例。
+
+这就魔幻了呀~~😂
 
 然后仔细看了下这个同学发的报错截图，也不太确定就是 pytest-timeout 的问题。
 
@@ -14,7 +18,7 @@
 
 那么这个问题是怎么回事呢？
 
-经过一番排查，大致浏览了一下 pytest-timeout 的源码，发现在 Windows 上，pytest-timeout 的实现是通过 `threading.Timer` 来实现的。
+查看 pytest-timeout 的源码，发现在 pytest-timeout 会先判断有没有SIGALRM 这个属性，如果有，则使用 signal 方法，否则使用 thread 方法。
 
 ```python
 HAVE_SIGALRM = hasattr(signal, "SIGALRM")
@@ -37,6 +41,7 @@ else:
         SIGEMT: Signals
     SIGALRM: Signals
 ```
+显然 Windows 下没有 `SIGALRM` 这个属性。
 
 因此 Windows 下走的是 `thread` 的方法。
 
@@ -77,7 +82,7 @@ def pytest_timeout_set_timer(item, settings):
     return True
 ```
 
-而 `threading.Timer` 在超时之后会调用方法 `timeout_timer`：
+主要是通过 `threading.Timer` 来实现超时的。 而 `threading.Timer` 在超时之后会调用方法 `timeout_timer`：
 
 ```python
 def timeout_timer(item, settings):
@@ -124,4 +129,4 @@ def timeout_timer(item, settings):
 
 而我之前一直是在 Linux 上使用 pytest-timeout 的，Linux 上的实现是通过 `signal` 来实现的。
 
-所以破案了，Linux 下用例超时后，后续的用例仍然可以继续执行，而 Windows 下用例超时后，整个 Python 进程就退出了。
+所以结论呼之欲出，Linux 下用例超时后，后续的用例仍然可以继续执行，而 Windows 下用例超时后，整个 Python 进程就退出了。
