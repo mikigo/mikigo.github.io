@@ -24,7 +24,7 @@ features:
     link: https://youqu.uniontech.com/pylinuxauto/
   - title: Django-Blog
     details: 一个基于 Django 的博客系统。
-    link: https://mikigo.site/django-blog/
+    link: https://mikigo.github.io/django-blog/
   - title: Safe-VitePress
     details: 一个将 VitePress 前端与 FastAPI 后端认证相结合的安全文档解决方案。
     link: https://github.com/mikigo/safe-vitepress/
