@@ -17,9 +17,9 @@ const Layout = () => (
             </h1>
           </div>
         }
-        afterOutline={
+        beforeDocContent={
             <div style={{fontSize: "0.8em", color: "gray"}}>
-                ----<br />阅读量 <span id="busuanzi_page_pv" style={{color: "#1cc088"}}>加载中...</span> 次 <br />
+                阅读量 <span id="busuanzi_page_pv" style={{color: "#1cc088"}}>加载中...</span> 次 <br />-----
             </div>
         }
     />
