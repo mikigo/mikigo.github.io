@@ -18,8 +18,8 @@ const Layout = () => (
           </div>
         }
         beforeDocContent={
-            <div style={{fontSize: "0.8em", color: "gray"}}>
-                阅读量 <span id="busuanzi_page_pv" style={{color: "#1cc088"}}>加载中...</span> 次 <br />-----
+            <div align="right" style={{fontSize: "0.8em", color: "gray"}}>
+                <a href="https://github.com/mikigo/" style={{color: "#1cc088"}}>mikigo</a>
             </div>
         }
     />
