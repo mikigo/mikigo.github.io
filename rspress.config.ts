@@ -12,9 +12,9 @@ export default defineConfig({
     logo: '/logo.png',
     logoText: 'mikigo.site',
 
-    // head: [
-    //     ['script', { src: '/busuanzi.min.js', defer: '' }],
-    // ],
+    head: [
+        ['script', { src: '/busuanzi.min.js', defer: '' }],
+    ],
 
     themeConfig: {
         enableContentAnimation: true,

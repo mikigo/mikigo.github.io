@@ -18,5 +18,10 @@
     "text": "\uD83E\uDDD1\u200D\uD83C\uDF73菜谱",
     "link": "/cookbook/index",
     "activeMatch": "/cookbook/"
+  },
+  {
+    "text": "关于",
+    "link": "/about",
+    "activeMatch": "/about"
   }
 ]
