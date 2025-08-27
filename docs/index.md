@@ -42,7 +42,7 @@ features:
     link: https://mikigo.site/sailwind_docs/
   - title: English Words
     details: 精心制作的 Web 版免费学单词项目，包含各类英语词库，助您高效学习英语。
-    link: https://mikigo.github.io/English-Words/
+    link: https://mikigo.github.io/english-words/
   - title: FunnyLog
     details: 一个简单易用、功能强大的日志工具。
     link: https://linuxdeepin.github.io/funnylog/
