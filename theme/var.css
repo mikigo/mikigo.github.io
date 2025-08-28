@@ -47,3 +47,18 @@ h1, h2 {
     box-shadow: 0 6px 12px rgba(100, 80, 200, 0.3);
     border-radius: 8px;
 }
+
+table {
+    box-shadow: 0 6px 12px rgba(100, 80, 200, 0.3);
+}
+table th {
+    background-color: var(--rp-code-title-bg);
+    color: #6253b7;
+    font-weight: bold;
+    padding: 10px;
+    text-align: center;
+}
+
+table td {
+    width: 10%;
+}
