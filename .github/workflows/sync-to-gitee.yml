@@ -3,20 +3,21 @@ name: Sync to Gitee
 on:
   push:
     branches: [ main, master ]
-  schedule:
-    - cron: '0 2 * * *'
   workflow_dispatch:
 
 jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      - name: Sync to Gitee
-        uses: wearerequired/git-mirror-action@v1 # 确认使用最新版本
+      - name: Checkout code # 先检出当前代码，确保工作区存在
+        uses: actions/checkout@v4
         with:
-          # 新的参数名：source-repo 和 destination-repo
-          # 源仓库（可选，不填默认为当前仓库）
-          # source-repo:
+          fetch-depth: 0 # 获取所有历史，而不是浅克隆
 
-          # 目标仓库（格式不变）
+      - name: Mirror to Gitee
+        uses: wearerequired/git-mirror-action@v1
+        with:
+          # 显式指定源仓库（当前仓库的地址）
+          source-repo: https://github.com/${{ github.repository }}.git
+          # 显式指定目标仓库（你的Gitee仓库地址）
           destination-repo: https://${{ secrets.GITEE_USERNAME }}:${{ secrets.GITEE_PRIVATE_TOKEN }}@gitee.com/${{ secrets.GITEE_USERNAME }}/${{ github.event.repository.name }}.git
