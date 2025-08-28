@@ -2,20 +2,21 @@ name: Sync to Gitee
 
 on:
   push:
-    branches: [ main, master ] # 当向 main 或 master 分支推送代码时触发同步
+    branches: [ main, master ]
   schedule:
-    - cron: '0 2 * * *' # 每天 UTC 时间 2:00 (北京时间 10:00) 进行定时同步，作为双重保障
-  workflow_dispatch: # 允许在 GitHub Actions 页面手动触发此工作流
+    - cron: '0 2 * * *'
+  workflow_dispatch:
 
 jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
       - name: Sync to Gitee
-        uses: wearerequired/git-mirror-action@v1
+        uses: wearerequired/git-mirror-action@v1 # 确认使用最新版本
         with:
-          # 来源仓库，默认就是当前仓库
-          # 目标仓库，格式为：https://{username}:{token}@gitee.com/{username}/{repo}.git
-          target: https://${{ secrets.GITEE_USERNAME }}:${{ secrets.GITEE_PRIVATE_TOKEN }}@gitee.com/${{ secrets.GITEE_USERNAME }}/${{ github.event.repository.name }}.git
-          # 强制推送，覆盖 Gitee 的历史，确保两边完全一致
-          force: true
+          # 新的参数名：source-repo 和 destination-repo
+          # 源仓库（可选，不填默认为当前仓库）
+          # source-repo:
+
+          # 目标仓库（格式不变）
+          destination-repo: https://${{ secrets.GITEE_USERNAME }}:${{ secrets.GITEE_PRIVATE_TOKEN }}@gitee.com/${{ secrets.GITEE_USERNAME }}/${{ github.event.repository.name }}.git
