@@ -2,8 +2,11 @@ name: Sync to Gitee
 
 on:
   push:
-    branches: [ main, gh-pages ]
-  workflow_dispatch:
+    branches: [ main ]
+  workflow_run:
+    workflows: [ "Deploy" ]
+    types:
+      - completed
 
 jobs:
   sync:
@@ -21,32 +24,3 @@ jobs:
           source-repo: https://github.com/${{ github.repository }}.git
           # 显式指定目标仓库（你的Gitee仓库地址）
           destination-repo: https://${{ secrets.GITEE_USERNAME }}:${{ secrets.GITEE_PRIVATE_TOKEN }}@gitee.com/${{ secrets.GITEE_USERNAME }}/site.git
-
-#name: Sync to Gitee
-#
-#on:
-#  push:
-#    branches: [ main, master ]
-#  schedule:
-#    - cron: '0 2 * * *' # 可选：每天UTC时间2点（北京时间10点）同步一次，作为备份
-#  workflow_dispatch: # 允许手动触发
-#
-#jobs:
-#  sync:
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Mirror to Gitee
-#        uses: Yikun/gitee-mirror-action@master # 使用这个专门的Gitee镜像Action
-#        with:
-#          # 源仓库：github/用户名/仓库名
-#          src: github/${{ github.repository }}
-#          # 目标仓库：gitee/用户名/仓库名
-#          dst: gitee/${{ secrets.GITEE_USERNAME }}/${{ github.event.repository.name }}
-#          # 账户类型：个人账户填 'person'，组织账户填 'org'
-#          account-type: person
-#          # 使用在Secrets中配置的Gitee私人令牌
-#          gitee-token: ${{ secrets.GITEE_PRIVATE_TOKEN }}
-#          # 是否静态同步（通常不需要）
-#          # static: false
-#          # 是否强制同步（通常需要，以确保一致）
-#          force: true
