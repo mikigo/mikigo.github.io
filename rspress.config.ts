@@ -16,9 +16,9 @@ export default defineConfig({
     logo: '/logo.png',
     logoText: 'mikigo.site',
 
-    head: [
-        ['script', { src: '//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js', defer: '' }],
-    ],
+    // head: [
+    //     ['script', { src: '//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js', defer: '' }],
+    // ],
 
     themeConfig: {
         enableContentAnimation: true,
@@ -30,7 +30,6 @@ export default defineConfig({
             message: `
         <a href="https://beian.miit.gov.cn/" target="_blank">蜀ICP备2024104386号</a>
          版权所有 © 2020-${new Date().getFullYear()} <a href="https://github.com/mikigo" target="_blank">mikigo</a>
-          | <p> | 本站总访问量：<span id="busuanzi_site_pv" style={{ color: '#1cc088' }}>加载中...</span> 次</p>
       `,
         },
         hideNavbar: 'auto',
