@@ -22,6 +22,9 @@ features:
   - title: PyLinuxAuto
     details: 一个用于 Linux 桌面 GUI 自动化测试的 Python 模块，支持多种元素定位方法和键鼠操作。
     link: https://youqu.uniontech.com/pylinuxauto/
+  - title: Allure-Markdown
+    details: 将 Allure 的元数据转换为 Markdown 格式的报告。
+    link: https://github.com/mikigo/allure-markdown
   - title: Django-Blog
     details: 一个基于 Django 的博客系统。
     link: https://mikigo.github.io/django-blog/
