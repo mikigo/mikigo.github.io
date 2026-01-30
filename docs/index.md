@@ -1,5 +1,4 @@
 ---
-# https://vitepress.dev/reference/default-theme-home-page
 pageType: home
 
 hero:
@@ -8,20 +7,30 @@ hero:
     记录美好生活
     发现不一样的自己
   tagline: 三更灯火五更鸡， 正是男儿读书时
+  actions:
+    - theme: brand
+      text: AutoTest
+      link: /program/autotest/自动化测试框架/Pytest从入门到起飞.md
+    - theme: alt
+      text: GitHub
+      link: https://github.com/mikigo
   image:
       src: /logo.png
       alt: mikigo
 
 features:
-  - title: YouQu
-    details: A simple and powerful autotest framework.
+  - title: 'YouQu'
+    details: 'A simple and powerful autotest framework.'
     link: https://youqu.uniontech.com/youqu2/
-  - title: YouQu3
+  - title: 'YouQu3'
     details: Next-Gen Linux Autotest Framework.
     link: https://youqu.uniontech.com/
   - title: PyLinuxAuto
     details: 一个用于 Linux 桌面 GUI 自动化测试的 Python 模块，支持多种元素定位方法和键鼠操作。
     link: https://youqu.uniontech.com/pylinuxauto/
+  - title: Allure3-Server
+    details: 使用 FastAPI 构建的服务器，用于生成和提供 Allure3 报告。
+    link: https://github.com/mikigo/allure3-server
   - title: Allure-Markdown
     details: 将 Allure 的元数据转换为 Markdown 格式的报告。
     link: https://github.com/mikigo/allure-markdown

@@ -1,10 +1,6 @@
-import {defineConfig} from 'rspress/config';
+import {defineConfig} from '@rspress/core';
 import sitemap from "rspress-plugin-sitemap";
 import path from "node:path";
-import mermaid from 'rspress-plugin-mermaid';
-import live2d from 'rspress-plugin-live2d';
-import fileTree from 'rspress-plugin-file-tree';
-import readingTime from 'rspress-plugin-reading-time';
 
 export default defineConfig({
     globalStyles: path.join(__dirname, 'theme/var.css'),
@@ -55,23 +51,6 @@ export default defineConfig({
     plugins: [
         sitemap({
             domain: "https://mikigo.site",
-        }),
-        mermaid(),
-        fileTree(),
-        readingTime({
-            defaultLocale: 'zh-CN',
-        }),
-        live2d({
-          models: [
-            {
-              path: 'https://model.oml2d.com/HK416-1-normal/model.json',
-              position: [0, 60],
-              scale: 0.08,
-              stageStyle: {
-                height: 450,
-              },
-            },
-          ],
         }),
     ],
 });
