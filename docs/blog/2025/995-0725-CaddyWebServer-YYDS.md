@@ -28,7 +28,7 @@ Caddy 的配置文件使用的是 Caddyfile 格式，语法非常简洁明了。
 
 以下是我使用 Caddyfile 配置的示例：
 
-```caddyfile
+```bash
 
 mikigo.site {
 

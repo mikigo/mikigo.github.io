@@ -7,7 +7,7 @@ Author: 禄烨
 
 ## 一、相关术语
 
-<center style="color:#C0C0C0;text-decoration">表1 相关术语</center>
+表1 相关术语
 
 | 全称            | 缩写   | 描述                                                         |
 | --------------- | ------ | ------------------------------------------------------------ |
@@ -55,7 +55,7 @@ Author: 禄烨
 
 ![](/data/图1 问题现象.png)
 
-<center style="color:#C0C0C0;text-decoration">图1 问题现象</center>
+图1 问题现象
 
 6、期望
 
@@ -86,7 +86,7 @@ uos@uos:~$ echo $PATH
 
 ​		查阅资料，了解到linux系统环境变量区分三类变量配置。见表2：
 
-<center style="color:#C0C0C0;text-decoration">表2 环境变量说明</center>
+表2 环境变量说明
 
 |   类型   | 配置文件     | 作用域                                                       |
 | :------: | ------------ | :----------------------------------------------------------- |
@@ -104,7 +104,7 @@ A( /etc/profile ) --> B[ $HOME/.profile ]
 B[ $HOME/.profile ] --> C[ $HOME/.bashrc ]
 ```
 
-<center style="color:#C0C0C0;text-decoration">图2 环境变量加载流程</center>
+图2 环境变量加载流程
 
 ​		了解环境变量配置文件加载顺序后，按照加载顺序检查环境变量配置对于PATH的定义是否有缺失，查看`/etc/profile`对全局环境变量的配置代码如下：
 
@@ -163,11 +163,11 @@ fi
 
 ![](/data/图3 调试详情.png)
 
-<center style="color:#C0C0C0;text-decoration">图3 调试详情</center>
+图3 调试详情
 
 ​		阅读bash man手册以及shell相关资料，得知直接启动终端执行命令的方式为非登录式（no-login shell）、交互式（interactive shell）行为。如表3 shell启动方式介绍，该行为下不会去运行任何profile和rc文件，只有登录式（login shell）会在登录时自动执行`/etc/profile`和`~/.profile`文件。从此处分析，无法使用reboot等命令属于正常情况。
 
-<center style="color:#C0C0C0;text-decoration">表3 shell启动方式</center>
+表3 shell启动方式
 
 | 启动方式                          | 说明                                                         |
 | --------------------------------- | ------------------------------------------------------------ |
@@ -205,7 +205,7 @@ PATH=$PATH:/sbin:/usr/sbin
 
 ![](/data/图4 手动补全环境变量.png)
 
-<center style="color:#C0C0C0;text-decoration">图4 手动补全环境变量</center>
+图4 手动补全环境变量
 
 追加环境变量后，执行reboot命令，系统响应重启。
 
@@ -227,13 +227,13 @@ export PATH
 
 ![](/data/图5 自动加载环境变量-1.png)
 
-<center style="color:#C0C0C0;text-decoration">图5 自动加载环境变量-1</center>
+图5 自动加载环境变量-1
 
 ​		继续边缘验证，该方式虽然可以解决此问题，但是存在不足，当在同一个终端中再次登录一个用户或者以登录方式打开shell，由于系统会自动先加载/etc/profile，然后再加载/etc/bash.bashrc ，所以导致变量值重复。如图6：
 
 ![](/data/图6 自动加载环境变量-2.png)
 
-<center style="color:#C0C0C0;text-decoration">图6 自动加载环境变量-2</center>
+图6 自动加载环境变量-2
 
 ​	
 
@@ -291,7 +291,7 @@ fi
 
 ​		对比两种解决方案，如表4所示，列出了两种方案的优缺点：
 
-<center style="color:#C0C0C0;text-decoration">表4 解决方案对比</center>
+表4 解决方案对比
 
 | 序号 | 方案                            | 优点                                                         | 缺点                                                         |
 | ---- | ------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
