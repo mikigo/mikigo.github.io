@@ -4,10 +4,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>0309-文档从 VitePress 迁移到 Rspress - mikigo.site</title>
 <script>{;const saved = localStorage.getItem('rspress-theme-appearance');const preferDark = window.matchMedia('(prefers-color-scheme: dark)').matches;const isDark = !saved || saved === 'auto' ? preferDark : saved === 'dark';document.documentElement.classList.toggle('dark', isDark);document.documentElement.classList.toggle('rp-dark', isDark);document.documentElement.style.colorScheme = isDark ? 'dark' : 'light';}</script>
-<link href="/static/css/styles.0c19059d.css" rel="stylesheet">
+<link href="/static/css/styles.4c9ddc8e.css" rel="stylesheet">
 <script defer src="/static/js/styles.c145b64d.js"></script>
-<script defer src="/static/js/8149.f72862eb.js"></script>
-<script defer src="/static/js/index.fa1bdb7c.js"></script>
+<script defer src="/static/js/7205.ffb7d471.js"></script>
+<script defer src="/static/js/index.f85237b4.js"></script>
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="generator" content="Rspress v2.0.0">
 <link rel="icon" href="/favicon.ico">
@@ -37,7 +37,7 @@
 <p>当然，也有 Rspress 也有缺点，主要由于是 2024 年才开源的新项目，又是基于 React 的框架，生态插件少，如评论插件、作者信息插件还没有，也有可能有插件，主要我还没有太多时间去折腾这块，还有手机端浏览器似乎适配不太好，不过这些功能相信后面会有的，而且现阶段对于我来说，这些功能也无所谓。</p>
 <p>在技术这块我从来都是“喜新厌旧”的，也有可能是已经用 VitePress 构建了好几个网站，有点审美疲劳了。</p>
 <p>说干就干，3 月 7 日，我“侍寝”到晚上 12 点，起床拿起电脑直接干到凌晨 3 点，从 Github 仓库创建、框架迁移、各种配置、Github Action 配置、云服务器配置，一段操作初版完成上线；3 月 8 日，一样的时间干到凌晨 3 点，文档细节调整、网站 logo 重做，主题色直接用的默认，终于达到自己比较满意的状态。</p>
-<p>迁移到 Rspress 后，目前情绪稳定，感觉良好。dev 速度和 build 速度好像是要快一点。</p><!--/$--></div><footer class="rp-doc-footer"><div class="rp-doc-footer__edit"><div class="rp-last-updated"><p>Last Updated<!-- -->: <span>3/19/2025, 6:31:23 AM</span></p></div></div><div class="rp-doc-footer__divider"></div><div class="rp-prev-next-page"><a href="/blog/2025/998-0311-家庭网站搞不下去了.html" class="rp-prev-next-page__item rp-prev-next-page__prev rp-link"><span class="rp-prev-next-page__item__desc">Previous page</span><span class="rp-prev-next-page__item__title"><svg width="1em" height="1em" viewBox="0 0 32 32" class="rp-prev-next-page__icon rp-prev-next-page__rotate_180"><path fill="currentColor" d="M22 16 12 26l-1.4-1.4 8.6-8.6-8.6-8.6L12 6z"></path></svg><span>0311-家庭网站搞不下去了</span></span></a><a href="/blog/2024/AT代码提交流程与常见场景.html" class="rp-prev-next-page__item rp-prev-next-page__next rp-link"><span class="rp-prev-next-page__item__desc">Next page</span><span class="rp-prev-next-page__item__title"><span>代码提交流程与常见场景</span><svg width="1em" height="1em" viewBox="0 0 32 32" class="rp-prev-next-page__icon"><path fill="currentColor" d="M22 16 12 26l-1.4-1.4 8.6-8.6-8.6-8.6L12 6z"></path></svg></span></a></div></footer></main></div><aside class="rp-doc-layout__outline rp-scrollbar"></aside></div></div>
+<p>迁移到 Rspress 后，目前情绪稳定，感觉良好。dev 速度和 build 速度好像是要快一点。</p><!--/$--></div><div align="left" style="font-size:0.8em;color:gray">声明：本站所有文章，均为本站原创发布。任何个人或组织，在未征得本站同意时，禁止复制、盗用、采集、发布本站内容到任何网站、书籍等各类媒体平台。<a href="https://github.com/mikigo/" style="color:#1cc088">-- mikigo</a></div><footer class="rp-doc-footer"><div class="rp-doc-footer__edit"><div class="rp-last-updated"><p>Last Updated<!-- -->: <span>3/19/2025, 6:31:23 AM</span></p></div></div><div class="rp-doc-footer__divider"></div><div class="rp-prev-next-page"><a href="/blog/2025/998-0311-家庭网站搞不下去了.html" class="rp-prev-next-page__item rp-prev-next-page__prev rp-link"><span class="rp-prev-next-page__item__desc">Previous page</span><span class="rp-prev-next-page__item__title"><svg width="1em" height="1em" viewBox="0 0 32 32" class="rp-prev-next-page__icon rp-prev-next-page__rotate_180"><path fill="currentColor" d="M22 16 12 26l-1.4-1.4 8.6-8.6-8.6-8.6L12 6z"></path></svg><span>0311-家庭网站搞不下去了</span></span></a><a href="/blog/2024/AT代码提交流程与常见场景.html" class="rp-prev-next-page__item rp-prev-next-page__next rp-link"><span class="rp-prev-next-page__item__desc">Next page</span><span class="rp-prev-next-page__item__title"><span>代码提交流程与常见场景</span><svg width="1em" height="1em" viewBox="0 0 32 32" class="rp-prev-next-page__icon"><path fill="currentColor" d="M22 16 12 26l-1.4-1.4 8.6-8.6-8.6-8.6L12 6z"></path></svg></span></a></div></footer></main></div><aside class="rp-doc-layout__outline rp-scrollbar"></aside></div></div>
     <div id="__rspress_modal_container"></div>
   </body>
 </html>
