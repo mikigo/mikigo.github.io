@@ -1,20 +1,14 @@
 [
   {
-    "type": "file",
-    "name": "index",
-    "label": "预览"
+    "type": "section-header",
+    "label": "总览"
   },
+  "index",
   {
-    "type": "dir",
-    "name": "2025",
-    "label": "2025",
-    "overviewHeaders": [1]
+    "type": "section-header",
+    "label": "博客"
   },
-  {
-    "type": "dir",
-    "name": "2024",
-    "label": "2024",
-    "collapsed": true,
-    "overviewHeaders": [1]
-  }
+  "2026-02-07",
+  "2025-09-09",
+  "2025-09-06"
 ]
