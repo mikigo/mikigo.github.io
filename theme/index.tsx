@@ -2,7 +2,7 @@ import {
   Layout as BasicLayout,
   getCustomMDXComponent as basicGetCustomMDXComponent,
 } from '@rspress/core/theme-original';
-
+import './index.css';
 
 const myStyle = {
   fontSize: '2em',
