@@ -11,11 +11,13 @@ export default defineConfig({
     icon: '/favicon.ico',
     logo: '/logo.png',
     logoText: 'mikigo.site',
-
     // head: [
     //     ['script', { src: '//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js', defer: '' }],
     // ],
-
+    route: {
+        cleanUrls: true,
+        exclude: ['components/**'],
+    },
     themeConfig: {
         enableContentAnimation: true,
         enableAppearanceAnimation: true,

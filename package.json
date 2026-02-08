@@ -1,5 +1,6 @@
 {
   "name": "mikigo.site",
+  "type": "module",
   "scripts": {
     "dev": "rspress dev",
     "build": "rspress build",
