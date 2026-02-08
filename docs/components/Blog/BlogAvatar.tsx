@@ -4,7 +4,7 @@ import styles from './BlogAvatar.module.css';
 const AUTHORS = {
   mikigo: {
     name: 'mikigo',
-    title: 'autotest',
+    title: 'Automation Test Engineer',
     github: 'https://github.com/mikigo',
     avatar: '/logo.png',
     x: '',
