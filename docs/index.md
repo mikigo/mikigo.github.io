@@ -6,7 +6,7 @@ hero:
   text: |
     记录美好生活
     发现不一样的自己
-  tagline: 三更灯火五更鸡， 正是男儿读书时
+  tagline: 三更灯火五更鸡， 正是男儿读书时。
   actions:
     - theme: brand
       text: AutoTest

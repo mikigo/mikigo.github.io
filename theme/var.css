@@ -20,3 +20,12 @@
   --shiki-token-punctuation: #6a737d;
   --shiki-token-link: #dbedff;
 }
+
+h1{
+  font-size: 2.8rem !important;
+  text-shadow: 0 0.5px 4px rgba(10, 10, 10, 0.2) !important;
+}
+
+.rp-home-hero__subtitle {
+  text-shadow: 0 0.5px 4px rgba(10, 10, 10, 0.2) !important;
+}
