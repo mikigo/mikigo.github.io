@@ -21,11 +21,28 @@
   --shiki-token-link: #dbedff;
 }
 
+.medium-zoom-image,
+video {
+  margin-left: atuo;
+  margin-right: auto;
+  box-shadow: 0 2px 6px #262726 !important;
+}
+
+.rp-nav-menu__item__container {
+  font-weight: bold !important;
+}
+
+.rp-nav__title__link {
+  font-size: 2rem !important;
+  color: #009048;
+  text-shadow: 0 0.5px 2px #00773b;
+}
+
 h1{
-  font-size: 2.8rem !important;
-  text-shadow: 0 0.5px 4px rgba(10, 10, 10, 0.2) !important;
+  font-size: 2.5rem !important;
+  text-shadow: 0 0.5px 2px #262726;
 }
 
 .rp-home-hero__subtitle {
-  text-shadow: 0 0.5px 4px rgba(10, 10, 10, 0.2) !important;
+  text-shadow: 0 0.5px 2px #262726 !important;
 }

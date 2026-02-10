@@ -1,6 +1,8 @@
 import {defineConfig} from '@rspress/core';
-import sitemap from "rspress-plugin-sitemap";
+import { pluginSitemap } from '@rspress/plugin-sitemap';
 import path from "node:path";
+
+const siteUrl = 'https://mikigo.site';
 
 export default defineConfig({
     globalStyles: path.join(__dirname, 'theme/var.css'),
@@ -51,8 +53,8 @@ export default defineConfig({
         ],
     },
     plugins: [
-        sitemap({
-            domain: "https://mikigo.site",
+        pluginSitemap({
+            siteUrl,
         }),
     ],
 });

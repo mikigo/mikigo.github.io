@@ -7,9 +7,7 @@
     "preview": "rspress preview"
   },
   "devDependencies": {
-    "@rspress/core": "^2.0.0"
-  },
-  "dependencies": {
-    "rspress-plugin-sitemap": "^1.2.1"
+    "@rspress/core": "^2.0.0",
+    "@rspress/plugin-sitemap": "^2.0.2"
   }
 }
