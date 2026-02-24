@@ -1,5 +1,9 @@
 ---
-Author: mikigo、litao
+date: 2024-01-01
+authors: ['mikigo']
+description: AT 经验总结
+sidebar: false
+pageType: doc-wide
 ---
 
 # AT 经验总结

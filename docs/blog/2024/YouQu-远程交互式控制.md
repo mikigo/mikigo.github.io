@@ -1,5 +1,9 @@
 ---
-Author: 禄烨
+date: 2024-01-01
+authors: ['mikigo']
+description: YouQu - 远程交互式控制
+sidebar: false
+pageType: doc-wide
 ---
 
 # YouQu - 远程交互式控制

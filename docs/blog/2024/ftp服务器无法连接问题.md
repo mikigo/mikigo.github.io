@@ -1,5 +1,9 @@
 ---
-Author: 海针
+date: 2024-01-01
+authors: ['mikigo']
+description: ftp服务器无法连接问题
+sidebar: false
+pageType: doc-wide
 ---
 
 # ftp服务器无法连接问题

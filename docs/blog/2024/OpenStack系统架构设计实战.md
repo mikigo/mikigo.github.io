@@ -1,5 +1,9 @@
 ---
-Author: mikigo
+date: 2024-01-01
+authors: ['mikigo']
+description: OpenStack系统架构设计实战
+sidebar: false
+pageType: doc-wide
 ---
 
 # OpenStack系统架构设计实战

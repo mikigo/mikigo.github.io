@@ -1,5 +1,9 @@
 ---
-Author: mikigo
+date: 2024-01-01
+authors: ['mikigo']
+description: Git报错
+sidebar: false
+pageType: doc-wide
 ---
 
 # Git报错

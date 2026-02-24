@@ -1,5 +1,9 @@
 ---
-Author: wangpeng
+date: 2024-01-01
+authors: ['mikigo']
+description: VSCode远程环境开发指南
+sidebar: false
+pageType: doc-wide
 ---
 # VSCode远程环境开发指南
 

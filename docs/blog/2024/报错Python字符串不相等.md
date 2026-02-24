@@ -1,5 +1,9 @@
 ---
-Author: mikigo
+date: 2024-01-01
+authors: ['mikigo']
+description: 博客文章
+sidebar: false
+pageType: doc-wide
 ---
 
 ![img](/faq/企业微信截图_17028676465027(1).png)

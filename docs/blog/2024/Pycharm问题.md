@@ -1,5 +1,9 @@
 ---
-Author: mikigo
+date: 2024-01-01
+authors: ['mikigo']
+description: Pycharm 问题
+sidebar: false
+pageType: doc-wide
 ---
 
 # Pycharm 问题

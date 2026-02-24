@@ -1,5 +1,9 @@
 ---
-Author: 海针
+date: 2024-01-01
+authors: ['mikigo']
+description: 代码提交流程与常见场景
+sidebar: false
+pageType: doc-wide
 ---
 
 # 代码提交流程与常见场景
