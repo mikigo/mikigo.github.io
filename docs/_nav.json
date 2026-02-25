@@ -10,6 +10,11 @@
     "activeMatch": "/program/"
   },
   {
+    "text": "🤓技术文档",
+    "link": "/tech_doc/index",
+    "activeMatch": "/tech_doc/"
+  },
+  {
     "text": "✍\uFE0F博客",
     "link": "/blog/index",
     "activeMatch": "/blog/"
