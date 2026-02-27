@@ -14,9 +14,6 @@ export default defineConfig({
     icon: '/favicon.ico',
     logo: '/logo.png',
     logoText: 'mikigo.site',
-    // head: [
-    //     ['script', { src: '//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js', defer: '' }],
-    // ],
     route: {
         cleanUrls: true,
         exclude: ['components/**'],
@@ -29,22 +26,11 @@ export default defineConfig({
 
         footer: {
             message: `
-        <a href="https://beian.miit.gov.cn/" target="_blank">蜀ICP备2024104386号</a>
-         版权所有 © 2020-${new Date().getFullYear()} <a href="https://github.com/mikigo" target="_blank">mikigo</a>
+        <a style="text-decoration: underline" href="https://beian.miit.gov.cn/" target="_blank">蜀ICP备2024104386号</a>
+         版权所有 © 2020-${new Date().getFullYear()} <a style="text-decoration: underline" href="https://github.com/mikigo" target="_blank">mikigo</a>
       `,
         },
         hideNavbar: 'auto',
-
-        outlineTitle: '本页目录',
-        prevPageText: '上一页',
-        nextPageText: '下一页',
-        lastUpdatedText: '最近更新时间',
-        searchPlaceholderText: '搜索文档',
-        overview: {
-            filterNameText: '快速查找',
-            filterPlaceholderText: '输入关键词',
-            filterNoResultText: '未查询到结果',
-        },
         socialLinks: [
             {
                 icon: 'github',
