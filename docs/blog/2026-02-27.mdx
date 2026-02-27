@@ -1,0 +1,381 @@
+---
+date: 2026-02-27
+authors: ['mikigo']
+description: 'Python `datetime` 超全指南：时间管理大师养成手册。今天我们来彻底征服 Python 的时间系统。本文涵盖 `datetime` 的**全部核心用法**，从基础创建到时区处理，从格式化到时间戳，从计算到坑点，全都讲清楚。'
+sidebar: false
+pageType: doc-wide
+---
+
+# 🕒 Python datetime 超全指南：时间管理大师养成手册
+
+> “时间是程序员的敌人。”
+> ——每一个调过时区 Bug 的人
+
+今天我们来彻底征服 Python 的时间系统。本文涵盖 `datetime` 的**全部核心用法**，从基础创建到时区处理，从格式化到时间戳，从计算到坑点，全都讲清楚。
+
+准备好了吗？系好安全带，我们要穿越时空了。
+
+
+## 一、时间世界的四大金刚
+
+Python 的时间体系主要来自：
+
+```python
+import datetime
+```
+
+这个模块里有几个核心类：
+
+| 类           | 作用       |
+| ----------- | -------- |
+| `date`      | 只管年月日    |
+| `time`      | 只管时分秒    |
+| `datetime`  | 年月日时分秒全管 |
+| `timedelta` | 时间差      |
+
+此外还有：
+
+| 类                | 作用     |
+| ---------------- | ------ |
+| `tzinfo`         | 时区抽象基类 |
+| `timezone`       | 固定偏移时区 |
+| `zoneinfo`（3.9+） | 真实时区支持 |
+
+
+## 二、创建时间对象
+
+### 1️⃣ 创建 date
+
+```python
+from datetime import date
+
+d = date(2026, 2, 27)
+print(d)
+```
+
+输出：
+
+```
+2026-02-27
+```
+
+常用属性：
+
+```python
+d.year
+d.month
+d.day
+```
+
+
+### 2️⃣ 创建 time
+
+```python
+from datetime import time
+
+t = time(20, 30, 15)
+print(t)
+```
+
+支持微秒：
+
+```python
+time(20, 30, 15, 123456)
+```
+
+
+### 3️⃣ 创建 datetime
+
+```python
+from datetime import datetime
+
+dt = datetime(2026, 2, 27, 20, 30, 15)
+```
+
+
+## 三、获取当前时间
+
+```python
+datetime.now()      # 当前本地时间
+datetime.utcnow()   # 当前UTC时间（不推荐）
+```
+::: warning
+`utcnow()` 不带时区信息，是“假 UTC”。
+:::
+
+推荐写法：
+
+```python
+from datetime import datetime, timezone
+
+datetime.now(timezone.utc)
+```
+
+
+## 四、时间戳（timestamp）
+
+### 获取时间戳
+
+```python
+dt.timestamp()
+```
+
+返回自 1970-01-01 起的秒数。
+
+
+### 时间戳转 datetime
+
+```python
+datetime.fromtimestamp(1709030000)
+```
+
+UTC 版本：
+
+```python
+datetime.utcfromtimestamp(ts)  # 不推荐
+```
+
+推荐：
+
+```python
+datetime.fromtimestamp(ts, timezone.utc)
+```
+
+
+## 五、时间计算（timedelta）
+
+### 创建时间差
+
+```python
+from datetime import timedelta
+
+delta = timedelta(days=1, hours=2, minutes=30)
+```
+
+支持：
+
+* days
+* seconds
+* microseconds
+* milliseconds
+* minutes
+* hours
+* weeks
+
+
+### 时间加减
+
+```python
+new_dt = dt + timedelta(days=1)
+```
+
+两个时间相减：
+
+```python
+delta = dt1 - dt2
+```
+
+
+## 六、格式化与解析（重点）
+
+### 1️⃣ 格式化：strftime
+
+```python
+dt.strftime("%Y-%m-%d %H:%M:%S")
+```
+
+常用格式符：
+
+| 符号 | 含义     |
+| -- | ------ |
+| %Y | 四位年份   |
+| %m | 月      |
+| %d | 日      |
+| %H | 小时(24) |
+| %M | 分钟     |
+| %S | 秒      |
+| %f | 微秒     |
+| %z | 时区     |
+
+
+### 2️⃣ 解析：strptime
+
+```python
+datetime.strptime("2026-02-27 20:30:15", "%Y-%m-%d %H:%M:%S")
+```
+
+⚠ 格式必须完全匹配，否则报错。
+
+
+## 七、时区处理（高级）
+
+### 1️⃣ 固定时区
+
+```python
+from datetime import timezone, timedelta
+
+tz = timezone(timedelta(hours=8))
+dt = datetime.now(tz)
+```
+
+
+### 2️⃣ 推荐方案：zoneinfo（3.9+）
+
+```python
+from zoneinfo import ZoneInfo
+from datetime import datetime
+
+dt = datetime.now(ZoneInfo("Asia/Taipei"))
+```
+
+其他例子：
+
+* `"Asia/Shanghai"`
+* `"UTC"`
+* `"America/New_York"`
+
+
+### 时区转换
+
+```python
+dt_utc = dt.astimezone(ZoneInfo("UTC"))
+```
+
+
+## 八、naive vs aware（大坑）
+
+| 类型    | 是否带时区 |
+| ----- | ----- |
+| naive | ❌     |
+| aware | ✅     |
+
+判断：
+
+```python
+dt.tzinfo is None
+```
+
+⚠ 千万不要混着算：
+
+```python
+naive - aware   # 会报错
+```
+
+
+## 九、替换时间字段
+
+```python
+dt.replace(year=2030)
+```
+
+⚠ 不会自动进位
+
+
+## 十、常用实战技巧
+
+### 获取今天
+
+```python
+date.today()
+```
+
+
+### 获取本月第一天
+
+```python
+today = date.today()
+first_day = today.replace(day=1)
+```
+
+
+### 获取昨天
+
+```python
+date.today() - timedelta(days=1)
+```
+
+
+### 判断是否同一天
+
+```python
+dt1.date() == dt2.date()
+```
+
+
+## 十一、排序与比较
+
+datetime 支持比较：
+
+```python
+dt1 > dt2
+```
+
+可以直接排序：
+
+```python
+sorted(datetime_list)
+```
+
+
+## 十二、ISO 格式
+
+生成：
+
+```python
+dt.isoformat()
+```
+
+解析：
+
+```python
+datetime.fromisoformat("2026-02-27T20:30:15")
+```
+
+
+## 十三、性能与最佳实践
+
+### 推荐导入方式
+
+✅ 推荐：
+
+```python
+from datetime import datetime
+```
+
+❌ 不推荐：
+
+```python
+import datetime
+datetime.datetime(...)
+```
+
+
+### 生产环境建议
+
+* 永远存 UTC
+* 展示时转本地
+* 不使用 `utcnow()`
+* 使用 `zoneinfo`
+* 不混用 naive/aware
+
+
+## 十四、常见坑位清单
+
+| 坑            | 解释              |
+| ------------ | --------------- |
+| 2月30日        | 会直接报错           |
+| 月份从0开始？      | ❌ Python 月份从1开始 |
+| 时间自动进位？      | ❌ replace 不进位   |
+| 夏令时          | 会影响时间差          |
+| timestamp 精度 | 浮点数存在误差         |
+
+
+## 十五、终极总结
+
+### 你需要记住的核心
+
+* `datetime` 是主力
+* `timedelta` 用于计算
+* `strftime/strptime` 用于转换
+* `zoneinfo` 处理时区
+* 永远优先使用 aware datetime
