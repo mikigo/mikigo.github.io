@@ -1,6 +1,17 @@
 
 
 # Shell进程调用
+
+import { Badge } from '@rspress/core/theme'; 
+
+<Badge type="tip"> 
+  <img 
+    style={{ height: '20px' }} 
+    src="/logo.png" 
+  /> 
+  <span>mikigo</span> 
+</Badge>
+
 ## 1. 进程调用无处不在
 实际上，Shell脚本的进程调用无处不在，除了shell自身的内建命令，Shell调用工具命令都会开辟一个子进程去执行，比如在shell脚本中使用sed，grep，sleep等命令。
 

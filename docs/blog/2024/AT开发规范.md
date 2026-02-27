@@ -85,9 +85,11 @@ AT 开发规范是根据自动化测试运行多年以来，遇到问题解决�
 | 方法文件名<br />（文管举例） | `dfm_widget.py`<br />`title_widget.py`<br />`right_view_widget.py`<br />`left_view_widget.py`<br />`pop_widget.py`<br />`base_widget.py`<br />`dfm_assert.py` |
 
 :::
+
 - 断言语句名称
 
 ::: tip 断言语句命名规范
+
 断言语句都是以 assert 开头
 
 | 断言                       | 语句                                                         |
@@ -99,6 +101,7 @@ AT 开发规范是根据自动化测试运行多年以来，遇到问题解决�
 | 判断元素是否存在           | assert_element_exist<br />assert_element_not_exist           |
 | 判断是否相等               | assert_equal<br />assert_not_equal                           |
 | 判断是否为真               | assert_true<br />assert_false                                |
+
 :::
 
 ## 3. Fixture 规范

@@ -22,10 +22,14 @@
 }
 
 .medium-zoom-image,
-video {
+video,
+.rp-home-hero__image-img,
+.rp-home-hero__image-img--light,
+#logo {
   margin-left: atuo;
   margin-right: auto;
   box-shadow: 0 2px 6px #262726 !important;
+  border-radius: 6px !important;
 }
 
 .rp-nav-menu__item__container {
