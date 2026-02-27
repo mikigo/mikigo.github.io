@@ -5,6 +5,7 @@ import path from "node:path";
 const siteUrl = 'https://mikigo.site';
 
 export default defineConfig({
+    lang: 'zh',
     globalStyles: path.join(__dirname, 'theme/var.css'),
     root: 'docs',
     base: '/',
