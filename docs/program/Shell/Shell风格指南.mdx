@@ -41,7 +41,7 @@ err() {
 
 if ! do_something; then
     err "Unable to do_something"
-    exit "${E_DID_NOTHING}"
+    exit "\${E_DID_NOTHING}"
 fi
 ```
 
@@ -220,15 +220,15 @@ shell中的循环略有不同，但是我们遵循跟声明函数时的大括号
 例如：
 
 ```shell
-for dir in ${dirs_to_cleanup}; do
-    if [[ -d "${dir}/${ORACLE_SID}" ]]; then
-        log_date "Cleaning up old files in ${dir}/${ORACLE_SID}"
-        rm "${dir}/${ORACLE_SID}/"*
+for dir in \${dirs_to_cleanup}; do
+    if [[ -d "\${dir}/\${ORACLE_SID}" ]]; then
+        log_date "Cleaning up old files in \${dir}/\${ORACLE_SID}"
+        rm "\${dir}/\${ORACLE_SID}/"*
         if [[ "$?" -ne 0 ]]; then
             error_message
         fi
     else
-        mkdir -p "${dir}/${ORACLE_SID}"
+        mkdir -p "\${dir}/\${ORACLE_SID}"
         if [[ "$?" -ne 0 ]]; then
         error_message
         fi
@@ -251,17 +251,17 @@ done
 示例：
 
 ```shell
-case "${expression}" in
+case "\${expression}" in
     a)
         variable="..."
-        some_command "${variable}" "${other_expr}" ...
+        some_command "\${variable}" "\${other_expr}" ...
         ;;
     absolute)
         actions="relative"
-        another_command "${actions}" "${other_expr}" ...
+        another_command "\${actions}" "\${other_expr}" ...
         ;;
     *)
-        error "Unexpected expression '${expression}'"
+        error "Unexpected expression '\${expression}'"
     	;;
 esac
 ```
@@ -276,12 +276,12 @@ aflag=''
 bflag=''
 files=''
 while getopts 'abf:v' flag; do
-    case "${flag}" in
+    case "\${flag}" in
         a) aflag='true' ;;
         b) bflag='true' ;;
-        f) files="${OPTARG}" ;;
+        f) files="\${OPTARG}" ;;
         v) verbose='true' ;;
-        *) error "Unexpected option ${flag}" ;;
+        *) error "Unexpected option \${flag}" ;;
     esac
 done
 ```
@@ -296,16 +296,16 @@ aflag=''
 bflag=''
 files=''
 while getopts 'abf:v' flag; do
-    case "${flag}" in
+    case "\${flag}" in
         a)aflag='true' 
         ;;
         b)bflag='true' 
         ;;
-        f) files="${OPTARG}"
+        f) files="\${OPTARG}"
         ;;
         v) verbose='true' 
         ;;
-        *) error "Unexpected option ${flag}"
+        *) error "Unexpected option \${flag}"
         ;;
     esac
 done
@@ -315,9 +315,9 @@ done
 
 ### 4.6. **变量扩展**
 
-【强制】如果变量值是系统路径，那么${var} 必须用双引号引起来。
+【强制】如果变量值是系统路径，那么 &#36;&#123;var&#125; 必须用双引号引起来。
 
-【建议】引用变量，推荐用 ${var} 而不是 $var 。
+【建议】引用变量，推荐用 &#36;&#123;var&#125; 而不是 $var 。
 
 【建议】除非绝对必要或者为了避免困惑，否则不要用大括号将单个字符的shell特殊变量或定位变量括起来。推荐将其他所有变量用大括号括起来。
 
@@ -327,7 +327,7 @@ done
 
 ```shell
 # Braces necessary:
-echo "many parameters: ${10}"
+echo "many parameters: \${10}"
 ```
 
 示例：单字符的特殊变量或小于10的位置变量，不建议用大括号括起来
@@ -344,16 +344,16 @@ echo "Specials: !=$!, -=$-, _=$_. ?=$?, #=$# *=$* @=$@ \$=$$ ..."
 # Braces avoiding confusion:
 # Output is "a0b0c0"
 set -- a b c
-echo "${1}0${2}0${3}0"
+echo "\${1}0\${2}0\${3}0"
 ```
 
 示例：包含路径的变量用引号引起来
 
 ```shell
 # Preferred style for other variables:
-PATH="${PATH}"
+PATH="\${PATH}"
 FILENAME="one_file"
-cp -pf "${PATH}/${FILENAME}" "${PWD}/"
+cp -pf "\${PATH}/\${FILENAME}" "\${PWD}/"
 ```
 
 
@@ -390,7 +390,7 @@ export ORACLE_SID='PROD'
 
 ```shell
 zip_version="$(dpkg --status zip | grep Version: | cut -d ' ' -f 2)"
-if [[ -z "${zip_version}" ]]; then
+if [[ -z "\${zip_version}" ]]; then
 	error_message
 else
 	readonly zip_version
@@ -462,12 +462,12 @@ main "$@"
 
 ```shell
 # Prefer this:
-addition=$((${X} + ${Y}))
-substitution="${string/#foo/bar}"
+addition=$((\${X} + \${Y}))
+substitution="\${string/#foo/bar}"
 
 # Instead of this:
-addition="$(expr ${X} + ${Y})"
-substitution="$(echo "${string}" | sed -e 's/^foo/bar/')"
+addition="$(expr \${X} + \${Y})"
+substitution="$(echo "\${string}" | sed -e 's/^foo/bar/')"
 ```
 
 
@@ -481,40 +481,40 @@ substitution="$(echo "${string}" | sed -e 's/^foo/bar/')"
 例如：
 
 ```shell
-if ! mv "${file_list}" "${dest_dir}/" ; then
-    echo "Unable to move ${file_list} to ${dest_dir}" >&2
-    exit "${E_BAD_MOVE}"
+if ! mv "\${file_list}" "\${dest_dir}/" ; then
+    echo "Unable to move \${file_list} to \${dest_dir}" >&2
+    exit "\${E_BAD_MOVE}"
 fi
 
 # Or
-mv "${file_list}" "${dest_dir}/"
+mv "\${file_list}" "\${dest_dir}/"
 if [[ "$?" -ne 0 ]]; then
-    echo "Unable to move ${file_list} to ${dest_dir}" >&2
-    exit "${E_BAD_MOVE}"
+    echo "Unable to move \${file_list} to \${dest_dir}" >&2
+    exit "\${E_BAD_MOVE}"
 fi
 
 # Or
-[[ ! -d "${dest_dir}/" ]] && echo "No such directory" >&2 && exit "${E_BAD_MOVE}" 
+[[ ! -d "\${dest_dir}/" ]] && echo "No such directory" >&2 && exit "\${E_BAD_MOVE}" 
 ```
 
 Bash 也有 PIPESTATUS 变量，允许检查从管道所有部分返回的代码。如果仅仅需要检查整个管道是成功还是失败，以下的方法是可以接受的：
 
 ```shell
-tar -cf - ./* | ( cd "${dir}" && tar -xf - )
-if [[ "${PIPESTATUS[0]}" -ne 0 || "${PIPESTATUS[1]}" -ne 0 ]]; then
-	echo "Unable to tar files to ${dir}" >&2
+tar -cf - ./* | ( cd "\${dir}" && tar -xf - )
+if [[ "\${PIPESTATUS[0]}" -ne 0 || "\${PIPESTATUS[1]}" -ne 0 ]]; then
+	echo "Unable to tar files to \${dir}" >&2
 fi
 ```
 
 但是在运行任何其他命令时， PIPESTATUS 将会被覆盖。如果你需要基于管道中发生的错误执行不同的操作，那么你需要在运行命令后立即将 PIPESTATUS 赋值给另一个变量。
 
 ```shell
-tar -cf - ./* | ( cd "${DIR}" && tar -xf - )
+tar -cf - ./* | ( cd "\${DIR}" && tar -xf - )
 return_codes=(${PIPESTATUS[*]})
-if [[ "${return_codes[0]}" -ne 0 ]]; then
+if [[ "\${return_codes[0]}" -ne 0 ]]; then
 	do_something
 fi
-if [[ "${return_codes[1]}" -ne 0 ]]; then
+if [[ "\${return_codes[1]}" -ne 0 ]]; then
 	do_something_else
 fi
 ```
@@ -629,11 +629,11 @@ fi
 ```shell
 last_line='NULL'
 your_command | while read line; do
-last_line="${line}"
+last_line="\${line}"
 done
 
 # This will output 'NULL'
-echo "${last_line}"
+echo "\${last_line}"
 ```
 
  
@@ -644,7 +644,7 @@ echo "${last_line}"
 total=0
 # Only do this if there are no spaces in return values.
 for value in $(command); do
-total+="${value}"
+total+="\${value}"
 done
 ```
 
@@ -656,13 +656,13 @@ done
 total=0
 last_file=
 while read count filename; do
-    total+="${count}"
-    last_file="${filename}"
+    total+="\${count}"
+    last_file="\${filename}"
 done <  <(your_command | uniq -c)
 # This will output the second field of the last line of output from
 # the command.
-echo "Total = ${total}"
-echo "Last one = ${last_file}"
+echo "Total = \${total}"
+echo "Last one = \${last_file}"
 ```
 
 

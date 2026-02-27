@@ -251,12 +251,12 @@ test@test-PC:~$ echo | awk -v a=8 '{printf("%.2f\n",sqrt(a))}'
 
 ### 2.1 C语言Hash算法
 
-以下C语言代码中`ELFHash`函数来源于<http://www.partow.net/programming/hashfunctions>    
+以下C语言代码中`ELFHash`函数来源于[http://www.partow.net/programming/hashfunctions](http://www.partow.net/programming/hashfunctions)    
 `test@test-PC:~/work/study/cplus$ vi hash.c `
 ```c
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
 
 unsigned int ELFHash(const char* str, unsigned int length)
 {

@@ -58,37 +58,37 @@ docker exec Jenkins_rongqi cat /var/Jenkins_home/secrets/initialAdminPassword
 
 - 填写项目的描述信息
 
-<img src="/Jenkins环境搭建以及任务创建_assets/通用模块.png" alt="项目描述" style="zoom:120%;" />
+<img src="/Jenkins环境搭建以及任务创建_assets/通用模块.png" alt="项目描述" style={{ zoom: '120%' }} />
 
 - 设置用户权限
 
-<img src="/Jenkins环境搭建以及任务创建_assets/权限.png" alt="权限" style="zoom:120%;" />
+<img src="/Jenkins环境搭建以及任务创建_assets/权限.png" alt="权限" style={{ zoom: '120%' }} />
 
 - 项目重构：重新构建这个作业而不需要再次输入参数，也就是说，它会使用上一次构建时使用的参数值直接进行构建
 
-<img src="/Jenkins环境搭建以及任务创建_assets/重构.png" alt="重构" style="zoom:120%;" />
+<img src="/Jenkins环境搭建以及任务创建_assets/重构.png" alt="重构" style={{ zoom: '120%' }} />
 
 - 任务构建参数选择：
 
-添加一些参数变量信息到你的Jenkins工程当中，根据参数类型，每个参数都有一个Name和某种类型的Value。当构建开始时，这些名称-值对将作为环境变量导出，允许构建配置的后续部分(例如构建步骤)访问这些值，例如通过使用${PARAMETER_NAME}语法使用这些变量
+添加一些参数变量信息到你的Jenkins工程当中，根据参数类型，每个参数都有一个Name和某种类型的Value。当构建开始时，这些名称-值对将作为环境变量导出，允许构建配置的后续部分(例如构建步骤)访问这些值，例如通过使用&#36;&#123;PARAMETER_NAME&#125;语法使用这些变量
 
-<img src="/Jenkins环境搭建以及任务创建_assets/任务参数.png" alt="任务参数" style="zoom:120%;" />
+<img src="/Jenkins环境搭建以及任务创建_assets/任务参数.png" alt="任务参数" style={{ zoom: '120%' }} />
 
 - 禁止重构，勾选后，任务将不支持重构功能
 
-<img src="/Jenkins环境搭建以及任务创建_assets/禁止重构.png" alt="禁止重构" style="zoom:120%;" />
+<img src="/Jenkins环境搭建以及任务创建_assets/禁止重构.png" alt="禁止重构" style={{ zoom: '120%' }} />
 
 - 限制job的最大并发数量
 
-<img src="/Jenkins环境搭建以及任务创建_assets/限制并发数量.png" alt="限制并发数量" style="zoom:120%;" />
+<img src="/Jenkins环境搭建以及任务创建_assets/限制并发数量.png" alt="限制并发数量" style={{ zoom: '120%' }} />
 
 - 允许项目并发执行
 
-<img src="/Jenkins环境搭建以及任务创建_assets/允许并发.png" alt="允许并发" style="zoom:120%;" />
+<img src="/Jenkins环境搭建以及任务创建_assets/允许并发.png" alt="允许并发" style={{ zoom: '120%' }} />
 
 - 限制job的运行环境，填写slave节点的标签即可
 
-<img src="/Jenkins环境搭建以及任务创建_assets/限制节点.png" alt="限制节点" style="zoom:120%;" />
+<img src="/Jenkins环境搭建以及任务创建_assets/限制节点.png" alt="限制节点" style={{ zoom: '120%' }} />
 
 (2)源码管理模块
 
@@ -98,13 +98,13 @@ docker exec Jenkins_rongqi cat /var/Jenkins_home/secrets/initialAdminPassword
 
   Credentials:ssh私钥，用于免密clone仓库
 
-  <img src="/Jenkins环境搭建以及任务创建_assets/git.png" alt="git" style="zoom:120%;" />			
+  <img src="/Jenkins环境搭建以及任务创建_assets/git.png" alt="git" style={{ zoom: '120%' }} />			
 
 - 仓库分支设置
 
   指定分支：clone仓库的哪个分支
 
-<img src="/Jenkins环境搭建以及任务创建_assets/git分支.png" alt="git分支" style="zoom:120%;" />
+<img src="/Jenkins环境搭建以及任务创建_assets/git分支.png" alt="git分支" style={{ zoom: '120%' }} />
 
 - 添加仓库附加行为
 
@@ -143,16 +143,16 @@ docker exec Jenkins_rongqi cat /var/Jenkins_home/secrets/initialAdminPassword
 
   - Build after other projects are built：用于配置当前项目在其他项目完成构建后进行构建
 
-<img src="/Jenkins环境搭建以及任务创建_assets/构建触发器.png" alt="构建触发器" style="zoom:120%;" />
+<img src="/Jenkins环境搭建以及任务创建_assets/构建触发器.png" alt="构建触发器" style={{ zoom: '120%' }} />
 
 (4)构建模块
 
-- 点击“增加构建步骤”，可以选择构建的方式，最常见的是Excute shell,可以通过shell命令，进行相关build操作 
+- 点击"增加构建步骤"，可以选择构建的方式，最常见的是Excute shell,可以通过shell命令，进行相关build操作 
 
-<img src="/Jenkins环境搭建以及任务创建_assets/构建操作.png" alt="构建操作" style="zoom:120%;" />
+<img src="/Jenkins环境搭建以及任务创建_assets/构建操作.png" alt="构建操作" style={{ zoom: '120%' }} />
 
 (5)构建后操作模块
 
 - build完成后，进行的一系列操作，比如说，可以将测试结果通过企业微信发送至项目负责人
 
-<img src="/Jenkins环境搭建以及任务创建_assets/构建后操作.png" alt="构建后操作" style="zoom:120%;" />
+<img src="/Jenkins环境搭建以及任务创建_assets/构建后操作.png" alt="构建后操作" style={{ zoom: '120%' }} />

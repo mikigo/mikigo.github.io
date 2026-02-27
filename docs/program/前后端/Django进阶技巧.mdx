@@ -46,10 +46,10 @@ Django的会话系统允许服务器跟踪用户的状态。当用户登录后�
 
 权限管理涉及决定已认证用户能够访问哪些资源或执行哪些操作。Django的权限系统分为基本权限和对象级权限。
 
-- 基本权限（Basic permissions）: 每个Django模型都可以定义一组全局权限，比如`add_<modelname>`, `change_<modelname>`, `delete_<modelname>`。这些权限自动添加到auth.permission表，并且可以分配给用户组或单独的用户。
+- 基本权限（Basic permissions）: 每个Django模型都可以定义一组全局权限，比如`add_&lt;modelname&gt;`, `change_&lt;modelname&gt;`, `delete_&lt;modelname&gt;`。这些权限自动添加到auth.permission表，并且可以分配给用户组或单独的用户。
 - 对象级权限（Object-level permissions）: 除了全局权限，Django也支持对具体对象实例的权限控制。这意味着可以限制用户仅能修改或删除他们自己的某些记录，而不是所有人的记录。这需要手动检查权限，通常在视图函数中完成。
 - 组（Groups）: Django允许将用户分组，并给组分配权限。这样可以批量管理权限，提高效率。
-- 用户权限检查: 使用user.has_perm()方法可以检查用户是否具有某个权限。在模板中也可以使用`{% if perms.app_label.codename %}`这样的标签来控制内容的显示。
+- 用户权限检查: 使用user.has_perm()方法可以检查用户是否具有某个权限。在模板中也可以使用`{% raw %}{% if perms.app_label.codename %}{% endraw %}`这样的标签来控制内容的显示。
 
 #### 1.2.1 在django中实现角色级别的权限控制
 
@@ -281,11 +281,11 @@ DRF 的主要优点：
 
 以下是使用curl的一个例子：
 
+```bash
 # 获取文章列表
-
 curl http://127.0.0.1:8000/articles/
 
 # 创建新文章
-
 curl -X POST -H "Content-Type: application/json" -d '{"title": "My Title", "author": "Me", "body": "This is my article body."}' http://127.0.0.1:8000/articles/
+```
 

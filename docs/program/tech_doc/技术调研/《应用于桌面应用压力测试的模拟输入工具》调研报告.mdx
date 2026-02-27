@@ -10,7 +10,7 @@
 |  **MEM**  |  MEM 是一个内存显示程序，显示所有内存驻留程序的占用情况 |
 | **输入子系统** | 输入子系统核心层（Input Core）、驱动层和事件处理层（Event Handler） |
 
-<center style="color:#C0C0C0;text-decoration:underline">表一 术语</center>
+<center style={{ color: '#C0C0C0', textDecoration: 'underline' }}>表一 术语</center>
 
 ## 问题
 随着文件管理器（以下简称"文管"）的使用者越来越多，厂商和社区反馈了越来越多反复操作后出现概率概率性 BUG，为了对 BUG 进行复现，就需要进行压力测试。
@@ -54,7 +54,7 @@ for i  in range(10):
 | 重复同时执行 10 个复制文件任务 |1.在 dock 栏目右键打开 2 个文管窗口<br />2.在 A 窗口中，选择文件右键-复制<br />3.在 B 窗口中，右键粘贴<br />4.快速粘贴 10 次<br />5.删除B窗口的文件|8H|
 | 重复向桌面复制文件 | 1.在dock栏目打开文管<br />2.选择一个“音乐”目录  CTRL+C  复制文件<br />3.在桌面粘贴文件<br />4.关闭提示弹窗<br />5.关闭文管 | 8H |
 
-<center style="color:#C0C0C0;text-decoration:underline">表二 压力测试场景</center>
+<center style={{ color: '#C0C0C0', textDecoration: 'underline' }}>表二 压力测试场景</center>
 
 可以很直观的看出，这些测试项的操作都较复杂。
 
@@ -62,7 +62,7 @@ Dogtail 是 Python 的三方库，它使用 Accessbility 技术与桌面应用�
 
 ![1021-文管](/test/1021-文管.png)
 
-<center style="color:#C0C0C0;text-decoration:underline">图一 1021文管Accessbility标签</center>
+<center style={{ color: '#C0C0C0', textDecoration: 'underline' }}>图一 1021文管Accessbility标签</center>
 
 通过 Dogtail 和 PyAutogui 来控制键盘、鼠标来进行应用的操作，在 Python 代码遍历寻找应用程序上可用的 Accessbility 节点时候，过程需要 1-2S 左右，之后再执行其他操作，这个过程耗时较长，失去了压力测试本身的意义。
 
@@ -73,7 +73,7 @@ Dogtail 是 Python 的三方库，它使用 Accessbility 技术与桌面应用�
 这个方案使用 Xdotool 工具模拟键盘、鼠标操作，Xwininfo 工具来获取窗体属性，此方法通过窗体固有属性，找到对应坐标，之后来进行键盘鼠标操作，整个流程如下图所示：
 
 ![x操作](/test/x操作.png)
-<center style="color:#C0C0C0;text-decoration:underline">图二  Xdotool和Xwininfo流程</center>
+<center style={{ color: '#C0C0C0', textDecoration: 'underline' }}>图二  Xdotool和Xwininfo流程</center>
 
 UOS 系统自带了Xdotool和Xwininfo工具，这个方法其实和方案二比较相似，方案二使用 Dogtail 定位元素位置、PyAutoGUI 来操作键盘、鼠标，使用wininfo 获取窗体属性计算坐标，通过 Xdotool 控制键鼠操作。
 
@@ -89,12 +89,12 @@ done
 ```
 
 ![速度](/test/速度.png)
-<center style="color:#C0C0C0;text-decoration:underline">图三  Python 脚本与 shell 脚本运行速度对比</center>
+<center style={{ color: '#C0C0C0', textDecoration: 'underline' }}>图三  Python 脚本与 shell 脚本运行速度对比</center>
 
 使用 shell 脚本编写：**重复向桌面复制文件，并且每次输出桌面和文管的窗口 ID(寻找窗口 ID 来获取坐标)** 测试场景，多次运行后，在下图四能看到，同一个场景同一套代码同一个机器，运行结果，极其不稳定，容易报错找不到窗口。
 
 ![向桌面复制文件.png](/test/向桌面复制文件.png)
-<center style="color:#C0C0C0;text-decoration:underline">图四  xdotool 不稳定</center>
+<center style={{ color: '#C0C0C0', textDecoration: 'underline' }}>图四  xdotool 不稳定</center>
 
 纵观整个方案二：运行环境简单、但是运行结果不稳定。
 
@@ -105,7 +105,7 @@ done
 | 1  |          可自动化、场景覆盖多          | 无法适用所有版本，环境复杂、键鼠操作比较慢达不到压测效果 |
 |  2   | 可自动化、运行环境简单，能适用所有版本 |                          不稳定                          |
 
-<center style="color:#C0C0C0;text-decoration:underline">表三 二种方案优缺点总结</center>
+<center style={{ color: '#C0C0C0', textDecoration: 'underline' }}>表三 二种方案优缺点总结</center>
 
 在目前的测试环境下，方案一由于 Python 在使用第三方库的时候，程序响应往往都需要 1-2s 时间，运行速度较慢，而且无法满足所有版本的压测需求。方案二使用 shell 脚本编写压测脚本，在运行 Xdotool  工具时候容易出错，Xdotool 工具对键鼠的操作已经算是比较快的工具了，但是在特殊 BUG 上，鼠标操作速度还是有所欠缺，如：异步线程出错，在测试过程中，经常性会遇到这样的小概率问题、同样的操作，有时候能复现问题有时候又不能复现，BUG 复现条件极其苛刻，需要更快的操作增加 复现概率，如下表列举部分的 BUG，在回归 BUG 就需要快速的键鼠操作。
 
@@ -119,7 +119,7 @@ done
 | 21172 |   【文件管理器】【5.1.0.8-1】左侧栏目快速切换，右键闪退。    | 2 | 2 |
 
 
-<center style="color:#C0C0C0;text-decoration:underline">表四 BUG 列表</center>
+<center style={{ color: '#C0C0C0', textDecoration: 'underline' }}>表四 BUG 列表</center>
 
 因此，我们需要对方案二进行优化，找到能解决**键鼠操作速度不够快**和**容易出错不稳定**的方案。
 
@@ -137,7 +137,7 @@ done
 
 ![input](/test/input.png)
 
-<center style="color:#C0C0C0;text-decoration:underline">图五  输入事件响应流程</center>
+<center style={{ color: '#C0C0C0', textDecoration: 'underline' }}>图五  输入事件响应流程</center>
 
 事件处理层为不同类型硬件提供了用户访问及处理接口。在 /dev/input 目录下显示的是已经注册在内核中的设备编程接口，用户通过 open 这些设备文件来打开不同的输入设备进行硬件操作，当打开设备 /dev/input/mice 时，会调用到事件处理层的 Mouse Handler 来处理输入事件，这也使得设备驱动层无需关心设备文件的操作，因为 Mouse Handler 已经有了对应事件处理的方法。
 
@@ -145,14 +145,14 @@ done
 
 ![xlib窗口说明](/test/xlib窗口说明.png)
 
-<center style="color:#C0C0C0;text-decoration:underline">图六 xlib 窗口说明</center>
+<center style={{ color: '#C0C0C0', textDecoration: 'underline' }}>图六 xlib 窗口说明</center>
 
 ### 整体设计
 
 **app-wininfo-m** 自上而下的模块结构呈现如下图七：
 
 ![app-wininfo-m.png](/test/app-wininfo-m.png)
-<center style="color:#C0C0C0;text-decoration:underline">图七  app-wininfo-m 模块结构</center>
+<center style={{ color: '#C0C0C0', textDecoration: 'underline' }}>图七  app-wininfo-m 模块结构</center>
 
 当按照这种模式设计，每个业务都比较统一有序和模块化，再扩展其他功能更加方便，不会影响到原有的功能。
 
@@ -197,7 +197,7 @@ sequenceDiagram
    E-->F(结束)
    G-->F(结束)
   ```
-在编码过程中，获取窗口的坐标引入 Xlib 的头文件 #include <linux/xlib.h> 获取结构体：**XGetWindowAttributes()** 函数返回指定窗口到当前属性 **XWindowAttributes** 结构。
+在编码过程中，获取窗口的坐标引入 Xlib 的头文件 `#include &lt;linux/xlib.h&gt;` 获取结构体：**`XGetWindowAttributes()`** 函数返回指定窗口到当前属性 **XWindowAttributes** 结构。
 
    ```c
 // 获取窗口的属性
@@ -349,7 +349,7 @@ void getwindowattribute(Window w){
    F-->G(结束)
    ```
 
-在编码过程中，对设备文件写入生效，需要引入子系统头文件 #include <linux/input.h> 获取到结构体：
+在编码过程中，对设备文件写入生效，需要引入子系统头文件 `#include &lt;linux/input.h&gt;` 获取到结构体：
 
 ```c
 struct input_event {
@@ -460,7 +460,7 @@ app-wininfo-m 应用程序参数文件说明：
 | -p   | 通过传入的进程号查找应用窗口的属性，查看所有进程下的窗口，并输出窗口属性 |
 | -k   |             键盘输入，如：`-k  KEY_A`，键盘输入A             |
 
-<center style="color:#C0C0C0;text-decoration:underline">表五 app-wininfo-m参数文件说明</center>
+<center style={{ color: '#C0C0C0', textDecoration: 'underline' }}>表五 app-wininfo-m参数文件说明</center>
 
 【实验环境】
 
@@ -494,7 +494,7 @@ window_Y=`echo ${window_PP#*"y:"}`	#截取窗口属性Y轴坐标
 
 
 ![newdemo](/test/可行性运行.gif)
-<center style="color:#C0C0C0;text-decoration:underline">图八 demo运行结果</center>
+<center style={{ color: '#C0C0C0', textDecoration: 'underline' }}>图八 demo运行结果</center>
 
 以上述例子运行，进行不同系统架构测试，测试结果如下：
 
@@ -503,7 +503,7 @@ window_Y=`echo ${window_PP#*"y:"}`	#截取窗口属性Y轴坐标
 | MIPS64EL | 正常运行 |
 | X86      | 正常运行 |
 | ARM64    | 正常运行 |
-<center style="color:#C0C0C0;text-decoration:underline">表六 兼容性运行结果</center>
+<center style={{ color: '#C0C0C0', textDecoration: 'underline' }}>表六 兼容性运行结果</center>
 
 
 ### app-wininfo-m 稳定性验证
@@ -520,7 +520,7 @@ window_Y=`echo ${window_PP#*"y:"}`	#截取窗口属性Y轴坐标
 | 点击鼠标右键                             | 使用demo程序，鼠标随机一直标左键，demo程序稳定         | 24H  | 通过 |
 | 键盘输入                                 | 使用demo程序，控制键盘一直输入，demo程序稳定           | 24H  | 通过 |
 
-<center style="color:#C0C0C0;text-decoration:underline">表七 稳定测试项</center>
+<center style={{ color: '#C0C0C0', textDecoration: 'underline' }}>表七 稳定测试项</center>
 
 经过上面的测试项，demo 程序满足了稳定性
 
@@ -540,7 +540,7 @@ done
 使用 time 命令运行 shell 脚本，下图就是 demo 程序运行速度。
 
 ![newdemo](/test/newdemo.png)
-<center style="color:#C0C0C0;text-decoration:underline">图九 demo运行速度</center>
+<center style={{ color: '#C0C0C0', textDecoration: 'underline' }}>图九 demo运行速度</center>
 
 由上图九可知 demo 程序运行速达到 1.844s，对比方案二的 2.315s 速度，明显超过 Xdotool 工具的运行速度。
 

@@ -66,7 +66,7 @@ Author: 海针
 
 ![image1](/public/youqu3中断任务续跑功技术能调研_assets/image1.png)
 
-<div style="text-align: center;">图1 执行流程</div>
+<div style={{ textAlign: 'center' }}>图1 执行流程</div>
 
 ### 3.1 整体设计
 
@@ -88,7 +88,7 @@ Author: 海针
 
 ......
 
-@click.option("--start-case", default=None, type=click.STRING, help="从{用例函数名称}开始执行测试")
+@click.option("--start-case", default=None, type=click.STRING, help="从&#123;用例函数名称&#125;开始执行测试")
 @click.option("--interrupt-continue", is_flag=True, default=False, type=click.BOOL, help="基于上一次中断的测试继续执行")
 @click.option("--order-execution", default=None, type=click.STRING, help="基于测试用例编号位置执行测试 asc/desc")
 def run(
@@ -132,9 +132,9 @@ def run(
 
 以上代码实现增加 `youqu3` 命令行参数并增加 `help` 提示信息：
 
-* 执行用例开始位置：--start-case {用例函数名称}
+* 执行用例开始位置：--start-case &#123;用例函数名称&#125;
 * 中断续跑：--interrupt-continue
-* 执行用例顺序：--order_execution {升序/降序}
+* 执行用例顺序：--order_execution &#123;升序/降序&#125;
 
 
 
