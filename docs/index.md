@@ -10,7 +10,7 @@ hero:
   actions:
     - theme: brand
       text: AutoTest
-      link: /program/autotest/自动化测试框架/Pytest从入门到起飞.md
+      link: /program/autotest/自动化测试框架/Pytest从入门到起飞
     - theme: alt
       text: GitHub
       link: https://github.com/mikigo
