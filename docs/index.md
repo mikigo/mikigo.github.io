@@ -31,6 +31,9 @@ features:
   - title: FastAPI-Self-Hosting-Docs
     details: 一个用于 FastAPI 应用程序的自托管文档解决方案，提供本地化的 Swagger UI 和 ReDoc 文档界面。
     link: https://github.com/mikigo/fastapi-self-hosting-docs
+  - title: Relative-Positon
+    details: 一个用于在 Linux 和 Windows 平台上将用户界面元素相对于窗口坐标进行定位的 Python 库。
+    link: https://github.com/mikigo/relative-position
   - title: Allure3-Server
     details: 使用 FastAPI 构建的服务器，用于生成和提供 Allure3 报告。
     link: https://github.com/mikigo/allure3-server
@@ -50,7 +53,7 @@ features:
     details: Basic template for automated testing using Pytest.
     link: https://github.com/mikigo/Autotest-Basic-Template/
   - title: Pytest Plugin List
-    details: Pytest Plugin List.
+    details: Pytest 插件列表
     link: https://github.com/mikigo/pytest-plugin-list/
   - title: SailWind Docs
     details: Paizi EDA Sailwind Docs. （国产EDA软件-SaiWind 中文文档）
