@@ -71,6 +71,6 @@ features:
     details: 一个控制 Python 函数执行的技术方案。
     link: https://linuxdeepin.github.io/letmego/
   - title: PyPKG
-    details: 一键创建 Python 工程，自动生成 Python 包目录结果、PyPI 发布相关配置文件，支持一键发布。
+    details: 一键创建 Python 工程，自动生成 Python 包文件目录结构、PyPI 发布相关配置文件，支持一键发布。
     link: https://gitee.com/deepin-autotest/pypkg/
 ---
