@@ -220,23 +220,6 @@ def test_something():
 3. **不支持异步函数**（虽然pytest 7.0+已经支持异步测试，但断言重写对异步代码的支持有限）
 4. **性能开销**：断言重写需要在导入时解析和修改字节码，会有轻微的性能开销（但通常可以忽略不计）
 
-## 替代方案：self.assert*风格
-
-如果你不喜欢pytest的断言重写，或者习惯了unittest风格的断言，你也可以使用pytest内置的`pytest`模块提供的方法：
-
-```python
-import pytest
-
-def test_pytest_asserts():
-    pytest.assertEqual(4, 5)  # 会显示详细错误信息
-    pytest.assertGreater(10, 5)
-    pytest.assertIn("foo", ["foo", "bar"])
-```
-
-这种方法类似于unittest的`self.assertEqual`等，而且不需要断言重写也能显示详细错误信息。
-
-不过，大多数pytest用户还是更喜欢简单的`assert`语句，因为它更Pythonic，而且有了断言重写，错误信息同样详细。
-
 ## 内幕：pytest是如何"偷看"你的变量的
 
 现在，我们来揭晓最终的秘密：pytest究竟是如何在不修改你源代码的情况下，"偷看"到你的变量值的？
