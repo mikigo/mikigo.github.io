@@ -1,0 +1,499 @@
+---
+date: 2026-04-20
+authors: ['mikigo']
+description: '本文记录了实现一个 Python 类装饰器 @relax 的踩坑过程，从 __getattribute__ 方案到包装方法/属性方案，再到支持实例属性延迟，最终解决 pytest 重跑时的闭包变量状态不一致问题。文章详细分析了装饰器闭包变量陷阱、property 与实例属性的时机问题、初始化与访问的区别等技术细节。'
+sidebar: false
+pageType: doc-wide
+---
+
+
+# 当你想让代码"慢下来"：一个 Python 装饰器的踩坑实录
+
+## 缘起：老板说系统太快了
+
+某天，老板突发奇想："我们的系统太快了，用户体验不好。能不能让某些操作故意慢一点？"
+
+作为一名有尊严的工程师，我的第一反应是：这是什么离谱的需求？但既然是老板的要求，那就做吧。
+
+需求很简单：
+- 实现一个类装饰器 `@relax`
+- 调用被装饰类中的某些方法/属性前先 sleep 一会儿
+- 支持白名单控制哪些需要延迟
+- 延迟时间可配置
+
+听起来挺简单的，对吧？
+
+> "这个需求很简单，怎么实现我不管。" —— 每一个产品经理的口头禅
+
+## 第一版实现：`__getattribute__` 方案
+
+作为一个有经验的 Python 开发者，我首先想到的是拦截属性访问。`__getattribute__` 是 Python 中最底层的属性访问拦截点，所有属性访问都会经过它。
+
+```python
+def relax(names=None, seconds=1.0):
+    def decorator(cls):
+        class Wrapper(cls):
+            def __getattribute__(self, name):
+                if name in (names or []):
+                    time.sleep(seconds)
+                return super().__getattribute__(name)
+        return Wrapper
+    return decorator
+```
+
+看起来很优雅，一个继承类搞定一切。但老板说："不要用 `__getattribute__`，换其他方案。"
+
+为什么？`__getattribute__` 太底层了，拦截范围太广，连 `__dict__`、`__class__` 这些特殊属性都会被拦截，容易出问题。而且它会影响所有属性访问，性能开销也不小。
+
+好吧，换个方案。
+
+## 第二版实现：包装方法/属性方案
+
+既然 `__getattribute__` 不行，那就精准打击——只包装需要延迟的属性和方法。
+
+```python
+def relax(names=None, seconds=1.0):
+    def decorator(cls):
+        for name in names or []:
+            attr = getattr(cls, name, None)
+            if attr is None:
+                continue
+            
+            if isinstance(attr, property):
+                # 包装 property 的 fget, fset, fdel
+                ...
+            else:
+                # 包装普通方法
+                @functools.wraps(attr)
+                def wrapped(*args, **kwargs):
+                    time.sleep(seconds)
+                    return attr(*args, **kwargs)
+                setattr(cls, name, wrapped)
+        
+        return cls
+    return decorator
+```
+
+这个方案更精准，只影响指定的属性和方法。
+
+老板又提需求了："`__init__` 中创建的实例属性也要支持延迟。"
+
+比如：
+```python
+@relax(names=['slow_attr'], seconds=1)
+class MyClass:
+    def __init__(self):
+        self.slow_attr = "value"  # 这个属性访问也要延迟
+```
+
+这就有点麻烦了。实例属性是在 `__init__` 执行时才创建的，装饰器执行时（类定义时）这些属性还不存在。
+
+## 第三版实现：支持实例属性
+
+我的方案是：
+1. 在装饰器执行阶段，为白名单中的实例属性创建 property（即使属性还不存在）
+2. 包装 `__init__`，执行完原 `__init__` 后，把实例属性移动到 `_relax_{name}` 这个隐藏位置
+3. property 的 getter/setter 从隐藏位置读写，并添加延迟
+
+```python
+def relax(names=None, seconds=1.0):
+    def decorator(cls):
+        # 用于记录已经处理过的实例属性
+        wrapped_instance_attrs = set()  # ← 问题之源！
+        
+        # 为白名单中的名称创建 property
+        for name in names or []:
+            attr = getattr(cls, name, None)
+            if attr is None:
+                # 不存在于类上，可能是实例属性
+                prop = property(
+                    make_getter(name, seconds),
+                    make_setter(name, seconds)
+                )
+                setattr(cls, name, prop)
+        
+        # 包装 __init__
+        original_init = cls.__dict__.get('__init__')
+        def wrapped_init(self, *args, **kwargs):
+            if original_init:
+                original_init(self, *args, **kwargs)
+            
+            for name in names_set:
+                if name in wrapped_instance_attrs:  # ← 问题！
+                    continue
+                if name in self.__dict__:
+                    value = self.__dict__.pop(name)
+                    setattr(self, f'_relax_{name}', value)
+                    wrapped_instance_attrs.add(name)
+        
+        cls.__init__ = wrapped_init
+        return cls
+    return decorator
+```
+
+看起来没问题，跑一下测试：
+
+```
+fast_method: fast, elapsed: 0.000s
+[relax] slow_method - sleeping for 1s
+slow_method: slow, elapsed: 1.005s
+...
+```
+
+一切正常。提交代码，下班！
+
+## 深夜惊魂：pytest 重跑的诡异 bug
+
+第二天，QA 同事跑来："你的代码有问题，pytest 重跑时日志变多了！"
+
+我一脸懵逼："什么意思？"
+
+他展示了 pytest 的输出：
+
+```
+第一次运行：
+[relax] slow_instance_attr - sleeping for 1s
+[relax] slow_instance_attr1 - sleeping for 1s
+...
+
+重跑后：
+[relax] slow_instance_attr - sleeping for 1s
+[relax] slow_instance_attr1 - sleeping for 1s
+[relax] slow_instance_attr2 - sleeping for 1s
+[relax] slow_instance_attr3 - sleeping for 1s
+[relax] slow_instance_attr4 - sleeping for 1s
+[relax] slow_instance_attr - sleeping for 1s  ← 多了一条！
+[relax] slow_instance_attr1 - sleeping for 1s  ← 多了一条！
+...
+```
+
+每次重跑，日志都会多出一些。这太诡异了！
+
+> "这就好比你去餐厅点菜，第二次点同样的菜，厨师却多给你做了几道。" —— 一个不太恰当的比喻
+
+## 问题定位：闭包变量的幽灵
+
+经过仔细分析，我发现了问题所在：
+
+**`wrapped_instance_attrs = set()` 这个变量是装饰器闭包中的局部变量！**
+
+这意味着：
+1. 第一次运行：`wrapped_instance_attrs` 是空的，实例化时属性名被添加进去
+2. pytest 重跑时（`--reruns` 在同一进程中）：模块被重新导入，**装饰器重新执行**
+3. 装饰器重新执行 → `wrapped_instance_attrs` 被重置为空 set
+4. 但类上的 `_relax_prop_{name}` 标记和 property 已经存在（从上一次运行遗留）
+5. 状态不一致！
+
+更糟糕的是，`wrapped_instance_attrs` 在实例间共享。第一个实例处理后，第二个实例会跳过这些属性（因为 `if name in wrapped_instance_attrs: continue`）。
+
+这就像一个餐厅：
+- 第一次：厨师记录了"已做过的菜"
+- 第二次：厨师换人了，记录本被清空，但厨房里的菜还在
+- 结果：混乱
+
+## 第一轮修复：把 property 创建移到装饰器执行阶段
+
+我的修复思路：
+- 把实例属性的 property 创建移到类定义时（装饰器执行阶段）
+- 移除 `wrapped_instance_attrs` 这个共享状态
+- `__init__` 只负责移动属性值，不创建 property
+
+```python
+def relax(names=None, seconds=1.0):
+    def decorator(cls):
+        names_list = names or []
+        
+        # 在装饰器执行阶段就创建所有 property
+        for name in names_list:
+            attr = getattr(cls, name, None)
+            
+            if isinstance(attr, property):
+                # 包装已有的 property
+                ...
+            elif callable(attr):
+                # 包装方法
+                ...
+            else:
+                # 可能是实例属性，提前创建 property
+                prop = property(
+                    make_instance_getter(name, seconds),
+                    make_instance_setter(name, seconds)
+                )
+                setattr(cls, name, prop)
+        
+        # 包装 __init__
+        original_init = cls.__dict__.get('__init__')
+        def wrapped_init(self, *args, **kwargs):
+            if original_init:
+                original_init(self, *args, **kwargs)
+            
+            # 只移动属性值，不创建 property
+            for name in names_list:
+                storage_name = f'_relax_{name}'
+                if name in self.__dict__:
+                    value = self.__dict__.pop(name)
+                    setattr(self, storage_name, value)
+        
+        cls.__init__ = wrapped_init
+        return cls
+    return decorator
+```
+
+这样 property 只创建一次，而且是在类级别管理，应该没问题了。
+
+跑一下测试：
+
+```
+=== Creating instance ===
+[relax] slow_attr - sleeping for 0.1s  ← 实例化时就触发了延迟？
+
+=== Accessing slow_attr ===
+[relax] slow_attr - sleeping for 0.1s
+got: value
+```
+
+又出问题了！**实例化过程中触发了延迟。**
+
+## 第二轮踩坑：`__init__` 中的赋值触发了 property setter
+
+问题分析：
+
+在 `__init__` 中执行 `self.slow_attr = "value"` 时：
+- `slow_attr` 已经是一个 property（装饰器执行时创建的）
+- property 有 setter → 赋值操作触发 setter → setter 中有 `time.sleep()`
+- 结果：实例化过程中就延迟了！
+
+这违背了用户意图——用户只想在**访问**属性时延迟，而不是在**初始化**时延迟。
+
+> "你点菜时厨师才开始做，而不是你进门时厨师就开始做。" —— 又一个不太恰当的比喻
+
+## 最终修复：区分初始化和访问
+
+解决方案：setter 中判断是否是初始化阶段。
+
+如果 `_relax_{name}` 还不存在 → 是初始化赋值 → 不延迟
+如果 `_relax_{name}` 已存在 → 是后续赋值 → 要延迟
+
+```python
+def make_instance_setter(n, sec, storage_n):
+    def setter(self, value):
+        if storage_n in self.__dict__:  # 已存在 → 不是初始化
+            _do_delay(n, sec)
+        setattr(self, storage_n, value)
+    return setter
+```
+
+最终测试：
+
+```
+=== Creating instance ===
+（无日志，初始化不延迟）
+
+=== Accessing slow_attr ===
+[relax] slow_attr - sleeping for 0.1s
+got: value
+```
+
+完美！
+
+再跑 pytest 重跑：
+
+```
+第一次：
+[relax] slow_instance_attr - sleeping for 1s
+[relax] slow_instance_attr1 - sleeping for 1s
+...
+
+重跑：
+[relax] slow_instance_attr - sleeping for 1s
+[relax] slow_instance_attr1 - sleeping for 1s
+...（日志数量一致）
+```
+
+终于稳定了！
+
+## 技术总结
+
+这次踩坑让我学到了几个重要教训：
+
+### 1. 装饰器闭包变量的陷阱
+
+装饰器中的局部变量会在多次调用间共享，这在 pytest 重跑场景下会出问题。
+
+```python
+def decorator(cls):
+    shared_state = set()  # ← 多次装饰器调用间共享！
+    ...
+```
+
+**解决方案**：避免在装饰器闭包中维护实例级别的状态，改用类级别标记或实例级别属性。
+
+### 2. property 与实例属性的时机问题
+
+property 在类定义时创建，实例属性在 `__init__` 时创建。两者的时机不同步，需要小心处理。
+
+### 3. 初始化 vs 访问的区别
+
+用户可能只想延迟"访问"，不想延迟"初始化"。setter 需要区分这两种场景。
+
+### 4. pytest 重跑的特殊性
+
+pytest `--reruns` 在同一进程中运行，模块会被重新导入，但之前的类定义可能遗留。这与每次启动新进程的行为不同。
+
+## 最终代码
+
+```python
+import time
+import functools
+
+
+def _do_delay(attr_name, sec):
+    print(f"[relax] {attr_name} - sleeping for {sec}s")
+    time.sleep(sec)
+
+
+def relax(names=None, seconds=1.0):
+    def decorator(cls):
+        names_list = names or []
+        
+        for name in names_list:
+            attr = getattr(cls, name, None)
+            
+            if isinstance(attr, property):
+                # 包装已有的 property
+                old_fget = attr.fget
+                old_fset = attr.fset
+                old_fdel = attr.fdel
+                
+                def make_fget(old_get, sec, attr_name):
+                    def wrapped_fget(self):
+                        _do_delay(attr_name, sec)
+                        return old_get(self)
+                    return wrapped_fget
+                
+                def make_fset(old_set, sec, attr_name):
+                    if old_set is None:
+                        return None
+                    def wrapped_fset(self, value):
+                        _do_delay(attr_name, sec)
+                        return old_set(self, value)
+                    return wrapped_fset
+                
+                def make_fdel(old_del, sec, attr_name):
+                    if old_del is None:
+                        return None
+                    def wrapped_fdel(self):
+                        _do_delay(attr_name, sec)
+                        return old_del(self)
+                    return wrapped_fdel
+                
+                new_prop = property(
+                    make_fget(old_fget, seconds, name),
+                    make_fset(old_fset, seconds, name),
+                    make_fdel(old_fdel, seconds, name),
+                    attr.__doc__
+                )
+                setattr(cls, name, new_prop)
+                
+            elif callable(attr):
+                # 包装方法
+                def make_wrapper(attr, sec, attr_name):
+                    @functools.wraps(attr)
+                    def wrapped(*args, **kwargs):
+                        _do_delay(attr_name, sec)
+                        return attr(*args, **kwargs)
+                    return wrapped
+                setattr(cls, name, make_wrapper(attr, seconds, name))
+                
+            else:
+                # 实例属性：提前创建 property
+                storage_name = f'_relax_{name}'
+                
+                def make_instance_getter(n, sec, storage_n):
+                    def getter(self):
+                        _do_delay(n, sec)
+                        return getattr(self, storage_n)
+                    return getter
+                
+                def make_instance_setter(n, sec, storage_n):
+                    def setter(self, value):
+                        # 初始化时不延迟（storage_n 还不存在）
+                        if storage_n in self.__dict__:
+                            _do_delay(n, sec)
+                        setattr(self, storage_n, value)
+                    return setter
+                
+                prop = property(
+                    make_instance_getter(name, seconds, storage_name),
+                    make_instance_setter(name, seconds, storage_name)
+                )
+                setattr(cls, name, prop)
+        
+        # 包装 __init__
+        original_init = cls.__dict__.get('__init__')
+        
+        @functools.wraps(original_init if original_init else lambda self: None)
+        def wrapped_init(self, *args, **kwargs):
+            if original_init:
+                original_init(self, *args, **kwargs)
+            
+            # 移动实例属性到隐藏位置
+            for name in names_list:
+                storage_name = f'_relax_{name}'
+                if name in self.__dict__ and storage_name not in self.__dict__:
+                    value = self.__dict__.pop(name)
+                    setattr(self, storage_name, value)
+        
+        cls.__init__ = wrapped_init
+        
+        return cls
+    return decorator
+```
+
+## 使用示例
+
+```python
+@relax(names=['slow_method', 'slow_property', 'slow_attr'], seconds=1)
+class MyClass:
+    def __init__(self):
+        self.slow_attr = "value"  # 初始化不延迟
+        self.fast_attr = "fast"   # 不在白名单，不延迟
+    
+    def slow_method(self):
+        return "slow"
+    
+    @property
+    def slow_property(self):
+        return "prop_value"
+
+
+obj = MyClass()
+obj.slow_attr      # 延迟 1 秒
+obj.slow_attr = "new"  # 延迟 1 秒
+obj.slow_method()  # 延迟 1 秒
+obj.slow_property  # 延迟 1 秒
+obj.fast_attr      # 不延迟
+```
+
+## 结语
+
+这个需求看似简单，却让我踩了三个坑：
+
+1. `__getattribute__` 太底层，不能用
+2. 装饰器闭包变量在 pytest 重跑时状态不一致
+3. property setter 在初始化时也被触发
+
+最终通过：
+- 把 property 创建移到类定义时
+- 移除共享状态
+- setter 区分初始化和访问
+
+才彻底解决问题。
+
+> "简单的需求背后，往往藏着复杂的坑。" —— 每一个工程师的血泪总结
+
+希望这篇博客能帮助遇到类似问题的朋友。如果你的老板也提出类似离谱需求，至少你知道怎么正确实现了。
+
+---
+
+*本文首发于技术博客，转载请注明出处。*
