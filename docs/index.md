@@ -28,6 +28,9 @@ features:
   - title: PyLinuxAuto
     details: 一个用于 Linux 桌面 GUI 自动化测试的 Python 模块，支持多种元素定位方法和键鼠操作。
     link: https://youqu.uniontech.com/pylinuxauto/
+  - title: Swarm
+    details: 🐝 Swarm - 分布式自动化测试执行框架。
+    link: https://github.com/mikigo/swarm
   - title: FastAPI-Self-Hosting-Docs
     details: 一个用于 FastAPI 应用程序的自托管文档解决方案，提供本地化的 Swagger UI 和 ReDoc 文档界面。
     link: https://github.com/mikigo/fastapi-self-hosting-docs
