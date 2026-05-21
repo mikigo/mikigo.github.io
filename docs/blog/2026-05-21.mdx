@@ -1,0 +1,355 @@
+---
+date: 2026-05-21
+authors: ['mikigo']
+description: '35B MoE模型跑在8GB显卡上是什么体验——Qwen3.6-35B-A3B本地部署全记录，含编译、量化、服务化、Claude Code集成'
+sidebar: false
+pageType: doc-wide
+---
+
+# Qwen3.6-35B-A3B 本地部署指南：当 35B 模型遇上 8GB 显卡
+
+> "35B 的模型跑在 8GB 显卡上？兄啊，你认真的？" —— 这是我对自己的灵魂拷问。
+
+## 前言
+
+2026年4月，阿里发布了 Qwen3.6-35B-A3B，一个基于 MoE 架构的 35B 参数模型（激活参数仅 3B）。一出场就拿了 LMSYS 榜单编程赛道第二，仅次于 Claude Opus 4.7，媒体称之为"Agentic coding 小钢炮"。
+
+但你猜怎么着？它的推荐配置是 **8 张 GPU**（SGLang tp-size=8）。
+
+而我只有一张 **RTX 4060 Ti，8GB 显存**。
+
+这就像拿着保温杯去接消防水带的活儿。但好消息是，我们有 GGUF 量化 和 llama.cpp——它们是穷人经济学在 AI 领域的杰出实践。
+
+本文将完整记录我在 Windows 11 + RTX 4060 Ti 上从零部署 Qwen3.6-35B-A3B 的全过程。踩过的坑、避过的雷，一并奉上。
+
+![](/blog/2026/521-1.png)
+
+---
+
+## 一、硬件环境：小马面前的大车
+
+### 我的配置
+
+| 组件 | 型号 |
+|------|------|
+| CPU | AMD Ryzen 7 7700X (8C/16T) |
+| 内存 | 32 GB DDR5 |
+| GPU | NVIDIA GeForce RTX 4060 Ti (8 GB VRAM) |
+| 系统 | Windows 11 Pro |
+| CUDA | 12.8 |
+| 驱动 | 571.96 |
+
+### 配置分析
+
+先说结论：**能跑，但别期待能飞。**
+
+- 模型 FP16 权重约 70GB，Q4_K_XL 量化后 21GB
+- RTX 4060 Ti 有 8GB VRAM，除去系统和 CUDA 上下文占用，可用约 **7GB**
+- 能卸载到 GPU 的层数约占 33%~40%，剩余走 CPU 推理
+- CPU 有 32GB RAM，放 21GB 模型 + KV Cache 属于刚好够用
+
+理解了这个物理现实之后，对速度就不会有不切实际的期待了。
+
+---
+
+## 二、软件选型：为什么不用 vLLM / SGLang？
+
+当你只有一张显卡时，生态位就非常清晰了：
+
+| 方案 | 适用场景 | 内存需求 |
+|------|---------|---------|
+| vLLM / SGLang | 多卡集群、高吞吐 | 需完整加载权重，单卡 70GB+ |
+| Transformers | 研究、微调 | 同上 |
+| llama.cpp + GGUF | 单卡、消费级硬件、CPU+GPU 混合 | 量化后可压缩至 4~20GB |
+
+**只有 llama.cpp 这个选项能放进我的 8GB 显卡。**
+
+具体到本项目，使用的是 `llama.cpp-tq3`——一个专门为 TurboQuant 量化格式优化的 llama.cpp 分支：
+
+```bash
+git clone https://github.com/turbo-tan/llama.cpp-tq3.git
+```
+
+TurboQuant（TQ）是 Google Research 提出的极致压缩算法。tq3 分支在 `Q3_K_S` 同体积下做到了更优的困惑度，比 EXL2 3.0bpw 还略胜一筹。
+
+---
+
+## 三、编译：CMake、CUDA 与 Ada Lovelace
+
+### 3.1 构建命令
+
+```powershell
+cmake -B build `
+  -DGGML_CUDA=ON `
+  -DCMAKE_CUDA_ARCHITECTURES="89" `
+  -DGGML_CUDA_F16=ON `
+  -DLLAMA_CURL=OFF
+
+cmake --build build --config Release -j
+```
+
+### 3.2 架构代码为什么是 89？
+
+这是一个非常容易踩的坑。如果你写成 75（Turing）、86（Ampere），CUDA 编译器不会报错，但运行时会出现三种可能：
+
+1. **直接崩** —— 不匹配的 PTX 版本
+2. **能跑但极慢** —— JIT 降级到兼容路径
+3. **输出乱码** —— 这也是为什么文档强调不要用 CUDA 13.2 驱动
+
+RTX 4060 Ti 是 Ada Lovelace 架构，对应的架构代码是 **89**。如果你的卡不同，查一下 [NVIDIA CUDA GPUs](https://developer.nvidia.com/cuda-gpus) 对照表。
+
+### 3.3 F16 开关
+
+`-DGGML_CUDA_F16=ON` 开启半精度。对 40 系显卡来说，这是免费的性能提升。40 系在半精度浮点上有硬件加速单元，不开等于浪费。
+
+### 3.4 编译产物
+
+完成后 `build/bin/Release/` 下会出现全套工具：
+
+```
+llama-server.exe     ← 我们的主角，HTTP API 服务器
+llama-quantize.exe   ← 量化工具
+llama-cli.exe        ← 命令行推理
+llama-bench.exe      ← 性能基准测试
+llama-perplexity.exe ← 困惑度评估
+ggml-cuda.dll        ← CUDA 后端动态库（约 60MB）
+```
+
+---
+
+## 四、模型获取：GGUF 才是 llama.cpp 的通行证
+
+### 4.1 一个常见的误解
+
+很多新手（包括最初的我）以为下载了 HuggingFace 上的模型文件就能直接喂给 llama.cpp。
+
+模型在 HuggingFace / ModelScope 上有两种发布形式：
+
+| 格式 | 文件后缀 | 用途 |
+|------|---------|------|
+| HuggingFace Transformers | `.safetensors`, `.bin` | PyTorch / Transformers 推理 |
+| GGUF | `.gguf` | llama.cpp 推理（量化或未量化） |
+
+**这两个格式互不兼容。** llama.cpp 只认 `.gguf`，不认 `.safetensors`。
+
+我第一次从 ModelScope 下载的就是 safetensors 格式——70GB 下载完毕后，llama-server 面无表情地告诉我格式不对。那一刻我的内心是：
+
+> "啊，这就是为什么文档里写的文件名是 `.gguf`。"
+
+### 4.2 正确的下载姿势
+
+Qwen3.6-35B-A3B 的 GGUF 量化由 Unsloth 团队制作并发布，ModelScope 上可以直接下载：
+
+```python
+from modelscope.hub.snapshot_download import snapshot_download
+
+snapshot_download(
+    'unsloth/Qwen3.6-35B-A3B-GGUF',
+    allow_patterns=['*UD-Q4_K_XL*'],
+    local_dir='./models',
+)
+```
+
+单个文件 `Qwen3.6-35B-A3B-UD-Q4_K_XL.gguf`，**20.8 GB**。以 5~6 MB/s 的速度下载，大约需要 55 分钟。
+
+`UD` 是 Unsloth Dynamic 的缩写，这是 Unsloth 的自适应量化方案——不是固定的 4-bit，而是根据每个张量的重要性动态调整精度。直观理解：重要的层给更高位宽，不重要的层给更低位宽，在相同体积下尽可能保留模型能力。
+
+### 4.3 量化等级的选择
+
+| 量化等级 | 大小 | 质量 | 适用场景 |
+|---------|------|------|---------|
+| Q4_K_M | ~19 GB | 中等 | 显存极度紧张 |
+| **Q4_K_XL** | **~21 GB** | **较好** | **8~16GB 显存，推荐** |
+| Q5_K_M | ~23 GB | 好 | 16GB+ 显存 |
+| Q6_K | ~25 GB | 很好 | 24GB+ 显存 |
+| Q8_0 | ~30 GB | 接近原始 | 32GB+ 显存 |
+
+对 8GB 显存的卡，Q4_K_XL 基本是最优选择：体积和 Q4_K_M 相近，但质量更接近 Q5_K_M。
+
+---
+
+## 五、启动服务：当模型比显存大三倍
+
+### 5.1 启动命令
+
+```powershell
+.\build\bin\Release\llama-server.exe `
+  -m models\Qwen3.6-35B-A3B-UD-Q4_K_XL.gguf `
+  --n-gpu-layers 999 `
+  --ctx-size 32768 `
+  --port 8080 `
+  --host 0.0.0.0
+```
+
+### 5.2 参数解读
+
+| 参数 | 含义 | 为什么这么设 |
+|------|------|-------------|
+| `-m` | 模型路径 | 指向 models 目录下的 GGUF 文件 |
+| `--n-gpu-layers 999` | 尽可能把所有层塞进 GPU | 8GB 塞不下全部，但 llama.cpp 会自己兜底——塞不下的自动走 CPU |
+| `--ctx-size 32768` | 上下文窗口 32K | 模型原生支持 262K，但长上下文吃显存。32K 对编程场景足够了 |
+| `--port 8080` | HTTP 端口 | 别跟其他服务冲突就行 |
+| `--host 0.0.0.0` | 监听地址 | `127.0.0.1` 也行，但 `0.0.0.0` 更通用 |
+
+### 5.3 启动日志里你一定会看到这个
+
+```
+common_params_fit_impl: cannot meet free memory target of 1024 MiB,
+                        need to reduce device memory by 16398 MiB
+common_fit_params: failed to fit params to free device memory:
+                   n_gpu_layers already set by user to 999, abort
+```
+
+**不要慌，这不是报错。**
+
+这是 llama.cpp 的显存适配逻辑在告诉你："老板，你要的 999 层我尽力了，但物理定律不允许。能塞进 GPU 的都塞进去了，剩下的在 CPU 上跑。"
+
+实际运行时，约 30%~40% 的计算在 GPU 上完成，其余在 CPU 上。这就是混合推理——虽不极致，但确实是 8GB 显存能跑 35B 模型的唯一方式。
+
+---
+
+## 六、API 服务：假装自己是 OpenAI
+
+### 6.1 端点总览
+
+| 端点 | 方法 | 说明 |
+|------|------|------|
+| `/health` | GET | 健康检查，返回 `{"status":"ok"}` |
+| `/v1/models` | GET | 模型列表，含参数量、上下文长度等元信息 |
+| `/v1/chat/completions` | POST | 聊天补全（兼容 OpenAI SDK） |
+| `/v1/completions` | POST | 文本补全 / FIM 代码补全 |
+| `/v1/embeddings` | POST | 文本嵌入向量 |
+| `/tokenize` | POST | 分词 |
+| `/detokenize` | POST | 反分词 |
+| `/` | GET | 内置 Web 聊天界面 |
+
+### 6.2 兼容性
+
+llama-server 的 `/v1/chat/completions` 端点与 OpenAI API 格式完全兼容。这意味着：
+
+- OpenAI Python SDK 可以直接用
+- 任何支持 OpenAI 兼容 API 的前端（ChatBox、Open WebUI 等）都可以接入
+- Claude Code 可以通过 `ANTHROPIC_BASE_URL` 环境变量使用它作为后端
+
+### 6.3 一个简单的测试
+
+```bash
+curl http://127.0.0.1:8080/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "Qwen3.6-35B-A3B-UD-Q4_K_XL.gguf",
+    "messages": [{"role": "user", "content": "你好"}],
+    "max_tokens": 50,
+    "temperature": 0.7
+  }'
+```
+
+返回的 JSON 中包含一个有趣的字段：`reasoning_content`。Qwen3.6 天然支持 thinking 模式，会在回答前先输出推理过程。
+
+---
+
+## 七、Claude Code 集成：本地模型给 Claude Code 当大脑
+
+### 7.1 配置
+
+```powershell
+# 临时生效（当前 PowerShell 窗口）
+$env:ANTHROPIC_BASE_URL="http://127.0.0.1:8080"
+$env:ANTHROPIC_AUTH_TOKEN="sk-fake-key"
+
+# 或持久生效（所有新窗口）
+[Environment]::SetEnvironmentVariable(
+    "ANTHROPIC_BASE_URL", "http://127.0.0.1:8080", "User")
+[Environment]::SetEnvironmentVariable(
+    "ANTHROPIC_AUTH_TOKEN", "sk-fake-key", "User")
+```
+
+然后像往常一样运行 `claude`，所有请求都会走本地模型。
+
+### 7.2 它是怎么工作的？
+
+Claude Code 发送的是 Anthropic Messages API 格式的请求。llama-server 检测到 Anthropic 请求头时，会自动将其转换为内部的 ChatML 格式，完成推理后再包装回 Anthropic 格式返回。
+
+这意味着你不需要任何中间转发层——llama-server 自己就是代理。
+
+---
+
+## 八、性能实测：8GB 显存的真实力
+
+### 8.1 推理速度
+
+| 指标 | 数值 |
+|------|------|
+| 提示处理速度 | ~12.3 tokens/s |
+| 生成速度 | ~5.4 tokens/s |
+| 单 token 延迟 | ~184 ms |
+| 模型加载时间 | ~20 秒 |
+
+### 8.2 速度意味着什么？
+
+5.4 tokens/s 意味着：
+- 回答一句 "Hello, say your name briefly"：约 10 秒
+- 生成一个 50 行的 Python 函数：约 1~2 分钟
+- 完整分析一个代码文件：可能需要 3~5 分钟
+
+如果是纯 GPU 推理（比如 RTX 4090 24GB），生成速度能到 20~40 tokens/s。这就是 **"能用"和"好用"的区别**。
+
+但话说回来——**8GB 显卡让你能在本地免费跑一个 35B 的编程模型，还要啥自行车？**
+
+---
+
+## 九、踩坑记录
+
+### 坑 1：下载了错误的格式
+
+- **现象**：llama-server 启动后报 `unknown file format`
+- **原因**：从 ModelScope 下载的是 safetensors 格式（HuggingFace Transformers），而不是 GGUF 格式
+- **解决**：从 `unsloth/Qwen3.6-35B-A3B-GGUF` 仓库下载 `.gguf` 文件
+
+### 坑 2：HuggingFace 直连被墙
+
+- **现象**：`huggingface_hub` 下载持续 SSL 错误
+- **原因**：国内网络环境，HuggingFace 访问不稳定
+- **解决**：用 ModelScope 替代，`unsloth/Qwen3.6-35B-A3B-GGUF` 在 ModelScope 上有镜像
+
+### 坑 3：pip 缺失
+
+- **现象**：`.venv/Scripts/pip.exe` 不存在
+- **原因**：使用 `uv venv` 创建默认不带 pip
+- **解决**：用 `uv pip install` 代替 `pip install`
+
+### 坑 4：显存不足的警告不要慌
+
+- **现象**：日志中 `failed to fit params to free device memory`
+- **原因**：21GB 模型 vs 8GB 显存的必然结果
+- **解决**：不是错误，llama.cpp 自动分配 GPU+CPU 混合推理
+
+---
+
+## 十、总结
+
+| 环节 | 核心工具 | 关键决策 |
+|------|---------|---------|
+| 推理引擎 | llama.cpp-tq3 | TurboQuant 优化的 CUDA 后端 |
+| 模型格式 | GGUF (UD-Q4_K_XL) | 21GB，在质量和体积间取平衡点 |
+| 编译配置 | CMake + CUDA sm_89 | Ada Lovelace 架构专门优化 |
+| 推理模式 | GPU + CPU 混合 | 8GB 显存跑 35B 的现实方案 |
+| 服务化 | llama-server | OpenAI 兼容 API，支持 Claude Code |
+| 模型源 | ModelScope | 国内下载无需翻墙 |
+
+### 这套方案适合谁？
+
+- 想在本地用大模型辅助编程，但不想/不能上 API 服务的人
+- 有一张 NVIDIA 消费级显卡（哪怕只有 8GB）
+- 不介意生成速度慢一点（5~6 tok/s），可以边等边干别的
+
+### 不适合谁？
+
+- 需要实时交互式对话（5 tok/s 会让你抓狂）
+- 需要高并发生产级服务
+- 需要视觉多模态能力（GGUF 的多模态支持仍在完善中）
+
+---
+
+**最后送大家一句话：8GB 显存能跑 35B 模型这件事本身，就是对 MoE 架构和量化技术最好的致敬。谁说穷人就不能玩大模型了？🦾**
+
