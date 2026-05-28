@@ -60,7 +60,7 @@ SKILL 是一种通用的扩展机制，可用于各种场景。但本文聚焦�
 
 ### 1.1 什么是 SKILL？
 
-SKILL 是 Claude Code 的扩展机制。一句话解释：
+SKILL 是 AI Agent 的扩展机制。一句话解释：
 
 :::tip 一句话理解 SKILL
 SKILL = 写给 AI 看的**岗位说明书**（SOP）。AI 读了之后，就能按你的规范干活。
@@ -92,23 +92,25 @@ SKILL 的职责是**指导执行**，不是存档知识。如果只是想记录�
 | 插件 | `<plugin>/skills/<name>/SKILL.md` | 团队级标准化 SKILL，统一分发 |
 
 :::details 测试工程师的存放建议
+
 - **个人级**：通用测试方法论——如"边界值分析"、"等价类划分"、"测试用例设计原则"
 - **项目级**：当前项目的具体规范——如"write-case 的用例命名规则"、"LayoutExport 的断言调用方式"
 - **插件级**：团队共享的标准化 SKILL，通过插件分发给所有成员，确保规范一致
+
 :::
 
 ### 1.4 SKILL 的目录结构
 
 以 write-case 技能为例，一个实战级的 SKILL 目录结构：
 
-```text
+```bash
 write-case/
 ├── SKILL.md                  # 主文件：工作流指引
-├── checklist.md              # 写用例后执行检查清单（10 项检查点）
+├── checklist.md              # 写用例后执行检查清单
 ├── references/               # 按需加载的参考文档
 │   ├── code_style.md         # 用例代码写法规范（模板、注释、fixture 等）
 │   ├── assertions.md         # 断言方法速查
-│   ├── dialogs.md            # 对话框速查表（~30 个对话框）
+│   ├── dialogs.md            # 对话框速查表
 │   ├── dialogs_patterns.md   # 对话框操作模式（桥接铜、跳线、筛选等）
 │   ├── ele_methods.md        # Ele 对象方法、复选框、下拉框等元素操作
 │   ├── keyboard_modeless.md  # 键盘操作、无模命令、放大视图
@@ -121,7 +123,11 @@ write-case/
 核心文件只有 `SKILL.md`，其余文件按需引用、按需加载——主文件保持精简（约 150 行），AI 只在需要时才读取详细资料，上下文窗口不会被无关内容填满。
 
 :::tip 与理想化的"模板目录"不同
-很多教程建议你放 `templates/case_template.py` 和 `examples/good_case.py`。实战经验是：**模板直接嵌入 references/code_style.md 里**，AI 按需读取更简洁；**示例代码用现有用例工程 `case/XX/test_XX_NNN.py` 充当**，比单独维护示例文件更真实也更及时。
+很多教程建议你放 `templates/case_template.py` 和 `examples/good_case.py`。
+
+实战经验是：**模板直接嵌入 references/code_style.md 里**，AI 按需读取更简洁；
+
+**示例代码用现有用例工程 `case/XX/test_XX_NNN.py` 充当**，比单独维护示例文件更真实也更及时。
 :::
 
 ### 1.5 一个最小 SKILL 示例
@@ -217,15 +223,14 @@ AI 写出来的代码，乍一看像那么回事，实际跑起来十有八九�
 人工介入需要做三件事：
 
 ```
-1. 修 bug    → 让脚本能跑起来（基本要求）
+1. 修 Bug    → 让脚本能跑起来（基本要求）
 2. 改习惯    → 让代码符合团队规范（核心价值）
 3. 做记录    → 把每次修改转化为可复用的知识（进化燃料）
 ```
 
 #### 批卷记录模板
 
-```markdown
-## 批卷记录 —— 用例：test_32_063
+:::info "批卷记录 —— 用例：test_32_063"
 
 | 问题 | 修改前 | 修改后 | 规范依据 |
 |------|-------|--------|---------|
@@ -236,23 +241,14 @@ AI 写出来的代码，乍一看像那么回事，实际跑起来十有八九�
 | 断言位置 | 每一步都有 `layout.asserts.xxx()` | 仅最后一步有断言 | 断言铁律：中间步骤不断言 |
 | 导入 | `from method.layout.dialog import pin_pair_properties` | 只保留 `from method.layout import LayoutExport` | 仅允许导入 pytest, BaseCase, LayoutExport |
 | 打开文件 | `layout.open_layout()` | `layout.open_document_from_ftp(ftp_path="SailWind-AICases-Res/Layout/32/xxx.pcb")` | 统一用 `open_document_from_ftp` |
-```
 
-:::warning 关键提醒
-批卷记录**不是写给自己看的备忘录**，而是写给 AI 看的**错题本**。格式越规范，AI 学得越好。推荐使用表格——结构化数据比自然语言更容易被 AI 理解和泛化。
 :::
 
-#### 批卷的"副产品"
+:::warning 关键提醒
 
-在 write-case 项目中，积累几轮批卷记录后浮现的模式：
+批卷记录**不是写给自己看的备忘录**，而是写给 AI 看的**错题本**。格式越规范，AI 学得越好。推荐使用表格——结构化数据比自然语言更容易被 AI 理解和泛化。
 
-- **80% 的错误集中在 3 个规范点上**：断言写法、注释原文保留、资源路径管理
-- **系统性错误**：命名（AI 不知道 `test_XX_NNN` 规则）、导入（AI 总想直接 import 对话框模块）、断言位置（AI 本能地每步都断言）
-- **铁律的由来**：为什么断言只能放最后一步？因为中间断言会让用例代码冗长且难以维护；为什么注释不能改？因为禅道原文是用例合法性的唯一依据
-
-这些洞察，就是下一阶段编写 SKILL 的核心素材。
-
----
+:::
 
 ### 阶段三：出师立规 —— 让 AI 生成 SKILL
 
@@ -406,23 +402,33 @@ write-case SKILL 的 `checklist.md` 第 7 步明确要求："如发现新发现�
 
 write-case 实际使用的配置：
 
-```yaml
+```yaml title="SKILL.md"
 ---
 name: write-case
 description: 根据测试用例信息（禅道ID或手动提供），生成符合项目规范的 SailWind Layout 自动化测试用例代码。
-metadata:
-  version: 1.0
-  author: mikigo
 ---
 ```
 
 :::details Frontmatter 关键字段速查
-| 字段 | 作用 | write-case 的用法 |
-|------|------|------------------|
-| `name` | 技能唯一标识 | `write-case` |
-| `description` | AI 判断是否调用此技能 | 包含触发关键词"禅道ID"、"自动化测试用例" |
-| `metadata.version` | 版本追踪 | 进化时递增版本号 |
-| `metadata.author` | 责任归属 | 便于追溯维护者 |
+
+| 字段                       | 必需 | 描述                                                         |
+| :------------------------- | :--- | :----------------------------------------------------------- |
+| `name`                     | 否   | Skill 列表中显示的显示名称。默认为目录名称。在 `/` 后的调用方式有何不同。 |
+| `description`              | 推荐 | Skill 的功能以及何时使用它。Claude 使用它来决定何时应用该 skill。如果省略，使用 markdown 内容的第一段。将关键用例放在前面：组合的 `description` 和 `when_to_use` 文本在 skill 列表中被截断为 1,536 个字符以减少上下文使用。 |
+| `when_to_use`              | 否   | 关于 Claude 何时应该调用该 skill 的额外上下文，例如触发短语或示例请求。附加到 skill 列表中的 `description`，并计入 1,536 个字符的上限。 |
+| `argument-hint`            | 否   | 自动完成期间显示的提示，指示预期的参数。示例：`[issue-number]` 或 `[filename] [format]`。 |
+| `arguments`                | 否   | 用于 skill 内容中`$name` 替换的命名位置参数。接受空格分隔的字符串或 YAML 列表。名称按顺序映射到参数位置。 |
+| `disable-model-invocation` | 否   | 设置为 `true` 以防止 Claude 自动加载此 skill。用于你想使用 `/name` 手动触发的工作流。也防止该 skill 被预加载到 subagents中。默认值：`false`。 |
+| `user-invocable`           | 否   | 设置为 `false` 以从 `/` 菜单中隐藏。用于用户不应直接调用的背景知识。默认值：`true`。 |
+| `allowed-tools`            | 否   | 当此 skill 处于活动状态时，Claude 可以使用而无需请求权限的工具。接受空格分隔的字符串或 YAML 列表。 |
+| `model`                    | 否   | 当此 skill 处于活动状态时要使用的模型。覆盖适用于当前轮的其余部分，不保存到设置；会话模型在你的下一个提示时恢复。接受与 `/model`相同的值，或 `inherit` 以保持活动模型。 |
+| `effort`                   | 否   | 当此 skill 处于活动状态时的工作量级别。覆盖会话工作量级别。默认值：继承自会话。选项：`low`、`medium`、`high`、`xhigh`、`max`；可用级别取决于模型。 |
+| `context`                  | 否   | 设置为 `fork` 以在分叉的 subagent 上下文中运行。             |
+| `agent`                    | 否   | 当设置 `context: fork` 时要使用的 subagent 类型。            |
+| `hooks`                    | 否   | 限定于此 skill 生命周期的 hooks。有关配置格式，请参阅 Skills 和代理中的 Hooks。 |
+| `paths`                    | 否   | Glob 模式，限制何时激活此 skill。接受逗号分隔的字符串或 YAML 列表。设置后，Claude 仅在处理与模式匹配的文件时自动加载该 skill。使用与路径特定规则相同的格式。 |
+| `shell`                    | 否   | 用于此 skill 中 `` !`command` `` 和 ` ```! ` 块的 shell。接受 `bash`（默认）或 `powershell`。设置 `powershell` 在 Windows 上通过 PowerShell 运行内联 shell 命令。需要 `CLAUDE_CODE_USE_POWERSHELL_TOOL=1`。 |
+
 :::
 
 ### 3.2 禅道 API 集成
