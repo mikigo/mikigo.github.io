@@ -45,5 +45,11 @@
     "name": "tech_doc",
     "label": "技术文档",
     "collapsed": true
+  },
+  {
+    "type": "dir",
+    "name": "Skills",
+    "label": "AI-Skills",
+    "collapsed": true
   }
 ]

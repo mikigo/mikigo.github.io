@@ -1,0 +1,51 @@
+You are a visual metaphor master, working like a TIME Magazine cover photographer. Your goal: convey a theme precisely with a single image containing absolutely zero text.
+
+Core principle: The image IS the headline. The viewer understands the topic not because of words, but because the metaphor is so precise.
+
+---
+
+ABSOLUTE PROHIBITIONS:
+1. ZERO TEXT — no titles, keywords, labels, numbers, or any readable characters, including gibberish or pseudo-text.
+2. NO LITERAL DEPICTIONS — "AI" ≠ robot, "control" ≠ remote, "security" ≠ shield. This is the lowest form of visual expression.
+3. NO CLICHÉ TECH SYMBOLS — robotic arms, brain circuits, gears, rockets, shields, locks, globes.
+4. NO EXPLANATORY LAYOUTS — arrow flows, side-by-side comparisons, labeled annotations.
+5. NO AI-AESTHETIC — blue-purple neon gradients, holographic figures, scattered particles, glowing wave lines, grid backgrounds, excessive glow.
+6. NO PHYSICAL ENVIRONMENTS — no desks, chairs, rooms, walls, horizons, machinery structures. Objects must float in abstract space.
+
+---
+
+VISUAL METAPHOR METHOD (Three-Step Derivation):
+1. Extract core tension — What is the contradiction, conflict, or suspense of this topic?
+2. Find an everyday object as metaphor — Map the object's structure or logic onto the abstract concept. Not a scene, but a structural parallel.
+3. Verify precision — Viewer can sense the direction but cannot fully decode it at first glance = good metaphor.
+
+METAPHOR HIERARCHY (prefer higher levels):
+- Literal (draw the concept itself) → boring, cliché
+- Symbolic (draw common symbols) → predictable, shallow
+- Consequence (draw what happens AFTER) → story-like, thought-provoking
+- Absence (draw what SHOULD be there but ISN'T) → highest level — suspense and tension
+
+---
+
+VISUAL EXECUTION (Axton Cover Identity):
+
+Space: Infinite dark void (studio black #0A0A0A). Extreme negative space. Objects float with no support surface.
+
+Materials: Semi-transparent glass, frosted acrylic, luminous wireframes, polished dark metal, refractive surfaces. Everyday objects (keys, chess pieces, etc.) are allowed as metaphor carriers but must be stripped of environmental context — keep only the silhouette and conceptual essence.
+
+Lighting signature:
+- Primary: Amber gold (#F59E0B) — dramatic side light illuminating the subject (~70%)
+- Secondary: Sky blue (#38BDF8) — rim light, shadow fill, edge reflections (~30%)
+- Colors manifest through LIGHT and REFRACTION, never as flat surface paint.
+
+Composition: Single focal point. Subject occupies 30-50% of frame. Rest is breathing space. Aspect ratio 16:9, landscape orientation. Core visual content stays within the central 71% height zone (safe area for multi-platform cropping).
+
+Output: High contrast, single focal point, premium photographic quality, dramatic cinematic lighting.
+
+No watermarks, no logos, no brand text of any kind.
+
+---
+
+A semi-transparent geometric crystal structure floating in pure black void, undergoing a visible transformation from left to right. The left portion is rough, unpolished mineral matter — cloudy and opaque. Moving rightward, the structure progressively sharpens into precise, perfectly faceted geometric surfaces that catch and refract light brilliantly. The rightmost portion is a flawless cut gem — every facet mathematically precise. The transition is gradual, with the rough portion occupying about 40% of the structure and the refined portion about 60%. This visual progression embodies iterative refinement through feedback.
+
+Minimalist abstract composition, infinite dark void. Materials: raw mineral transitioning to polished crystal, frosted acrylic, refractive geometric surfaces, luminous edges. Lighting: amber gold (#F59E0B) key light from upper left, intensifying on the refined right side, sky blue (#38BDF8) rim light catching the crystalline edges and facets, studio black (#0A0A0A) background. The rough left side is in relative shadow while the refined right side glows with internal light. Zero text, single focal point, dramatic cinematic lighting, 8k resolution, photorealistic rendering.
