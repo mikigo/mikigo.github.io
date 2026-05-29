@@ -15,7 +15,7 @@ export default defineConfig({
     logo: '/logo.png',
     logoText: 'mikigo.site',
     route: {
-        cleanUrls: true,
+        cleanUrls: false,
         exclude: ['components/**'],
     },
     themeConfig: {

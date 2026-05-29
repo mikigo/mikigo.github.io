@@ -1,3 +1,8 @@
 [
-    "skill-image.md"
+    {
+    "type": "dir",
+    "name": "SKILL进化论",
+    "label": "SKILL进化论",
+    "collapsed": true
+  }
 ]
