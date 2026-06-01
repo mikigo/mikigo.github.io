@@ -8,22 +8,21 @@ pageType: doc-wide
 
 # Qwen3.5-9B 本地部署与 Claude Code 接入：协议不兼容？手搓一个代理就好啦
 
-> "Ollama 明明是 OpenAI 格式，Claude Code 只要 Anthropic 格式，你们就不能坐下来聊聊吗？" —— 于是我给他们安排了一个翻译。
-
 Ollama:
 
 ![](/blog/2026/61-1.png)
+
 Claude Code:
 
 ![](/blog/2026/61-2.png)
 
 ## 前言
 
-2025年底，阿里发布了 Qwen3.5 系列，其中 9B 密集模型在 Agent 场景下表现抢眼。此前我已经在本地跑通了 [Qwen3.6-35B-A3B](/blog/2026-05-21)（MoE 架构，激活 3B），它作为日常对话的"快枪手"很不错，但在工具调用和代码生成上，9B 密集模型的理论上限明显更高。
+[上篇](/blog/2026-05-21) 折腾完 Qwen3.6-35B-A3B 之后，本地有了一个说得过去的日常对话模型。但用了一阵子发现，3B 的激活参数量在工具调用和复杂代码生成上还是差点意思——让它给 Claude Code 当 Agent 主力，经常出现工具参数填错、步骤遗漏之类的问题。
 
-于是有了这次部署。但事情远没有 `ollama pull` 一行命令那么简单——真正的时间黑洞在于让 **Claude Code 能用上这个本地模型**。
+于是决定再部署一个 Qwen3.5-9B，跟 35B-A3B 做分工：9B 负责 Agent 和编码，35B-A3B 负责快速对话。一快一猛，换着用。
 
-本文将完整记录：环境评估 → 方案选型 → 模型部署 → Claude Code 接入踩坑 → 手搓协议转译代理 → CC Switch 统一管理。读完你不仅能复现，还能理解每一个"为什么会这样"。
+9B 密集模型的显存占用比 MoE 大不少，8GB 显卡刚好卡在临界点上。而且这次的目标不只是跑通模型——要让 Claude Code 和 OpenCode 都能用上它，中间还踩了个 Anthropic 和 OpenAI 协议不兼容的大坑。
 
 ---
 
@@ -356,11 +355,293 @@ claude --settings .cc-settings.json
 
 ---
 
-## 附录：完整文件清单
+## 附录
 
-| 文件 | 用途 |
-|------|------|
-| `Modelfile` | Agent 优化版模型定义（32K 上下文 + 系统提示词） |
-| `proxy.py` | Anthropic ↔ OpenAI 协议转译代理（180 行） |
-| `.cc-settings.json` | Claude Code + 代理配置（可被 CC Switch 接管） |
-| `部署文档.md` | 运维速查手册 |
+### A. Modelfile — Agent 优化版模型定义
+
+```
+FROM qwen3.5:9b
+
+# Agent 优化版 — 用于 Claude Code / OpenCode 等编码 Agent
+# 基于 Q4_K_M 量化，显存占用约 6.6GB
+
+# 延长上下文窗口（Agent 场景需要更长的对话历史）
+PARAMETER num_ctx 32768
+
+# 系统提示词：优化工具调用和代码能力
+SYSTEM """你是一个专业的 AI 编程助手。你的核心能力包括：
+
+1. 代码生成与修改：编写清晰、可维护的代码，遵循最佳实践
+2. 工具调用：准确使用提供的工具完成任务
+3. 调试分析：分析错误信息，定位问题根因
+4. 架构设计：理解代码结构，提出合理的设计建议
+
+回答规则：
+- 优先使用工具来完成任务，而不是猜测
+- 代码修改时使用精确的编辑操作，避免重写整个文件
+- 如果信息不足，先询问而不是假设
+- 回复简洁直接，避免冗余解释
+"""
+```
+
+创建命令：
+
+```powershell
+ollama create qwen3.5:9b-agent -f Modelfile
+```
+
+### B. proxy.py — Anthropic ↔ OpenAI 协议转译代理
+
+```python
+"""Anthropic -> OpenAI 转译代理 v4（含请求日志）"""
+import json, http.server, urllib.request, uuid, time, threading
+
+OLLAMA = "http://localhost:11434/v1"
+PORT = 8787
+LOG_FILE = "proxy.log"
+
+def log(msg):
+    ts = time.strftime("%H:%M:%S")
+    line = f"[{ts}] {msg}"
+    print(line, flush=True)
+    with open(LOG_FILE, "a", encoding="utf-8") as f:
+        f.write(line + "\n")
+
+def sse(event, data):
+    return f"event: {event}\ndata: {json.dumps(data)}\n\n".encode()
+
+class Proxy(http.server.BaseHTTPRequestHandler):
+    def log_message(self, fmt, *args):
+        log(fmt % args)
+
+    def _respond(self, code, body):
+        self.send_response(code)
+        self.send_header("Content-Type", "application/json")
+        self.end_headers()
+        self.wfile.write(json.dumps(body).encode())
+
+    def do_GET(self):
+        log(f"GET {self.path}")
+        self.send_response(200)
+        self.send_header("Content-Type", "application/json")
+        self.end_headers()
+        if "/models" in self.path:
+            try:
+                r = urllib.request.urlopen(f"{OLLAMA}/models", timeout=10)
+                d = json.loads(r.read())
+                models = [{"id": m["id"], "object": "model"} for m in d.get("data", [])]
+                self.wfile.write(json.dumps({"object": "list", "data": models}).encode())
+            except:
+                self.wfile.write(json.dumps({"object": "list", "data": [
+                    {"id": "qwen3.5-9b-agent", "object": "model"}
+                ]}).encode())
+        else:
+            self.wfile.write(json.dumps({"status": "ok"}).encode())
+
+    def do_POST(self):
+        length = int(self.headers.get("Content-Length", 0))
+        raw = self.rfile.read(length)
+        req = json.loads(raw)
+
+        # 去掉 query string（如 ?beta=true）
+        path = self.path.split("?")[0]
+        is_stream = req.get("stream", False)
+        model = req.get("model", "qwen3.5-9b-agent")
+        log(f"POST {self.path} | model={model} | stream={is_stream} | msgs={len(req.get('messages',[]))} | tools={len(req.get('tools',[]))}")
+
+        if path not in ("/v1/messages", "/anthropic/v1/messages"):
+            return self._respond(200, {"status": "ok"})
+
+        # 转换消息格式
+        msgs = []
+        for m in req.get("messages", []):
+            role = m["role"]
+            text = self._flatten(m.get("content", ""))
+            if role == "system":
+                msgs.append({"role": "user", "content": f"[System]\n{text}"})
+            else:
+                msgs.append({"role": role, "content": text})
+
+        body = {
+            "model": model,
+            "messages": msgs,
+            "max_tokens": req.get("max_tokens", 4096),
+            "stream": is_stream,
+        }
+        log(f"  -> Ollama: {len(msgs)} msgs, max_tokens={body['max_tokens']}")
+
+        try:
+            data = json.dumps(body).encode()
+            r = urllib.request.urlopen(urllib.request.Request(
+                f"{OLLAMA}/chat/completions",
+                data=data,
+                headers={"Content-Type": "application/json"}
+            ), timeout=300)
+
+            if is_stream:
+                self._stream(req, r)
+            else:
+                self._nonstream(req, r)
+        except Exception as e:
+            log(f"ERROR: {e}")
+            self._respond(500, {"error": str(e)})
+
+    def _nonstream(self, req, r):
+        resp = json.loads(r.read())
+        choice = resp["choices"][0]
+        msg = choice["message"]
+        text = msg.get("content", "") or msg.get("reasoning", "")
+        if msg.get("reasoning") and msg.get("content"):
+            text = msg["reasoning"] + "\n\n" + msg["content"]
+
+        body = {
+            "id": "msg_" + uuid.uuid4().hex[:12],
+            "type": "message",
+            "role": "assistant",
+            "content": [{"type": "text", "text": text.strip()}],
+            "model": req.get("model", "qwen3.5-9b-agent"),
+            "stop_reason": "end_turn",
+            "stop_sequence": None,
+            "usage": {"input_tokens": resp.get("usage",{}).get("prompt_tokens",1),
+                      "output_tokens": resp.get("usage",{}).get("completion_tokens",1)}
+        }
+        log(f"OK nonstream: {len(text)} chars")
+        self._respond(200, body)
+
+    def _stream(self, req, r):
+        log("STREAM start")
+        self.send_response(200)
+        self.send_header("Content-Type", "text/event-stream")
+        self.send_header("Cache-Control", "no-cache")
+        self.end_headers()
+
+        mid = "msg_" + uuid.uuid4().hex[:12]
+        model = req.get("model", "qwen3.5-9b-agent")
+        out_tok = 0
+        started = False
+        finish = "end_turn"
+
+        # Anthropic SSE 头部事件
+        self.wfile.write(sse("message_start", {
+            "type": "message_start",
+            "message": {"id": mid, "type": "message", "role": "assistant",
+                        "content": [], "model": model, "stop_reason": None,
+                        "stop_sequence": None, "usage": {"input_tokens": 0, "output_tokens": 0}}
+        }))
+        self.wfile.flush()
+        time.sleep(0.02)
+
+        self.wfile.write(sse("ping", {"type": "ping"}))
+        self.wfile.flush()
+
+        buf = b""
+        for chunk in r:
+            buf += chunk
+            while b"\n" in buf:
+                line, buf = buf.split(b"\n", 1)
+                line = line.strip()
+                if not line or not line.startswith(b"data: "):
+                    continue
+                if line == b"data: [DONE]":
+                    break
+                try:
+                    d = json.loads(line[6:])
+                except:
+                    continue
+
+                choices = d.get("choices", [])
+                if not choices:
+                    continue
+                delta = choices[0].get("delta", {})
+                content = delta.get("content", "")
+
+                if content:
+                    if not started:
+                        self.wfile.write(sse("content_block_start", {
+                            "type": "content_block_start", "index": 0,
+                            "content_block": {"type": "text", "text": ""}
+                        }))
+                        self.wfile.flush()
+                        started = True
+                    self.wfile.write(sse("content_block_delta", {
+                        "type": "content_block_delta", "index": 0,
+                        "delta": {"type": "text_delta", "text": content}
+                    }))
+                    self.wfile.flush()
+                    time.sleep(0.01)
+
+                fr = choices[0].get("finish_reason")
+                if fr == "stop":
+                    finish = "end_turn"
+                elif fr == "length":
+                    finish = "max_tokens"
+                if d.get("usage", {}).get("completion_tokens"):
+                    out_tok = d["usage"]["completion_tokens"]
+
+        if started:
+            self.wfile.write(sse("content_block_stop", {"type": "content_block_stop", "index": 0}))
+            self.wfile.flush()
+
+        self.wfile.write(sse("message_delta", {
+            "type": "message_delta",
+            "delta": {"stop_reason": finish, "stop_sequence": None},
+            "usage": {"output_tokens": out_tok or 1}
+        }))
+        self.wfile.flush()
+
+        self.wfile.write(sse("message_stop", {"type": "message_stop"}))
+        self.wfile.flush()
+        log(f"STREAM done: started={started}, finish={finish}, out_tok={out_tok}")
+
+    def _flatten(self, content):
+        if isinstance(content, str):
+            return content
+        if isinstance(content, list):
+            parts = []
+            for c in content:
+                if isinstance(c, dict):
+                    t = c.get("type", "")
+                    if t == "text":
+                        parts.append(c.get("text", ""))
+                    elif t == "tool_use":
+                        parts.append(f"[Tool: {c.get('name', '')}({json.dumps(c.get('input',{}))})]")
+                    elif t == "tool_result":
+                        parts.append(f"[ToolResult: {c.get('content','')}]")
+                else:
+                    parts.append(str(c))
+            return "\n".join(parts)
+        return str(content)
+
+if __name__ == "__main__":
+    log(f"Proxy started on port {PORT}")
+    http.server.HTTPServer(("127.0.0.1", PORT), Proxy).serve_forever()
+```
+
+### C. .cc-settings.json — Claude Code 代理配置
+
+```json
+{
+  "env": {
+    "ANTHROPIC_AUTH_TOKEN": "ollama",
+    "ANTHROPIC_BASE_URL": "http://localhost:8787",
+    "ANTHROPIC_MODEL": "qwen3.5-9b-agent",
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "qwen3.5-9b-agent",
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "qwen3.5-9b-agent",
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "qwen3.5-9b-agent",
+    "ANTHROPIC_REASONING_MODEL": "qwen3.5-9b-agent",
+    "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",
+    "API_TIMEOUT_MS": "3000000"
+  },
+  "enabledPlugins": {
+    "superpowers@superpowers-marketplace": true
+  },
+  "extraKnownMarketplaces": {
+    "superpowers-marketplace": {
+      "source": {
+        "source": "github",
+        "repo": "obra/superpowers-marketplace"
+      }
+    }
+  }
+}
+```
