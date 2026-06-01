@@ -1,0 +1,366 @@
+---
+date: 2026-06-01
+authors: ['mikigo']
+description: 'Qwen3.5-9B本地部署全记录：Ollama、CC Switch、Claude Code集成，以及一个为了绕开协议鸿沟手搓Anthropic↔OpenAI代理的故事'
+sidebar: false
+pageType: doc-wide
+---
+
+# Qwen3.5-9B 本地部署与 Claude Code 接入：协议不兼容？手搓一个代理就好啦
+
+> "Ollama 明明是 OpenAI 格式，Claude Code 只要 Anthropic 格式，你们就不能坐下来聊聊吗？" —— 于是我给他们安排了一个翻译。
+
+Ollama:
+
+![](/blog/2026/61-1.png)
+Claude Code:
+
+![](/blog/2026/61-2.png)
+
+## 前言
+
+2025年底，阿里发布了 Qwen3.5 系列，其中 9B 密集模型在 Agent 场景下表现抢眼。此前我已经在本地跑通了 [Qwen3.6-35B-A3B](/blog/2026-05-21)（MoE 架构，激活 3B），它作为日常对话的"快枪手"很不错，但在工具调用和代码生成上，9B 密集模型的理论上限明显更高。
+
+于是有了这次部署。但事情远没有 `ollama pull` 一行命令那么简单——真正的时间黑洞在于让 **Claude Code 能用上这个本地模型**。
+
+本文将完整记录：环境评估 → 方案选型 → 模型部署 → Claude Code 接入踩坑 → 手搓协议转译代理 → CC Switch 统一管理。读完你不仅能复现，还能理解每一个"为什么会这样"。
+
+---
+
+## 一、硬件环境：8GB 显存，够吗？
+
+| 组件 | 型号 |
+|------|------|
+| CPU | AMD Ryzen 7 7700X (8C/16T, Zen 4) |
+| GPU | NVIDIA GeForce RTX 4060 Ti (**8 GB GDDR6**) |
+| 内存 | 32 GB DDR5 |
+| 磁盘 | 500GB SSD, 剩余 ~141GB |
+| 系统 | Windows 11 Pro |
+| CUDA | 12.8 |
+| 驱动 | 571.96 |
+| Python | 3.10.11 |
+
+关键瓶颈：**8GB 显存**。
+
+FP16 的 9B 模型约 18GB，8GB 卡门都进不去。必须量化。好在 Ollama 默认就是 Q4_K_M，模型约 6.6GB，全塞进显存还剩约 1.5GB 给 KV Cache——刚好够用，但别指望同时跑第二个模型。
+
+---
+
+## 二、方案选型：为什么是 Ollama
+
+| 方案 | 显存够吗 | Windows 友好吗 | 维护成本 | 结论 |
+|------|:--:|:--:|:--:|------|
+| Transformers + HF 原生 | ❌ FP16=18GB | 一般 | 高 | 出门左转 |
+| vLLM + AWQ | ⚠️ 8GB 勉强 | 不友好 | 高 | 别折腾 |
+| llama.cpp 原生 | ✅ 灵活 | 需自行编译 | 中 | 可用但累 |
+| **Ollama** | ✅ Q4_K_M=6.6GB | 一行安装 | 低 | **就它了** |
+
+Ollama 的优势：Windows 原生安装包、模型管理像 docker pull 一样简单、内置 OpenAI 兼容 API（`localhost:11434/v1`）、自动 GPU 加速。
+
+权衡：灵活性不如 llama.cpp 原生（比如不能精确控制 GPU offload 层数），但对个人使用场景完全够用。
+
+### 量化策略对比
+
+| 量化等级 | 模型文件大小 | 是否适合 8GB |
+|------|------|:--:|
+| Q4_K_M | ~6.6 GB | ✅ 部署时实测 7.5GB 显存占用 |
+| Q5_K_M | ~7.5 GB | ⚠️ 极限，KV Cache 捉襟见肘 |
+| Q8_0 | ~9.5 GB | ❌ 显存放不下 |
+
+**选定 Q4_K_M**。
+
+---
+
+## 三、模型部署：两行命令，半小时等待
+
+### 3.1 安装 Ollama
+
+```powershell
+winget install Ollama.Ollama
+```
+
+安装后托盘出现小羊驼图标，服务自动运行。版本 0.24.0。
+
+### 3.2 拉取模型
+
+```powershell
+ollama pull qwen3.5:9b
+```
+
+6.6GB 的 GGUF 文件，在 10 MB/s 的速度下大约 11 分钟。期间我经历了两次下载中断（Windows 网络波动），好在 Ollama 支持断点续传。
+
+### 3.3 创建 Agent 优化版（推荐）
+
+默认模型上下文窗口偏小，且没有 Agent 场景的系统提示词。我写了一个 Modelfile：
+
+```
+FROM qwen3.5:9b
+PARAMETER num_ctx 32768
+SYSTEM """你是一个专业的 AI 编程助手……(此处省略200字)"""
+```
+
+然后：
+
+```powershell
+ollama create qwen3.5:9b-agent -f Modelfile
+```
+
+搞定了两个模型：
+- `qwen3.5:9b` — 基础版，日常使用
+- `qwen3.5:9b-agent` — 优化版，32K 上下文 + 编程助手提示词
+
+### 3.4 验证
+
+```powershell
+# 终端交互测试
+ollama run qwen3.5:9b "Hello"
+
+# API 测试
+curl http://localhost:11434/v1/chat/completions `
+  -H "Content-Type: application/json" `
+  -d '{"model":"qwen3.5:9b","messages":[{"role":"user","content":"hi"}]}'
+```
+
+两测均通过。此时如果只是用 ChatGPT-Next-Web 之类的 OpenAI 客户端，故事已经结束了。
+
+但你猜怎么着？我要接的是 **Claude Code**。
+
+---
+
+## 四、Claude Code 接入：一场持续 3 小时的协议战争
+
+### 4.1 第一次尝试：直接配 openaiProvider（失败）
+
+Claude Code 文档说支持 `openaiProvider`，配置如下：
+
+```json
+{
+  "openaiProvider": {
+    "baseURL": "http://localhost:11434/v1",
+    "apiKey": "ollama",
+    "model": "qwen3.5:9b-agent"
+  }
+}
+```
+
+结果：**Not logged in · Please run /login**
+
+原因是 Claude Code v2.1.79 在检测到 `openaiProvider` 后，仍然会先走 Anthropic 认证流程。认证不过，直接拒绝服务。这就像你告诉出租车司机"我有导航"，司机说"不行，我得先用我的导航确认一下路"。
+
+### 4.2 第二次尝试：用 Anthropic 环境变量冒充（失败）
+
+```json
+{
+  "env": {
+    "ANTHROPIC_BASE_URL": "http://localhost:11434/v1",
+    "ANTHROPIC_AUTH_TOKEN": "ollama",
+    "ANTHROPIC_MODEL": "qwen3.5:9b-agent"
+  }
+}
+```
+
+我想的是：让 Claude Code 以为它在跟 Anthropic 服务器说话，实际上指向 Ollama。
+
+现实：Claude Code 发送的是 Anthropic Messages API 格式的请求（`/v1/messages`，JSON 结构是 Anthropic 风格），Ollama 只理解 OpenAI Chat Completions 格式（`/v1/chat/completions`，JSON 结构是 OpenAI 风格）。
+
+结果：**There's an issue with the selected model**。Ollama 看不懂 Anthropic 的请求格式，回复了 404。
+
+这个思路方向对了，但缺了一个**翻译层**。
+
+### 4.3 第三次尝试：Litellm 代理（差点成功）
+
+Litellm 是一个 LLM API 网关，支持 Anthropic ↔ OpenAI 协议转换。但它的完整功能（proxy mode）需要安装 30+ 个依赖包，其中包括 websockets、fastapi、uvicorn 等。
+
+```bash
+pip install "litellm[proxy]"
+```
+
+安装成功后启动：
+
+```bash
+litellm --model ollama_chat/qwen3.5:9b-agent --port 8787
+```
+
+结果请求被转发到了 DeepSeek 的 API 地址，而不是本地的 Ollama。原因是 litellm 读取了环境变量里的 `ANTHROPIC_BASE_URL`（之前配 CC Switch 时留下的 DeepSeek 地址），自作主张地把请求转给了 DeepSeek。
+
+我陷入了凝视 `/dev/null` 的深渊。
+
+### 4.4 第四次尝试：手搓协议转译代理（成功）
+
+"既然 litellm 这么复杂，不如自己写一个。"
+
+核心需求极其简单：
+1. 监听 8787 端口
+2. 接收 Anthropic `/v1/messages` 格式请求
+3. 转成 OpenAI `/v1/chat/completions` 格式发给 Ollama
+4. 把 Ollama 的 OpenAI 格式响应转回 Anthropic 格式
+5. 返回给 Claude Code
+
+Python 标准库就够了（`http.server` + `urllib.request` + `json`），不到 200 行代码。
+
+#### 遇到的坑与解
+
+| 坑 | 症状 | 解法 |
+|----|------|------|
+| **Query string 匹配失败** | Claude Code 请求 `/v1/messages?beta=true`，代理只匹配 `/v1/messages` | `path = self.path.split("?")[0]` |
+| **冒号模型名** | `qwen3.5:9b-agent` 被 Claude Code 预检拦截 | Ollama `cp` 创建无冒号副本 |
+| **流式传输（SSE）** | Claude Code 默认开启 streaming，期待 `text/event-stream` | 实现 Anthropic SSE 事件格式（`message_start` → `content_block_delta` → `message_stop`） |
+| **思考模型输出** | Qwen 返回 `reasoning` 字段 + 空 `content` | 合并 `reasoning` 和 `content` 为文本输出 |
+| **端口残留** | 多次重启代理导致 CLOSE_WAIT 堆积 | 重启前 kill 旧进程 |
+
+#### 核心代码片段
+
+请求转译（Anthropic → OpenAI）：
+
+```python
+# Anthropic system message → OpenAI user message with prefix
+messages = []
+for m in anthropic_request["messages"]:
+    role = m["role"]
+    text = flatten_content(m["content"])
+    if role == "system":
+        messages.append({"role": "user", "content": f"[System]\n{text}"})
+    else:
+        messages.append({"role": role, "content": text})
+```
+
+响应转译（OpenAI → Anthropic）：
+
+```python
+anthropic_resp = {
+    "id": "msg_" + uuid.uuid4().hex[:12],
+    "type": "message",
+    "role": "assistant",
+    "content": [{"type": "text", "text": text}],
+    "model": model,
+    "stop_reason": "end_turn",
+    "usage": {"input_tokens": ..., "output_tokens": ...}
+}
+```
+
+完整代码放在项目目录下的 `proxy.py`，约 180 行。
+
+---
+
+## 五、架构总览：最终的调用链
+
+```
+┌──────────────┐     Anthropic格式      ┌─────────────────┐     OpenAI格式      ┌─────────────────┐
+│  Claude Code │ ──────────────────────> │  proxy.py:8787   │ ──────────────────> │  Ollama:11434   │
+│              │ <────────────────────── │  (协议转译代理)    │ <────────────────── │  qwen3.5:9b     │
+│              │     Anthropic格式       │                  │     OpenAI格式      │  (Q4_K_M,6.6GB) │
+└──────────────┘                        └─────────────────┘                     └─────────────────┘
+                                                                                       │
+                                                                                       ▼
+                                                                               ┌──────────────┐
+                                                                               │  RTX 4060 Ti │
+                                                                               │  8GB VRAM    │
+                                                                               │  实测 7.5GB  │
+                                                                               └──────────────┘
+```
+
+三条黄金法则：
+1. **Claude Code 只吃 Anthropic 格式**——给它 OpenAI 格式会噎着
+2. **Ollama 只吃 OpenAI 格式**——给它 Anthropic 格式它不认识
+3. **代理什么都吃，什么都吐**——像一个尽职的翻译官
+
+---
+
+## 六、CC Switch 无缝集成
+
+CC Switch 是 Claude Code 的多 Provider 管理器——我日常在 DeepSeek、智谱、本地模型间切换。
+
+在 CC Switch 中新建一个 Claude Provider，配置为：
+
+```json
+{
+  "env": {
+    "ANTHROPIC_BASE_URL": "http://localhost:8787",
+    "ANTHROPIC_AUTH_TOKEN": "ollama",
+    "ANTHROPIC_MODEL": "qwen3.5-9b-agent",
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "qwen3.5-9b-agent",
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "qwen3.5-9b-agent",
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "qwen3.5-9b-agent"
+  }
+}
+```
+
+注意：`ANTHROPIC_BASE_URL` 填的是**代理端口 8787**，不是 Ollama 的 11434。
+
+启动方式：
+
+```bash
+# 方式一：通过 CC Switch 图形界面切换并启动
+# 方式二：通过临时配置文件
+claude --settings .cc-settings.json
+```
+
+> **重要**：代理必须保持运行！建议开一个独立的终端 `python proxy.py` 常驻，或配置为 Windows 服务。
+
+---
+
+## 七、模型分工策略
+
+启动 CC Switch 的 Local Proxy 特性后，可以利用故障切换（Failover）功能实现智能路由：
+
+| 模型 | 角色 | 场景 | CC Switch 配置 |
+|------|------|------|------|
+| DeepSeek V4 Pro | 主 Provider | 日常编码、复杂推理 | 默认选中 |
+| **qwen3.5:9b-agent** | 本地后备 | 断网时、隐私敏感任务、高并发 | Failover Queue |
+| Qwen3.6:35B-A3B | 快速对话 | 轻量问答、翻译 | 按需切换 |
+
+这样平常走 DeepSeek 云端的强推理能力，断网或需要隐私时自动切到本地模型——鱼和熊掌，能兼得。
+
+---
+
+## 八、服务管理与常用命令
+
+| 操作 | 命令 |
+|------|------|
+| 启动 Ollama | 开始菜单 → Ollama（桌面应用自动启动服务） |
+| 停止 Ollama | 托盘右键 → Quit |
+| 释放显存（不关服务） | `ollama stop` |
+| 查看模型 | `ollama list` |
+| 查看显存 | `nvidia-smi` |
+| 启动代理 | `python proxy.py` |
+| 模型永不卸载 | 设置环境变量 `OLLAMA_KEEP_ALIVE=-1`（需重启 Ollama） |
+
+---
+
+## 九、故障排查速查表
+
+| 问题 | 可能原因 | 解决 |
+|------|------|------|
+| Claude Code: "Not logged in" | Anthropic 认证未过 | 检查 `ANTHROPIC_BASE_URL` 是否指向代理 |
+| Claude Code: "Interrupted" | 代理没收到请求 / 路径匹配失败 | 检查 `proxy.log`，确认 query string 被正确 strip |
+| Claude Code: "model not exist" | 模型名含特殊字符 | 用 `ollama cp` 创建无冒号/无特殊字符副本 |
+| 代理超时无响应 | 旧进程残留 | `taskkill /F /IM python.exe` 后重启 |
+| Ollama 响应慢 | 模型未预加载 | 发一个请求预热；或设置 `OLLAMA_KEEP_ALIVE=-1` |
+| CC Switch 配置不生效 | `currentProviderClaude` 未更新 | 检查 `C:\Users\Administrator\.cc-switch\settings.json` |
+
+---
+
+## 十、总结
+
+这次部署让我深刻体会到：**AI 模型的部署本身已经简单到令人发指（两条命令），但让它跟你已有的工具链谈恋爱，才是真正的修罗场。**
+
+核心收获：
+
+1. **8GB 显存够用但不宽裕**。Q4_K_M 量化 + 32K 上下文，实测 7.5GB 显存占用，勉强塞下。别同时跑两个模型。
+2. **Ollama + Claude Code 的协议鸿沟是真实存在的**。Ollama 讲 OpenAI 方言，Claude Code 只认 Anthropic 普通话。需要中间人翻译。
+3. **手搓代理虽不优雅但有效**。180 行 Python 标准库代码解决了 3 小时的踩坑。有时候最朴素的方法最好用。
+4. **CC Switch 是管理多 Provider 的神器**。云端国产 API + 本地模型，一键切换，互不干扰。
+5. **冒号能杀人**。`qwen3.5:9b-agent` 中的冒号被 Claude Code 预检拦截，改成 `qwen3.5-9b-agent` 就通了。有时候 bug 就是一个小字符。
+
+> 最后送上一句：如果你也在 Windows + 8GB 显卡上部署本地 LLM 给 Claude Code 用——记住，这不是技术问题，这是翻译工作。雇一个代理就好。
+
+---
+
+## 附录：完整文件清单
+
+| 文件 | 用途 |
+|------|------|
+| `Modelfile` | Agent 优化版模型定义（32K 上下文 + 系统提示词） |
+| `proxy.py` | Anthropic ↔ OpenAI 协议转译代理（180 行） |
+| `.cc-settings.json` | Claude Code + 代理配置（可被 CC Switch 接管） |
+| `部署文档.md` | 运维速查手册 |
