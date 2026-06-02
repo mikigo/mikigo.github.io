@@ -1,4 +1,4 @@
-import { useLang, usePages } from '@rspress/core/runtime';
+import { normalizeHrefInRuntime, useLang, usePages } from '@rspress/core/runtime';
 import {
   getCustomMDXComponent,
   renderInlineMarkdown,
@@ -50,7 +50,7 @@ export const useBlogPages = (): BlogItem[] => {
       return {
         date: itemDate,
         description,
-        link: routePath,
+        link: normalizeHrefInRuntime(routePath),
         title: title,
         authors: authors as string[] | undefined,
         badgeText: badge_text as string | undefined,

@@ -48,8 +48,8 @@
   },
   {
     "type": "dir",
-    "name": "Skills",
-    "label": "AI-Skills",
-    "collapsed": true
+    "name": "AI",
+    "label": "AI",
+    "collapsed": false
   }
 ]
