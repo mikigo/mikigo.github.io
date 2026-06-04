@@ -1,5 +1,6 @@
-import {defineConfig} from '@rspress/core';
+import { defineConfig } from '@rspress/core';
 import { pluginSitemap } from '@rspress/plugin-sitemap';
+import mermaid from 'rspress-plugin-mermaid';
 import path from "node:path";
 
 const siteUrl = 'https://mikigo.site';
@@ -42,6 +43,11 @@ export default defineConfig({
     plugins: [
         pluginSitemap({
             siteUrl,
+        }),
+        mermaid({
+            mermaidConfig: {
+                theme: 'dark',
+            },
         }),
     ],
 });
