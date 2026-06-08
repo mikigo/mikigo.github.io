@@ -8,6 +8,9 @@ const siteUrl = 'https://mikigo.site';
 export default defineConfig({
     lang: 'zh',
     globalStyles: path.join(__dirname, 'theme/var.css'),
+    head: [
+        ['script', { async: true, src: '/counter.js' }],
+    ],
     root: 'docs',
     base: '/',
     title: 'mikigo.site',
@@ -27,6 +30,12 @@ export default defineConfig({
 
         footer: {
             message: `
+        <span style="display:none" class="counter-container" data-counter-style="badge">
+          本站访问 <span data-pv-site></span> 次 ·
+          今日 <span data-pv-today></span> 次 ·
+          访客 <span data-uv-today></span> 人
+        </span>
+        <br>
         <a style="text-decoration: underline" href="https://beian.miit.gov.cn/" target="_blank">蜀ICP备2024104386号</a>
          版权所有 © 2020-${new Date().getFullYear()} <a style="text-decoration: underline" href="https://github.com/mikigo" target="_blank">mikigo</a>
       `,
