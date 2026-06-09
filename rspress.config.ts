@@ -8,6 +8,9 @@ const siteUrl = 'https://mikigo.site';
 export default defineConfig({
     lang: 'zh',
     globalStyles: path.join(__dirname, 'theme/var.css'),
+    head: [
+        ['script', { src: '/counter.js' }],
+    ],
     root: 'docs',
     base: '/',
     title: 'mikigo.site',
@@ -27,7 +30,6 @@ export default defineConfig({
 
         footer: {
             message: `
-        <script async src="/counter.js"></script>
         <span style="display:none" class="counter-container" data-counter-style="badge">
           本站访问量 <span data-pv-site></span> 次 ·
           本站访客数 <span data-uv-site></span> 人 ·
