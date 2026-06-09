@@ -22,7 +22,7 @@ const Layout = () => (
     afterDocContent={
             <div align="left" style={{fontSize: "0.8em", color: "gray"}}>
                 <span style={{display:"none"}} className="counter-container">
-                  阅读量 <span data-pv-page></span> 次
+                  阅读量 <span data-pv-page=""></span> 次
                 </span>
                 <br/>
                 声明：本站所有文章，均为本站原创发布。任何个人或组织，在未征得本站同意时，禁止复制、盗用、采集、发布本站内容到任何网站、书籍等各类媒体平台。
