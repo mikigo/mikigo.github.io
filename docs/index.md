@@ -34,6 +34,9 @@ features:
   - title: FastAPI-Self-Hosting-Docs
     details: 一个用于 FastAPI 应用程序的自托管文档解决方案，提供本地化的 Swagger UI 和 ReDoc 文档界面。
     link: https://github.com/mikigo/fastapi-self-hosting-docs
+  - title: Web-Counter
+    details: 轻量、隐私优先、开箱即用的网站访问计数器。
+    link: https://github.com/mikigo/web-counter
   - title: Relative-Positon
     details: 一个用于在 Linux 和 Windows 平台上将用户界面元素相对于窗口坐标进行定位的 Python 库。
     link: https://github.com/mikigo/relative-position
