@@ -29,6 +29,7 @@ export default defineConfig({
             message: `
         <script async src="/counter.js"></script>
         <span style="display:none" class="counter-container" data-counter-style="badge">
+          阅读量 <span data-pv-page></span> 次 ·
           本站访问量 <span data-pv-site></span> 次 ·
           本站访客数 <span data-uv-site></span> 人 ·
           今日访问量 <span data-pv-today></span> 次 ·
