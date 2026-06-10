@@ -41,7 +41,7 @@ pageType: doc-wide
 ## 架构
 
 <pre class="mermaid">
-graph TD
+flowchart TD
     A["用户浏览器"]
     A -->|HTTPS| B["Caddy / Nginx"]
     B -->|"/counter.js /api/*"| C["web-counter (FastAPI)"]
@@ -120,7 +120,7 @@ mikigo.site, www.mikigo.site {
 **自动更新流水线：**
 
 <pre class="mermaid">
-graph LR
+flowchart LR
     A[push main] --> B[GitHub Actions]
     B --> C[gh-pages]
     C --> D[sync-to-gitee]
