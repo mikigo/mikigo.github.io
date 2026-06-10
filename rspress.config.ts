@@ -9,6 +9,7 @@ export default defineConfig({
     lang: 'zh',
     globalStyles: path.join(__dirname, 'theme/var.css'),
     head: [
+        ['script', {}, 'if (location.pathname === "/") location.replace("/index.html");'],
         ['script', { src: '/counter.js' }],
     ],
     root: 'docs',
