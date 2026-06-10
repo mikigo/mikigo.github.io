@@ -40,14 +40,14 @@ pageType: doc-wide
 
 ## 架构
 
-<pre class="mermaid">
+```mermaid
 flowchart TD
     A["用户浏览器"]
     A -->|HTTPS| B["Caddy / Nginx"]
     B -->|"/counter.js /api/*"| C["web-counter (FastAPI)"]
     B -->|"其他路径"| D["静态文件"]
     C --> E["SQLite (WAL)"]
-</pre>
+```
 
 几个有意思的设计决策：
 
@@ -119,14 +119,14 @@ mikigo.site, www.mikigo.site {
 
 **自动更新流水线：**
 
-<pre class="mermaid">
+```mermaid
 flowchart LR
     A[push main] --> B[GitHub Actions]
     B --> C[gh-pages]
     C --> D[sync-to-gitee]
     D --> E[服务器 git pull]
     E --> F[Caddy serve]
-</pre>
+```
 
 ## Dashboard
 
