@@ -40,20 +40,13 @@ pageType: doc-wide
 
 ## 架构
 
-<pre>
-用户浏览器
-  │  HTTPS
-  ▼
-Caddy / Nginx
-  │ /counter.js  →  web-counter
-  │ /api/*       →  web-counter
-  │ /*           →  静态文件
-  │ localhost
-  ▼
-web-counter (FastAPI)
-  counter.js │ REST API
-  Dashboard  │ Rate Limiter
-  SQLite (WAL)
+<pre class="mermaid">
+graph TD
+    A["用户浏览器"]
+    A -->|HTTPS| B["Caddy / Nginx"]
+    B -->|"/counter.js /api/*"| C["web-counter (FastAPI)"]
+    B -->|"其他路径"| D["静态文件"]
+    C --> E["SQLite (WAL)"]
 </pre>
 
 几个有意思的设计决策：
@@ -126,23 +119,13 @@ mikigo.site, www.mikigo.site {
 
 **自动更新流水线：**
 
-<pre>
-push main
-  │
-  ▼
-GitHub Actions 构建
-  │
-  ▼
-gh-pages 分支
-  │
-  ▼
-sync-to-gitee 全分支镜像
-  │
-  ▼
-服务器 crontab git pull
-  │
-  ▼
-Caddy serve
+<pre class="mermaid">
+graph LR
+    A[push main] --> B[GitHub Actions]
+    B --> C[gh-pages]
+    C --> D[sync-to-gitee]
+    D --> E[服务器 git pull]
+    E --> F[Caddy serve]
 </pre>
 
 ## Dashboard
