@@ -11,7 +11,9 @@ const myStyle = {
 }
 
 const Layout = () => (
-  <BasicLayout
+  <>
+    <script dangerouslySetInnerHTML={{ __html: 'if (location.pathname==="/") location.replace("/index.html");' }} />
+    <BasicLayout
     beforeFeatures={
           <div>
             <h1 align="center"  style={myStyle}>
@@ -29,7 +31,8 @@ const Layout = () => (
                 <a href="https://github.com/mikigo/" style={{color: "#1cc088"}}>-- mikigo</a>
             </div>
         }
-  />
+    />
+  </>
 );
 
 export { Layout };
