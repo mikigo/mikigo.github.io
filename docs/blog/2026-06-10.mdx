@@ -1,83 +1,63 @@
 ---
 date: 2026-06-10
 authors: ['mikigo']
-description: '从零到一开发 web-counter：一个隐私优先、一行命令部署的网站访问计数器，全程由 Claude Code 辅助完成。包含技术选型、前后端架构、生产部署、8个坑和解决方案。'
+description: '从零到一开发 web-counter：一个隐私优先、一行命令部署的网站访问计数器。包含技术选型、前后端架构、生产部署、8个坑和解决方案。'
 sidebar: false
 pageType: doc-wide
 ---
 
-# 我花了三天时间，让 Claude Code 帮我写了一个网站计数器，然后把它开源了
+# 我花了三天时间写了一个网站计数器，然后把它开源了
 
-## 背景
+## 起因
 
-事情的起因很简单：我的个人站点 [mikigo.site](https://mikigo.site) 是用 Rspress 搭建的纯静态博客，没有后端，自然也就没有访问统计。我想知道哪篇文章最受欢迎、每天有多少人来看，但又不愿意接入 Google Analytics——那玩意儿一个脚本 100KB，还要弹 Cookie 弹窗，对技术博客来说实在太重了。
+我的个人站点 [mikigo.site](https://mikigo.site) 是用 Rspress 搭的静态博客。纯静态，没有后端。
 
-市面上倒是有不蒜子这类轻量方案，但服务是别人维护的，数据存在别人服务器上，哪天说不蒜就不蒜了。
+这就意味着我不知道谁来看过、哪篇文章最受欢迎。Google Analytics 实在太重了——一个脚本 100KB，还得弹 Cookie 弹窗。对一个技术博客来说，为看个 PV 让用户点"同意追踪"？不太对劲。
 
-于是我问了自己一个问题：**能不能自己写一个？**
+不蒜子够轻量，但服务是别人的。哪天说不蒜就不蒜了，数据也跟着没了。
 
-能。尤其是当你有一个 Claude Code 在旁边的时候。
+于是我决定自己写一个。
 
-## 技术选型：够用就好，别想太多
+## 选型
 
-计数器这个需求本身很简单——记录访问、查询统计、展示数据。技术选型上我给自己定了三条原则：
+需求很简单：记录访问、查询统计、展示数据。给自己定的规矩也很简单：
 
-1. **依赖最小化**——能用一个库解决的绝不引入第二个
-2. **运维零负担**——不需要 MySQL、Redis、消息队列，一个 SQLite 搞定
-3. **部署一条命令**——用户 `pip install && web-counter start` 就能跑起来
-
-最终选型如下：
+1. 依赖能少就少
+2. 不需要 MySQL、Redis 这些，一个 SQLite 搞定
+3. 用户 `pip install && web-counter start` 就能跑
 
 | 层 | 选择 | 理由 |
 |---|------|------|
-| Web 框架 | FastAPI + uvicorn | 异步支持好，BackgroundTasks 适合异步写库 |
-| 数据库 | SQLite (WAL) + aiosqlite | 单文件零配置，WAL 模式支持并发读写 |
-| 密码哈希 | bcrypt | 业界标准，Dashboard 管理员密码存储 |
-| 前端 JS | 原生 JavaScript（~1KB） | 不引入任何框架，兼容所有浏览器 |
-| 图表 | Chart.js CDN | Dashboard 看板的 30 天趋势图，CDN 引入不占包体积 |
-| 进程管理 | systemd + PID 文件 | `start / stop / restart` 命令行管理 |
-| 分发 | pip 包（PyPI） | 标准 Python 分发方式 |
+| Web 框架 | FastAPI + uvicorn | BackgroundTasks 天然适合异步写库 |
+| 数据库 | SQLite WAL + aiosqlite | 单文件零运维，WAL 撑得住并发 |
+| 密码哈希 | bcrypt | Dashboard 管理员密码，没什么好纠结的 |
+| 前端 JS | 原生 JS，约 1KB | 没引入任何框架 |
+| 图表 | Chart.js CDN | Dashboard 看板用，走 CDN 不占包体积 |
+| 进程管理 | systemd + PID 文件 | start / stop / restart 一套走 |
+| 分发 | pip 包 | Python 项目标配 |
 
-是的，你没看错——**没有 React、没有 Vue、没有 Webpack**。前端 counter.js 只有约 1KB，用原生 XMLHttpRequest 发两个请求，剩下的交给 DOM API。对于一个计数器来说，这就够了。
+前端 counter.js 用原生 XMLHttpRequest 发两个请求，剩下的交给 DOM。没有 React、没有 Webpack、没有 node_modules 黑洞。
 
-## 架构设计：麻雀虽小，五脏俱全
+## 架构
 
-```
-┌──────────────────────────────────────┐
-│           用户的静态网站                │
-│  <script src="/counter.js">          │
-│  <span data-pv-site></span> 次       │
-└──────────────┬───────────────────────┘
-               │ HTTPS
-┌──────────────▼───────────────────────┐
-│         Caddy / Nginx 反代            │
-│  /counter.js  →  web-counter:8000    │
-│  /api/*       →  web-counter:8000    │
-│  /*           →  静态文件              │
-└──────────────┬───────────────────────┘
-               │ localhost
-┌──────────────▼───────────────────────┐
-│          web-counter (FastAPI)        │
-│  ┌─────────────────────────────┐    │
-│  │ counter.js  │  REST API     │    │
-│  │ Dashboard   │  Rate Limiter │    │
-│  └─────────────┴───────────────┘    │
-│              SQLite (WAL)            │
-└──────────────────────────────────────┘
+```mermaid
+graph TD
+    A["静态网站<br/>&lt;script src='/counter.js'&gt;<br/>&lt;span data-pv-site&gt;"]
+    A -->|HTTPS| B["Caddy / Nginx 反代<br/>/counter.js → :8000<br/>/api/* → :8000<br/>/* → 静态文件"]
+    B -->|"localhost"| C["web-counter (FastAPI)<br/>counter.js | REST API<br/>Dashboard | Rate Limiter<br/>SQLite (WAL)"]
 ```
 
-核心设计决策有三条，每条背后都有故事：
+几个有意思的设计决策：
 
-**1. 自动发现 API 地址**。counter.js 通过 `document.currentScript.src` 反推 API 基地址，用户不需要配置域名。同域部署时开箱即用，跨域时通过 `data-counter-api` 属性指定。
+**API 地址自动发现。** counter.js 通过 `document.currentScript.src` 反推 API 基地址，同域部署不用配。如果你把 JS 放 CDN 上，加个 `data-counter-api` 属性就行。
 
-**2. 声明式 DOM 绑定**。用户只需在 HTML 中写 `<span data-pv-today></span>`，counter.js 自动扫描 data-* 属性并填充数据。计数器容器初始 `display:none`，只有成功获取数据后才显示——后端挂了用户完全无感。
+**声明式 DOM 绑定。** 用户写 `<span data-pv-today></span>`，counter.js 自动扫 data-* 属性填数据。计数器初始 `display:none`，数据到了才显示。后端挂了用户完全无感——这是我最满意的设计。
 
-**3. 隐私优先的访客去重**。不存 IP、不设 Cookie、不做指纹。访客唯一性由 `SHA256(IP + salt)` 标识，salt 由部署者自己生成和保管。换 salt 意味着历史 UV 清零，所以文档里写了三遍"salt 设定后不要更换"。
+**隐私去重不用 Cookie。** 不存 IP、不设 Cookie、不做指纹。访客唯一性 = `SHA256(IP + salt)`，salt 你自己生成自己保管。换 salt 意味着历史 UV 归零，所以文档里写了三遍"salt 设定后不要换"。
 
-## 前端 counter.js：1KB 的自我修养
+## counter.js：1KB 能干多少事
 
 ```javascript
-// 整个脚本的核心逻辑就三步
 (function () {
   // 1. 发现 API 地址
   var apiBase = scriptTag.src.substring(0, scriptTag.src.lastIndexOf("/"));
@@ -85,35 +65,29 @@ pageType: doc-wide
   // 2. 扫描 DOM
   var pvToday = document.querySelector("[data-pv-today]");
 
-  // 3. 发请求 + 填数据
+  // 3. 发请求，填数据，完事儿
   xhr.open("GET", apiBase + "/api/count");
   xhr.onload = function() {
     pvToday.textContent = JSON.parse(xhr.responseText).today_pv;
-    container.style.display = "inline-block"; // 大功告成
+    container.style.display = "inline-block";
   };
 })();
 ```
 
-当然，实际代码比这复杂一些，因为要处理千分位格式化、多种展示风格（badge / card / bordered）、SPA 客户端路由（MutationObserver）、多容器可见性等等。但核心理念不变：**简单的需求就应该用简单的代码解决**。
-
-展示风格也是用内联 CSS 实现的，没有额外的样式文件。用户通过 `data-counter-style` 属性选择：
+核心就这三步。其他的是千分位格式化、四种展示风格（badge / card / bordered / default）、SPA 路由适配、多容器可见性处理。展示风格纯内联 CSS，没有额外样式文件：
 
 | 风格 | 效果 |
 |------|------|
-| `badge` | 圆角药丸徽章，GitHub 风格 |
+| `badge` | 圆角药丸徽章 |
 | `card` | 白底卡片 + 阴影 |
 | `bordered` | 细边框方框 |
 | `default` | 纯文本 |
 
-## 部署实录：从本地到云端
+## 部署
 
-### 服务器环境
+服务器是 Ubuntu 22.04，Web 服务器用的 Caddy。
 
-- Ubuntu 22.04，Caddy 做 Web 服务器和 HTTPS
-- Python 3.10，pip 安装 web-counter
-- SQLite 数据文件在 `/opt/web-counter/data/`
-
-### systemd 守护
+**systemd 服务：**
 
 ```ini
 [Service]
@@ -125,9 +99,9 @@ ExecStart=python3 -m uvicorn web_counter.main:app --host 127.0.0.1 --port 8001
 Restart=on-failure
 ```
 
-关键：**绑 127.0.0.1**，不直接暴露公网。所有请求通过 Caddy 反代进来。
+绑 127.0.0.1，不直接暴露公网。
 
-### Caddy 反代
+**Caddy 反代：**
 
 ```
 mikigo.site, www.mikigo.site {
@@ -139,98 +113,85 @@ mikigo.site, www.mikigo.site {
 }
 ```
 
-同域部署不需要 CORS 配置，这是最简单的方案。
+同域部署，CORS 根本不配，省事。
 
-### 自动部署流水线
+**自动更新流水线：**
 
-整个站点的更新流程是：
-
-```
-push main → GitHub Actions 构建 → gh-pages 分支
-                                      ↓
-                         sync-to-gitee 全分支镜像
-                                      ↓
-                      服务器 crontab git pull
-                                      ↓
-                          Caddy 直接 serve
+```mermaid
+graph LR
+    A[push main] --> B[GitHub Actions 构建]
+    B --> C[gh-pages 分支]
+    C --> D[sync-to-gitee 全分支镜像]
+    D --> E[服务器 crontab git pull]
+    E --> F[Caddy serve]
 ```
 
-web-counter 自身也在同一台服务器上，通过 systemd 管理生命周期。
+## Dashboard
 
-## Dashboard：登录即用的统计看板
+`/dashboard` 登录后能看到：
 
-`/dashboard` 提供了完整的后台管理界面：
+- 今日 PV/UV、累计 PV/UV，每 30 秒自动刷新
+- 30 天趋势图（Chart.js 双线对比）
+- 排行榜管理（显示数量、排除规则，支持 `*` 通配符）
+- 数据重置、起始值设置
 
-- **实时统计卡片**——今日 PV/UV、累计 PV/UV，每 30 秒自动刷新
-- **30 天趋势图**——Chart.js 折线图，PV 和 UV 双线对比
-- **排行榜管理**——配置显示数量、排除规则（支持 `*` 通配符）
-- **数据管理**——重置全部/今日/指定页面数据，设置累计起始值
+密码 bcrypt 哈希，session cookie 设了 HttpOnly + SameSite=Lax，24 小时过期。
 
-后台密码用 bcrypt 哈希存储，登录后签发 HttpOnly + SameSite=Lax 的 session cookie，24 小时过期。
+## 集成 Skill
 
-## Agent Skill：让 AI 帮你集成
-
-开发过程中踩了不少框架特有的坑，我把它们全写成了 Claude Code Skill，这样其他人在 AI 辅助下集成时能自动避开：
+开发过程中在 Rspress 和 VitePress 上踩了不少坑。我把这些坑整理成了两个集成指南，放在项目 `skills/` 目录下：
 
 | Skill | 适用框架 |
 |-------|---------|
-| `rspress-web-counter` | Rspress 集成全流程 |
-| `vitepress-web-counter` | VitePress 集成全流程 |
+| `rspress-web-counter` | Rspress |
+| `vitepress-web-counter` | VitePress |
 
-Skill 涵盖了所有已知的坑：
-- Rspress head 配置 `async:true` 会被序列化成 `asyncsrc`（属性粘连 bug）
-- JSX 中 `<span data-pv-page>` 会渲染成 `data-pv-page="true"`
-- VitePress footer 在所有页面渲染（与 Rspress 不同）
-- 等等
+里面记录了每个框架特有的坑——比如 Rspress head 配置里 `async:true` 会被序列化成 `asyncsrc`，JSX 里 `<span data-pv-page>` 会渲染成 `data-pv-page="true"`。如果你也用这些框架，直接看 Skill 能省不少时间。
 
-## 我们踩过的 8 个坑
+## 踩过的 8 个坑
 
-整个项目用 Claude Code 辅助开发，三天时间写完、测试、部署、上线。过程并非一帆风顺，以下是印象最深的几个问题：
+三天写完、测完、部署上线。不是一帆风顺，以下是印象最深的。
 
-**1. Rspress head 布尔属性序列化 bug**
+**1. Rspress head 布尔属性粘连**
 
-在 `head` 配置中写 `['script', { async: true, src: '/counter.js' }]`，Rspress 渲染成了 `<script asyncsrc="/counter.js">`——`async` 和 `src` 粘连了。浏览器不认 `asyncsrc`，脚本压根没加载。**解决**：去掉 `async: true`，只用 `{ src: '/counter.js' }`，或者将 script 放在 footer message 的原始 HTML 中。
+`['script', { async: true, src: '/counter.js' }]` 被 Rspress 渲染成 `<script asyncsrc="/counter.js">`。`async` 和 `src` 粘在一起了，浏览器不认。去掉了 `async: true` 就好了。
 
-**2. React JSX 属性值陷阱**
+**2. React 属性值陷阱**
 
-`<span data-pv-page></span>` 在 JSX 中会被 React 渲染为 `data-pv-page="true"`，counter.js 读到 "true" 当作页面路径，导致阅读量查询错误。**解决**：写 `<span data-pv-page=""></span>`（空字符串）。
+`<span data-pv-page></span>` 在 JSX 里会变成 `data-pv-page="true"`，counter.js 把 `"true"` 当成页面路径去查，阅读量永远对不上。写成 `<span data-pv-page=""></span>`（空字符串）才正常。
 
-**3. SPA 客户端路由计数器消失**
+**3. SPA 路由切换计数器没了**
 
-Rspress 页面切换时 footer 被重新渲染（`display:none`），但浏览器不重新执行 `<script>` 标签。**解决**：v0.2.0 引入 MutationObserver，监听 DOM 变化自动重新填充计数器。
+Rspress 切换页面时 footer 重新渲染成 `display:none`，但浏览器不会重新执行 script 标签。加了 MutationObserver 监听 DOM 变化，自动重新填充。
 
-**4. 首次刷新 +2 计数**
+**4. 刷一次 +2**
 
-DOMContentLoaded 触发一次 `refresh()`，MutationObserver 检测 DOM 插入后又触发一次。**解决**：加 800ms 冷却期 + 路径去重。
+DOMContentLoaded 触发一次 `refresh()`，MutationObserver 又触发一次。加了 800ms 冷却和路径去重。
 
 **5. 首次访问显示 0**
 
-counter.js 同时发 visit 和 count 请求，visit 异步写库还没完成 count 就返回了。**解决**：先发 visit → 等完成 → 再发 count。
+visit 和 count 请求同时发出去，visit 异步写库还没 commit，count 就查回来了。改成先发 visit，等它完成再查 count。
 
-**6. 多容器只显示一个**
+**6. 两个容器只显示一个**
 
-页面同时有 footer 统计和文章阅读量两个 counter-container，早期代码只处理第一个。**解决**：遍历所有 counter 元素，每个容器独立显示。
+页面同时有 footer 统计和文章阅读量两个 counter-container，早期代码只处理了第一个。改成遍历所有 counter 元素。
 
-**7. 排行榜标题缺失**
+**7. 排行榜只显示 URL**
 
-全新页面无 title 历史数据，排行榜只显示 URL。**解决**：counter.js 上报时附带 `document.title`，服务器存到 `page_titles` 表；同时也批量从 HTML 文件中提取 titles 补全历史数据。
+新页面没有 title 数据。让 counter.js 上报时顺便带 `document.title`，服务端存到 `page_titles` 表，顺便写了个脚本从 HTML 文件批量提取标题补历史数据。
 
 **8. Rspress footer 只在首页**
 
-`themeConfig.footer.message` 在 Rspress 中仅在首页渲染，文章页没有。**解决**：全站统计数据放在 footer 中（首页可见），页面阅读量放在 `afterDocContent` 中（文章页可见）。
+`themeConfig.footer.message` 在 Rspress 里只在首页渲染。全站统计放 footer 里（首页可见），页面阅读量放 `beforeDocContent` 插槽里（文章页可见）。
 
-## 开源与展望
+## 开源
 
-web-counter 已经开源在 [GitHub](https://github.com/mikigo/web-counter)，PyPI 可直接安装：
+web-counter 已开源在 [GitHub](https://github.com/mikigo/web-counter)，PyPI 直接装：
 
 ```bash
 pip install web-counter
 ```
 
-如果你也是静态博客的拥趸，又在为访问统计发愁，不妨试试。一行命令部署，一行标签接入，数据完全由你掌控。
+如果你是静态博客用户，又在为访问统计发愁，试试这个。一行命令部署，一行标签接入，数据在你自己的服务器上。
 
-欢迎 Star、提 Issue、贡献代码。
-
----
-
-*本文由 Claude Code 辅助编写，web-counter 的 99% 代码由 Claude Code 生成。*
+欢迎 Star、Issue、PR。
