@@ -37,6 +37,9 @@ features:
   - title: Web-Counter
     details: 轻量、隐私优先、开箱即用的网站访问计数器。
     link: https://github.com/mikigo/web-counter
+  - title: RepoPress
+    details: 基于 Git 的文档 CMS。在线编辑 Markdown/MDX 并实时预览，提交并推送到文档仓库。支持 VitePress、Rspress、Docusaurus、MkDocs。
+    link: https://github.com/mikigo/RepoPress
   - title: Relative-Positon
     details: 一个用于在 Linux 和 Windows 平台上将用户界面元素相对于窗口坐标进行定位的 Python 库。
     link: https://github.com/mikigo/relative-position
