@@ -56,7 +56,7 @@ export default defineConfig({
         }),
         mermaid({
             mermaidConfig: {
-                theme: 'dark',
+                theme: 'neutral',
             },
         }),
     ],
