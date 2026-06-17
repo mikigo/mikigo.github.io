@@ -1,102 +1,84 @@
-import { normalizeHrefInRuntime, useLang, usePages } from '@rspress/core/runtime';
+import { useLang, usePages } from '@rspress/core/runtime';
+import { Link, renderInlineMarkdown } from '@rspress/core/theme';
+import type { BlogAvatarAuthor } from '@rstack-dev/doc-ui/blog-avatar';
+import { BlogBackground } from '@rstack-dev/doc-ui/blog-background';
 import {
-  getCustomMDXComponent,
-  renderInlineMarkdown,
-} from '@rspress/core/theme';
-import React from 'react';
-import { BlogAvatar } from './BlogAvatar';
+  BlogList as BaseBlogList,
+  type BlogListItem,
+} from '@rstack-dev/doc-ui/blog-list';
 
-export interface BlogItem {
-  title?: string;
+const AUTHORS: Record<string, BlogAvatarAuthor> = {
+  mikigo: {
+    name: 'mikigo',
+    avatar: '/logo.png',
+    github: 'https://github.com/mikigo',
+  },
+};
+
+type BlogFrontmatter = {
   description?: string;
-  date?: Date;
-  link?: string;
+  date?: string;
   authors?: string[];
-}
+};
 
-export interface BlogProps {
-  posts: BlogItem[];
-}
+const normalizeAuthors = (
+  authors?: string[],
+): BlogAvatarAuthor[] => {
+  if (!authors?.length) {
+    return [];
+  }
+  return authors
+    .map(author => (typeof author === 'string' ? AUTHORS[author] : author))
+    .filter((a): a is BlogAvatarAuthor => Boolean(a));
+};
 
-export const useBlogPages = (): BlogItem[] => {
+const getDateValue = (date?: BlogListItem['date']): number => {
+  if (!date) {
+    return 0;
+  }
+  const timestamp = new Date(date).getTime();
+  return Number.isNaN(timestamp) ? 0 : timestamp;
+};
+
+export const useBlogPages = (): BlogListItem[] => {
   const { pages } = usePages();
   const lang = useLang();
 
-  const blogPages = pages
+  return pages
     .filter(page => page.lang === lang)
     .filter(
       page =>
         page.routePath.includes('/blog/') && !page.routePath.endsWith('/blog/'),
     )
-    .sort((a, b) => {
-      const dateA = a.frontmatter?.date
-        ? new Date(a.frontmatter?.date as string)
-        : new Date(0);
-      const dateB = b.frontmatter?.date
-        ? new Date(b.frontmatter?.date as string)
-        : new Date(0);
-      return dateB.getTime() - dateA.getTime();
-    });
+    .map(page => {
+      const frontmatter = (page.frontmatter ?? {}) as BlogFrontmatter;
+      const filename = page.routePath.split('/').pop();
 
-  return blogPages.map(
-    ({
-      frontmatter: { description, date, authors, badge_text },
-      routePath,
-      title,
-    }) => {
-      const itemDate = date ? new Date(date as string) : undefined;
-      // Extract filename from routePath, e.g. '/en/blog/lynx-3-5' -> 'lynx-3-5'
-      const filename = routePath.split('/').pop();
       return {
-        date: itemDate,
-        description,
-        link: normalizeHrefInRuntime(routePath),
-        title: title,
-        authors: authors as string[] | undefined,
-        badgeText: badge_text as string | undefined,
-        filename,
+        id: filename,
+        title: page.title,
+        description: frontmatter.description,
+        date: frontmatter.date,
+        href: page.routePath,
+        authors: normalizeAuthors(frontmatter.authors),
       };
-    },
-  );
+    })
+    .sort((a, b) => getDateValue(b.date) - getDateValue(a.date));
 };
 
 export function BlogList() {
-  const { h2: H2, p: P, a: A, hr: Hr } = getCustomMDXComponent();
-
   const blogPages = useBlogPages();
   const lang = useLang();
 
   return (
     <>
-      {blogPages.map(({ date, description, link, title, authors }, index) => (
-        <React.Fragment key={link || index}>
-          {title && (
-            <H2 id={link}>
-              <A href={link}>{title}</A>
-            </H2>
-          )}
-          {date && (
-            <P>
-              <em>
-                {new Intl.DateTimeFormat(lang, {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                }).format(date)}
-              </em>
-            </P>
-          )}
-          {authors && (
-            <>
-              {authors.map(author => (
-                <BlogAvatar author={author} key={author} />
-              ))}
-            </>
-          )}
-          {description && <P {...renderInlineMarkdown(description)} />}
-          {index < blogPages.length - 1 && <Hr />}
-        </React.Fragment>
-      ))}
+      <BaseBlogList
+        posts={blogPages}
+        lang={lang}
+        LinkComp={Link}
+        renderInlineMarkdown={renderInlineMarkdown}
+      />
+      <BlogBackground />
     </>
   );
 }
