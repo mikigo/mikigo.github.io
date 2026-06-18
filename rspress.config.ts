@@ -16,7 +16,7 @@ export default defineConfig({
     title: 'mikigo.site',
     description: 'mikigo.site',
     icon: '/favicon.ico',
-    logo: '/logo.png',
+    // logo: '/logo.png',
     logoText: 'mikigo.site',
     route: {
         cleanUrls: false,
