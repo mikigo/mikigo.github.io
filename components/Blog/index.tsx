@@ -59,7 +59,7 @@ export const useBlogPages = (): BlogListItem[] => {
         title: page.title,
         description: frontmatter.description,
         date: frontmatter.date,
-        href: page.routePath,
+        href: page.routePath + '.html',
         authors: normalizeAuthors(frontmatter.authors),
       };
     })
