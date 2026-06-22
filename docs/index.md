@@ -34,73 +34,69 @@ features:
   - title: Swarm
     details: 🐝 Swarm - 分布式自动化测试执行框架。
     icon: 🐝
-    link: https://github.com/mikigo/swarm
+    link: /project/swarm.htmlswarm.html
   - title: FastAPI-Self-Hosting-Docs
     details: 一个用于 FastAPI 应用程序的自托管文档解决方案，提供本地化的 Swagger UI 和 ReDoc 文档界面。
     icon: 📚
-    link: https://github.com/mikigo/fastapi-self-hosting-docs
+    link: /project/fastapi-self-hosting-docs.html
   - title: Web-Counter
     details: 轻量、隐私优先、开箱即用的网站访问计数器。
     icon: 📊
-    link: https://github.com/mikigo/web-counter
+    link: /project/web-counter.html
   - title: RepoPress
     details: 基于 Git 的文档 CMS。在线编辑 Markdown/MDX 并实时预览，提交并推送到文档仓库。支持 VitePress、Rspress、Docusaurus、MkDocs。
     icon: 📝
-    link: https://github.com/mikigo/RepoPress
+    link: /project/repopress.html
   - title: Relative-Positon
     details: 一个用于在 Linux 和 Windows 平台上将用户界面元素相对于窗口坐标进行定位的 Python 库。
     icon: 📐
-    link: https://github.com/mikigo/relative-position
+    link: /project/relative-position.html
   - title: Allure3-Server
     details: 使用 FastAPI 构建的服务器，用于生成和提供 Allure3 报告。
     icon: 📈
-    link: https://github.com/mikigo/allure3-server
+    link: /project/allure3-server.html
   - title: Allure-Markdown
     details: 将 Allure 的元数据转换为 Markdown 格式的报告。
     icon: 📄
-    link: https://github.com/mikigo/allure-markdown
+    link: /project/allure-markdown.html
   - title: Django-Blog
     details: 一个基于 Django 的博客系统。
     icon: ✍️
-    link: https://mikigo.github.io/django-blog/
+    link: /project/django-blog.html
   - title: Safe-VitePress
     details: 一个将 VitePress 前端与 FastAPI 后端认证相结合的安全文档解决方案。
     icon: 🔒
-    link: https://github.com/mikigo/safe-vitepress/
+    link: /project/safe-vitepress.html
   - title: TestRunner
     details: 一个可视化的界面来管理和运行自动化测试任务的前后端系统。
     icon: 🎯
-    link: https://github.com/mikigo/TestRunner/
+    link: /project/test-runner.html
   - title: Autotest Basic Template
     details: Basic template for automated testing using Pytest.
     icon: 📋
-    link: https://github.com/mikigo/Autotest-Basic-Template/
-  - title: Pytest Plugin List
-    details: Pytest 插件列表
-    icon: 🔌
-    link: https://github.com/mikigo/pytest-plugin-list/
+    link: /project/autotest-basic-template.html
   - title: SailWind Docs
     details: Paizi EDA Sailwind Docs. （国产EDA软件-SaiWind 中文文档）
     icon: 📖
-    link: https://mikigo.site/sailwind_docs/
+    link: https://mikigo.github.io/sailwind_docs/
   - title: English Words
     details: 精心制作的 Web 版免费学单词项目，包含各类英语词库，助您高效学习英语。
     icon: 📝
-    link: https://mikigo.site/english-words/
+    link: https://english.mikigo.site/
   - title: FunnyLog
     details: 一个简单易用、功能强大的日志工具。
     icon: 📜
-    link: https://linuxdeepin.github.io/funnylog/
+    link: /project/funnylog.html
   - title: pdocr-rpc
     details: 基于 PaddleOCR 封装的 RPC 服务，包含客户端和服务端。
     icon: 👁️
-    link: https://linuxdeepin.github.io/pdocr-rpc/
+    link: /project/pdocr-rpc.html
   - title: LetMeGo
     details: 一个控制 Python 函数执行的技术方案。
     icon: 🎛️
-    link: https://linuxdeepin.github.io/letmego/
+    link: /project/letmego.html
   - title: PyPKG
     details: 一键创建 Python 工程，自动生成 Python 包文件目录结构、PyPI 发布相关配置文件，支持一键发布。
     icon: 📦
-    link: https://gitee.com/deepin-autotest/pypkg/
+    link: /project/pypkg.html
 ---
