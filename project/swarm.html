@@ -1,0 +1,502 @@
+<!doctype html>
+<html lang="zh">
+  <head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>🐝 Swarm - 分布式自动化测试执行框架 - mikigo.site</title>
+<script src="/counter.js">
+  <script>{;const saved = localStorage.getItem('rspress-theme-appearance');const preferDark = window.matchMedia('(prefers-color-scheme: dark)').matches;const isDark = !saved || saved === 'auto' ? preferDark : saved === 'dark';document.documentElement.classList.toggle('dark', isDark);document.documentElement.classList.toggle('rp-dark', isDark);document.documentElement.style.colorScheme = isDark ? 'dark' : 'light';}</script>
+<link href="/static/css/styles.562d17e9.css" rel="stylesheet">
+<script defer src="/static/js/styles.e775c89e.js"></script>
+<script defer src="/static/js/lib-react.cd61bfb4.js"></script>
+<script defer src="/static/js/lib-router.5bdbca0e.js"></script>
+<script defer src="/static/js/9792.6f2a662b.js"></script>
+<script defer src="/static/js/index.335b27d8.js"></script>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Rspress v2.0.2">
+<link rel="icon" href="/favicon.ico">
+<meta property="og:type" content="website">
+<meta property="og:title" content="🐝 Swarm - 分布式自动化测试执行框架 - mikigo.site">
+<meta name="description" content="&quot;让测试飞一会儿&quot;"></head>
+
+  <body>
+    <div id="__rspress_root"><header class="rp-nav"><div class="rp-nav__left"><div class="rp-nav__title"><a href="/" class="rp-nav__title__link rp-link"><span>mikigo.site</span></a></div></div><div class="rp-nav__right"><button class="rp-search-button"><div class="rp-search-button__content"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="none" viewBox="0 0 20 21" class="rp-search-button__icon"><path fill="currentColor" d="M8.333 1.913A6.667 6.667 0 0 1 15 8.58c0 1.54-.525 2.957-1.402 4.085l4.49 4.492a.834.834 0 0 1-1.177 1.178l-4.491-4.49a6.64 6.64 0 0 1-4.087 1.402 6.667 6.667 0 0 1 0-13.334m0 1.667a5 5 0 1 0 0 10 5 5 0 0 0 0-10"></path></svg><span class="rp-search-button__word">搜索</span></div><div class="rp-search-button__hotkey" style="opacity:0"><span></span><span>K</span></div></button><div class="rp-search-button--mobile"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="none" viewBox="0 0 20 21"><path fill="currentColor" d="M8.333 1.913A6.667 6.667 0 0 1 15 8.58c0 1.54-.525 2.957-1.402 4.085l4.49 4.492a.834.834 0 0 1-1.177 1.178l-4.491-4.49a6.64 6.64 0 0 1-4.087 1.402 6.667 6.667 0 0 1 0-13.334m0 1.667a5 5 0 1 0 0 10 5 5 0 0 0 0-10"></path></svg></div><ul class="rp-nav-menu rp-nav-menu--right"><li class="rp-nav-menu__item"><a href="/index.html" class="rp-nav-menu__item__container rp-link">🏠首页</a></li><li class="rp-nav-menu__item"><a href="/program/index.html" class="rp-nav-menu__item__container rp-link">💻编程</a></li><li class="rp-nav-menu__item"><a href="/tech_doc/index.html" class="rp-nav-menu__item__container rp-link">🤓技术文档</a></li><li class="rp-nav-menu__item"><a href="/blog/index.html" class="rp-nav-menu__item__container rp-link">✍️博客</a></li><li class="rp-nav-menu__item"><a href="/cookbook/index.html" class="rp-nav-menu__item__container rp-link">🧑‍🍳菜谱</a></li><li class="rp-nav-menu__item"><a href="/leaderboard.html" class="rp-nav-menu__item__container rp-link">📊排行榜</a></li></ul><div class="rp-nav__others"><div class="rp-nav-menu__divider"></div><div class="rp-switch-appearance"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24" class="rp-switch-appearance__icon rp-switch-appearance__icon--sun"><path fill="currentColor" d="m7.001 15.848-1.226 1.226a.58.58 0 0 0 0 .818.58.58 0 0 0 .818 0l1.226-1.226a.58.58 0 0 0 0-.818.58.58 0 0 0-.818 0m-.352-8.735a.584.584 0 0 0 .825-.825L6.237 5.051a.584.584 0 0 0-.825.825zM5.011 11.07h-1.75a.584.584 0 0 0 0 1.167h1.75c.324 0 .584-.26.584-.583a.585.585 0 0 0-.584-.584m7.003-5.835c.324 0 .584-.26.584-.584V2.9a.58.58 0 0 0-.584-.584.58.58 0 0 0-.583.583V4.65c0 .323.262.584.583.584m5.616 1.621 1.226-1.225a.58.58 0 0 0 0-.818.58.58 0 0 0-.818 0l-1.226 1.225a.58.58 0 0 0 0 .818.576.576 0 0 0 .818 0m3.138 4.214h-1.75a.58.58 0 0 0-.584.584c0 .324.26.584.583.584h1.751a.584.584 0 1 0 0-1.167m-3.389 5.124a.584.584 0 0 0-.825.825l1.238 1.238a.584.584 0 0 0 .825-.826zm-5.365-9.795a5.256 5.256 0 0 0-5.257 5.258 5.256 5.256 0 0 0 5.257 5.257 5.256 5.256 0 0 0 5.257-5.257 5.256 5.256 0 0 0-5.257-5.258m0 11.675a.58.58 0 0 0-.583.583v1.751a.582.582 0 1 0 1.167 0v-1.75a.584.584 0 0 0-.584-.584"></path></svg><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" fill="currentColor" viewBox="0 0 19 19" class="rp-switch-appearance__icon rp-switch-appearance__icon--moon"><path fill="currentColor" d="M9.166 0a9.2 9.2 0 0 1 1.857.188.834.834 0 0 1 .042 1.623 4.47 4.47 0 1 0 5.457 5.457l.048-.135a.834.834 0 0 1 1.575.177q.186.902.188 1.856A9.168 9.168 0 1 1 9.166 0"></path></svg></div><div class="rp-social-links"><a href="https://github.com/mikigo/" target="_blank" rel="noopener noreferrer" class="rp-social-links__item"><div class="rp-social-links__icon"><div class="rp-social-links__icon"><svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 24 24"><path fill="currentColor" d="M12 .297c-6.63 0-12 5.373-12 12c0 5.303 3.438 9.8 8.205 11.385c.6.113.82-.258.82-.577c0-.285-.01-1.04-.015-2.04c-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729c1.205.084 1.838 1.236 1.838 1.236c1.07 1.835 2.809 1.305 3.495.998c.108-.776.417-1.305.76-1.605c-2.665-.3-5.466-1.332-5.466-5.93c0-1.31.465-2.38 1.235-3.22c-.135-.303-.54-1.523.105-3.176c0 0 1.005-.322 3.3 1.23c.96-.267 1.98-.399 3-.405c1.02.006 2.04.138 3 .405c2.28-1.552 3.285-1.23 3.285-1.23c.645 1.653.24 2.873.12 3.176c.765.84 1.23 1.91 1.23 3.22c0 4.61-2.805 5.625-5.475 5.92c.42.36.81 1.096.81 2.22c0 1.606-.015 2.896-.015 3.286c0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></div></div></a><ul class="rp-hover-group rp-hover-group--hidden rp-hover-group--right"></ul></div></div><button aria-label="mobile hamburger" class="rp-nav-hamburger rp-nav-hamburger__sm"><svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" fill="none" viewBox="0 0 21 21"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.667" d="M3.645 5.225h13.333M3.645 10.225h13.333M3.645 15.225h13.333"></path></svg></button><button aria-label="mobile hamburger" class="rp-nav-hamburger rp-nav-hamburger__md"><svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" fill="none" viewBox="0 0 21 21"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.667" d="M3.645 5.225h13.333M3.645 10.225h13.333M3.645 15.225h13.333"></path></svg><ul class="rp-hover-group rp-hover-group--hidden rp-hover-group--right"><div class="rp-nav-menu__others-mobile__container"><div class="rp-nav-hamburger__md__hover-group"><div class="rp-nav-screen-appearance"><div class="rp-nav-screen-appearance__left">主题</div><div class="rp-nav-screen-appearance__right"></div></div><div class="rp-nav-screen-divider"></div><div class="rp-social-links"><a href="https://github.com/mikigo/" target="_blank" rel="noopener noreferrer" class="rp-social-links__item"><div class="rp-social-links__icon"><div class="rp-social-links__icon"><svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 24 24"><path fill="currentColor" d="M12 .297c-6.63 0-12 5.373-12 12c0 5.303 3.438 9.8 8.205 11.385c.6.113.82-.258.82-.577c0-.285-.01-1.04-.015-2.04c-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729c1.205.084 1.838 1.236 1.838 1.236c1.07 1.835 2.809 1.305 3.495.998c.108-.776.417-1.305.76-1.605c-2.665-.3-5.466-1.332-5.466-5.93c0-1.31.465-2.38 1.235-3.22c-.135-.303-.54-1.523.105-3.176c0 0 1.005-.322 3.3 1.23c.96-.267 1.98-.399 3-.405c1.02.006 2.04.138 3 .405c2.28-1.552 3.285-1.23 3.285-1.23c.645 1.653.24 2.873.12 3.176c.765.84 1.23 1.91 1.23 3.22c0 4.61-2.805 5.625-5.475 5.92c.42.36.81 1.096.81 2.22c0 1.606-.015 2.896-.015 3.286c0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></div></div></a><ul class="rp-hover-group rp-hover-group--hidden rp-hover-group--right"></ul></div></div></div></ul></button></div></header><div class="rp-doc-layout__menu"><div class="rp-sidebar-menu"><div class="rp-sidebar-menu__left"></div><button type="button" class="rp-sidebar-menu__right"><span>目录</span><svg width="14" height="14" class="rp-progress-circle"><circle cx="7" cy="7" r="6" stroke-linecap="round" fill="none" stroke="var(--rp-c-divider-light)" stroke-width="2"></circle><circle cx="7" cy="7" r="6" stroke-linecap="round" fill="none" stroke="var(--rp-c-brand)" stroke-width="2" stroke-dasharray="37.69911184307752" stroke-dashoffset="37.69911184307752" transform="rotate(-90 7 7)" style="transition:stroke-dashoffset 0.3s"></circle></svg><svg width="1em" height="1em" viewBox="0 0 32 32" style="transform:rotate(0deg);transition:transform 0.2s ease-out"><path fill="currentColor" d="M22 16 12 26l-1.4-1.4 8.6-8.6-8.6-8.6L12 6z"></path></svg></button></div></div><div class="rp-doc-layout__container"><aside class="rp-doc-layout__sidebar-placeholder"></aside><div class="rp-doc-layout__doc"><main class="rp-doc-layout__doc-container"><div align="left" style="font-size:0.85em;color:gray;margin-bottom:24px"><span style="display:none" class="counter-container">阅读量 <span data-pv-page=""></span> 次</span></div><div class="rp-doc rspress-doc"><!--$--><h1 class="rp-toc-include" id="-swarm---分布式自动化测试执行框架"><a href="#-swarm---分布式自动化测试执行框架" class="rp-header-anchor rp-link" aria-hidden="true">#</a>🐝 Swarm - 分布式自动化测试执行框架<!-- --> </h1>
+<blockquote>
+<p>&quot;让测试飞一会儿&quot;</p>
+</blockquote>
+<h2 class="rp-toc-include" id="概述"><a href="#概述" class="rp-header-anchor rp-link" aria-hidden="true">#</a>概述</h2>
+<p>Swarm 是一个<strong>分布式自动化测试执行框架</strong>，核心思路是：让测试用例自己找人跑，自己跑完自己报。</p>
+<p>你可以把它理解为 <code>pytest-xdist</code> 的分布式增强版——但多了任务队列、Web 管理、Allure 自动报告、客户端心跳检测、虚拟环境自动管理。</p>
+<p><strong>GitHub</strong>: <a href="https://github.com/mikigo/swarm" target="_blank" rel="noopener noreferrer" class="rp-link">https://github.com/mikigo/swarm</a></p>
+<h2 class="rp-toc-include" id="解决的痛点"><a href="#解决的痛点" class="rp-header-anchor rp-link" aria-hidden="true">#</a>解决的痛点</h2>
+<ul>
+<li>测试用例跑几小时，单机扛不住全部卡死</li>
+<li>几十台机器各跑各的，全靠手动分配任务</li>
+<li>测试报告手动 <code>allure generate</code> 100 次，打包上传累断手</li>
+<li>每次换环境，依赖安装到怀疑人生</li>
+</ul>
+<h2 class="rp-toc-include" id="核心特性"><a href="#核心特性" class="rp-header-anchor rp-link" aria-hidden="true">#</a>核心特性</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="rp-table-scroll-container rp-scrollbar"><table><thead><tr><th>特性</th><th>说明</th></tr></thead><tbody><tr><td>动态分发</td><td>客户端空闲自动领任务，无需人工干预</td></tr><tr><td>多客户端并发</td><td>N 台机器并发跑，互不干扰</td></tr><tr><td>WebSocket 实时通信</td><td>实时日志推送，断线自动重连</td></tr><tr><td>Allure 报告</td><td>自动收集结果，一键生成 HTML 报告</td></tr><tr><td>CLI + API 双接口</td><td>命令行和 REST API 双通道</td></tr><tr><td>心跳监控</td><td>客户端心跳检测，自动下线感知和任务重分配</td></tr><tr><td>Git 代码同步</td><td>自动 clone/pull 测试仓库，支持分支和 tag</td></tr><tr><td>虚拟环境管理</td><td>自动创建 venv 并安装依赖（支持 uv/pipenv/venv）</td></tr><tr><td>任务队列</td><td>完整的任务历史、队列管理、重试、取消</td></tr><tr><td>零外网依赖</td><td>内网友好，自托管 Swagger UI 文档</td></tr><tr><td>终端表格</td><td>Rich 表格展示任务列表，可自定义列、宽度、颜色</td></tr></tbody></table></div>
+<h2 class="rp-toc-include" id="快速开始"><a href="#快速开始" class="rp-header-anchor rp-link" aria-hidden="true">#</a>快速开始</h2>
+<h3 class="rp-toc-include" id="安装"><a href="#安装" class="rp-header-anchor rp-link" aria-hidden="true">#</a>安装</h3>
+<div class="rp-codeblock language-bash"><div class="rp-codeblock__content"><div class="rp-codeblock__content__scroll-container rp-scrollbar rp-scrollbar--always"><pre class="shiki css-variables" style="background-color:var(--shiki-background);color:var(--shiki-foreground)" tabindex="0" data-lang="bash"><code><span class="line"><span style="color:var(--shiki-token-function)">pip</span><span style="color:var(--shiki-token-string)"> install</span><span style="color:var(--shiki-token-string)"> swarm</span></span></code></pre></div><div class="rp-code-button-group"><button class="rp-code-button-group__button rp-code-wrap-button" title="Toggle code wrap"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" class="rp-code-button-group__icon rp-code-button-group__icon--wrapped"><path fill="#22a041" d="M21 5H3v2h18zM3 19h7v-2H3zm0-6h15c1 0 2 .43 2 2s-1 2-2 2h-2v-2l-4 3 4 3v-2h2c2.95 0 4-1.27 4-4 0-2.72-1-4-4-4H3z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" class="rp-code-button-group__icon rp-code-button-group__icon--wrap"><path fill="currentColor" d="M16 7H3V5h13zM3 19h13v-2H3zm19-7-4-3v2H3v2h15v2z"></path></svg></button><button class="rp-code-button-group__button rp-code-copy-button" title="复制代码"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 30 30" class="rp-code-button-group__icon rp-code-copy-button__icon rp-code-copy-button__icon--copy"><path fill="currentColor" d="M28 10v18H10V10zm0-2H10a2 2 0 0 0-2 2v18a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2"></path><path fill="currentColor" d="M4 18H2V4a2 2 0 0 1 2-2h14v2H4Z"></path></svg><svg width="32" height="32" viewBox="0 0 30 30" class="rp-code-button-group__icon rp-code-copy-button__icon rp-code-copy-button__icon--success"><path fill="#49cd37" d="m13 24-9-9 1.414-1.414L13 21.171 26.586 7.586 28 9z"></path></svg></button></div></div></div>
+<h3 class="rp-toc-include" id="启动服务端"><a href="#启动服务端" class="rp-header-anchor rp-link" aria-hidden="true">#</a>启动服务端</h3>
+<div class="rp-codeblock language-bash"><div class="rp-codeblock__content"><div class="rp-codeblock__content__scroll-container rp-scrollbar rp-scrollbar--always"><pre class="shiki css-variables" style="background-color:var(--shiki-background);color:var(--shiki-foreground)" tabindex="0" data-lang="bash"><code><span class="line"><span style="color:var(--shiki-token-comment)"># 默认端口 8000</span></span>
+<span class="line"><span style="color:var(--shiki-token-function)">swarm</span><span style="color:var(--shiki-token-string)"> server</span><span style="color:var(--shiki-token-string)"> start</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--shiki-token-comment)"># 自定义端口</span></span>
+<span class="line"><span style="color:var(--shiki-token-function)">swarm</span><span style="color:var(--shiki-token-string)"> server</span><span style="color:var(--shiki-token-string)"> start</span><span style="color:var(--shiki-token-string)"> --port</span><span style="color:var(--shiki-token-constant)"> 9000</span></span></code></pre></div><div class="rp-code-button-group"><button class="rp-code-button-group__button rp-code-wrap-button" title="Toggle code wrap"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" class="rp-code-button-group__icon rp-code-button-group__icon--wrapped"><path fill="#22a041" d="M21 5H3v2h18zM3 19h7v-2H3zm0-6h15c1 0 2 .43 2 2s-1 2-2 2h-2v-2l-4 3 4 3v-2h2c2.95 0 4-1.27 4-4 0-2.72-1-4-4-4H3z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" class="rp-code-button-group__icon rp-code-button-group__icon--wrap"><path fill="currentColor" d="M16 7H3V5h13zM3 19h13v-2H3zm19-7-4-3v2H3v2h15v2z"></path></svg></button><button class="rp-code-button-group__button rp-code-copy-button" title="复制代码"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 30 30" class="rp-code-button-group__icon rp-code-copy-button__icon rp-code-copy-button__icon--copy"><path fill="currentColor" d="M28 10v18H10V10zm0-2H10a2 2 0 0 0-2 2v18a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2"></path><path fill="currentColor" d="M4 18H2V4a2 2 0 0 1 2-2h14v2H4Z"></path></svg><svg width="32" height="32" viewBox="0 0 30 30" class="rp-code-button-group__icon rp-code-copy-button__icon rp-code-copy-button__icon--success"><path fill="#49cd37" d="m13 24-9-9 1.414-1.414L13 21.171 26.586 7.586 28 9z"></path></svg></button></div></div></div>
+<p>启动后可访问：</p>
+<ul>
+<li><code>http://localhost:8000</code> — 根路径（版本信息）</li>
+<li><code>http://localhost:8000/docs</code> — Swagger API 文档</li>
+<li><code>http://localhost:8000/api/reports/{task_id}</code> — 查看测试报告</li>
+</ul>
+<h3 class="rp-toc-include" id="启动客户端"><a href="#启动客户端" class="rp-header-anchor rp-link" aria-hidden="true">#</a>启动客户端</h3>
+<div class="rp-codeblock language-bash"><div class="rp-codeblock__content"><div class="rp-codeblock__content__scroll-container rp-scrollbar rp-scrollbar--always"><pre class="shiki css-variables" style="background-color:var(--shiki-background);color:var(--shiki-foreground)" tabindex="0" data-lang="bash"><code><span class="line"><span style="color:var(--shiki-token-comment)"># 连接本机服务端</span></span>
+<span class="line"><span style="color:var(--shiki-token-function)">swarm</span><span style="color:var(--shiki-token-string)"> client</span><span style="color:var(--shiki-token-string)"> start</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--shiki-token-comment)"># 连接远程服务端</span></span>
+<span class="line"><span style="color:var(--shiki-token-function)">swarm</span><span style="color:var(--shiki-token-string)"> client</span><span style="color:var(--shiki-token-string)"> start</span><span style="color:var(--shiki-token-string)"> --server</span><span style="color:var(--shiki-token-string)"> http://192.168.1.100:8000</span></span></code></pre></div><div class="rp-code-button-group"><button class="rp-code-button-group__button rp-code-wrap-button" title="Toggle code wrap"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" class="rp-code-button-group__icon rp-code-button-group__icon--wrapped"><path fill="#22a041" d="M21 5H3v2h18zM3 19h7v-2H3zm0-6h15c1 0 2 .43 2 2s-1 2-2 2h-2v-2l-4 3 4 3v-2h2c2.95 0 4-1.27 4-4 0-2.72-1-4-4-4H3z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" class="rp-code-button-group__icon rp-code-button-group__icon--wrap"><path fill="currentColor" d="M16 7H3V5h13zM3 19h13v-2H3zm19-7-4-3v2H3v2h15v2z"></path></svg></button><button class="rp-code-button-group__button rp-code-copy-button" title="复制代码"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 30 30" class="rp-code-button-group__icon rp-code-copy-button__icon rp-code-copy-button__icon--copy"><path fill="currentColor" d="M28 10v18H10V10zm0-2H10a2 2 0 0 0-2 2v18a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2"></path><path fill="currentColor" d="M4 18H2V4a2 2 0 0 1 2-2h14v2H4Z"></path></svg><svg width="32" height="32" viewBox="0 0 30 30" class="rp-code-button-group__icon rp-code-copy-button__icon rp-code-copy-button__icon--success"><path fill="#49cd37" d="m13 24-9-9 1.414-1.414L13 21.171 26.586 7.586 28 9z"></path></svg></button></div></div></div>
+<p>多台测试机器各自启动客户端即可加入集群。</p>
+<h3 class="rp-toc-include" id="创建并执行任务"><a href="#创建并执行任务" class="rp-header-anchor rp-link" aria-hidden="true">#</a>创建并执行任务</h3>
+<p><strong>方式一：命令行</strong></p>
+<div class="rp-codeblock language-bash"><div class="rp-codeblock__content"><div class="rp-codeblock__content__scroll-container rp-scrollbar rp-scrollbar--always"><pre class="shiki css-variables" style="background-color:var(--shiki-background);color:var(--shiki-foreground)" tabindex="0" data-lang="bash"><code><span class="line"><span style="color:var(--shiki-token-function)">swarm</span><span style="color:var(--shiki-token-string)"> run</span><span style="color:var(--shiki-token-string)"> tests/</span><span style="color:var(--shiki-token-string)"> --repo</span><span style="color:var(--shiki-token-string)"> https://github.com/xxx/tests.git</span><span style="color:var(--shiki-token-string)"> -b</span><span style="color:var(--shiki-token-string)"> main</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--shiki-token-comment)"># 加过滤条件</span></span>
+<span class="line"><span style="color:var(--shiki-token-function)">swarm</span><span style="color:var(--shiki-token-string)"> run</span><span style="color:var(--shiki-token-string)"> tests/api/</span><span style="color:var(--shiki-token-string)"> -k</span><span style="color:var(--shiki-token-string-expression)"> &quot;test_user&quot;</span><span style="color:var(--shiki-token-string)"> -m</span><span style="color:var(--shiki-token-string-expression)"> &quot;smoke&quot;</span><span style="color:var(--shiki-foreground)"> \</span></span>
+<span class="line"><span style="color:var(--shiki-token-string)">    --repo</span><span style="color:var(--shiki-token-string)"> https://github.com/xxx/tests.git</span><span style="color:var(--shiki-token-string)"> -b</span><span style="color:var(--shiki-token-string)"> main</span><span style="color:var(--shiki-foreground)"> \</span></span>
+<span class="line"><span style="color:var(--shiki-token-string)">    --client-timeout=60</span><span style="color:var(--shiki-token-string)"> --client-reruns=2</span></span></code></pre></div><div class="rp-code-button-group"><button class="rp-code-button-group__button rp-code-wrap-button" title="Toggle code wrap"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" class="rp-code-button-group__icon rp-code-button-group__icon--wrapped"><path fill="#22a041" d="M21 5H3v2h18zM3 19h7v-2H3zm0-6h15c1 0 2 .43 2 2s-1 2-2 2h-2v-2l-4 3 4 3v-2h2c2.95 0 4-1.27 4-4 0-2.72-1-4-4-4H3z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" class="rp-code-button-group__icon rp-code-button-group__icon--wrap"><path fill="currentColor" d="M16 7H3V5h13zM3 19h13v-2H3zm19-7-4-3v2H3v2h15v2z"></path></svg></button><button class="rp-code-button-group__button rp-code-copy-button" title="复制代码"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 30 30" class="rp-code-button-group__icon rp-code-copy-button__icon rp-code-copy-button__icon--copy"><path fill="currentColor" d="M28 10v18H10V10zm0-2H10a2 2 0 0 0-2 2v18a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2"></path><path fill="currentColor" d="M4 18H2V4a2 2 0 0 1 2-2h14v2H4Z"></path></svg><svg width="32" height="32" viewBox="0 0 30 30" class="rp-code-button-group__icon rp-code-copy-button__icon rp-code-copy-button__icon--success"><path fill="#49cd37" d="m13 24-9-9 1.414-1.414L13 21.171 26.586 7.586 28 9z"></path></svg></button></div></div></div>
+<p><strong>方式二：配置文件（推荐）</strong></p>
+<div class="rp-codeblock language-json"><div class="rp-codeblock__content"><div class="rp-codeblock__content__scroll-container rp-scrollbar rp-scrollbar--always"><pre class="shiki css-variables" style="background-color:var(--shiki-background);color:var(--shiki-foreground)" tabindex="0" data-lang="json"><code><span class="line"><span style="color:var(--shiki-foreground)">{</span></span>
+<span class="line"><span style="color:var(--shiki-token-keyword)">  &quot;name&quot;</span><span style="color:var(--shiki-token-punctuation)">:</span><span style="color:var(--shiki-token-string-expression)"> &quot;API Regression&quot;</span><span style="color:var(--shiki-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--shiki-token-keyword)">  &quot;repo_url&quot;</span><span style="color:var(--shiki-token-punctuation)">:</span><span style="color:var(--shiki-token-string-expression)"> &quot;https://github.com/xxx/tests.git&quot;</span><span style="color:var(--shiki-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--shiki-token-keyword)">  &quot;branch&quot;</span><span style="color:var(--shiki-token-punctuation)">:</span><span style="color:var(--shiki-token-string-expression)"> &quot;main&quot;</span><span style="color:var(--shiki-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--shiki-token-keyword)">  &quot;test_paths&quot;</span><span style="color:var(--shiki-token-punctuation)">:</span><span style="color:var(--shiki-foreground)"> [</span><span style="color:var(--shiki-token-string-expression)">&quot;tests/api/&quot;</span><span style="color:var(--shiki-token-punctuation)">,</span><span style="color:var(--shiki-token-string-expression)"> &quot;tests/integration/&quot;</span><span style="color:var(--shiki-foreground)">]</span><span style="color:var(--shiki-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--shiki-token-keyword)">  &quot;filter_args&quot;</span><span style="color:var(--shiki-token-punctuation)">:</span><span style="color:var(--shiki-foreground)"> {</span></span>
+<span class="line"><span style="color:var(--shiki-token-keyword)">    &quot;k&quot;</span><span style="color:var(--shiki-token-punctuation)">:</span><span style="color:var(--shiki-token-string-expression)"> &quot;api&quot;</span><span style="color:var(--shiki-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--shiki-token-keyword)">    &quot;m&quot;</span><span style="color:var(--shiki-token-punctuation)">:</span><span style="color:var(--shiki-token-string-expression)"> &quot;regression&quot;</span></span>
+<span class="line"><span style="color:var(--shiki-foreground)">  }</span><span style="color:var(--shiki-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--shiki-token-keyword)">  &quot;client_args&quot;</span><span style="color:var(--shiki-token-punctuation)">:</span><span style="color:var(--shiki-foreground)"> {</span></span>
+<span class="line"><span style="color:var(--shiki-token-keyword)">    &quot;timeout&quot;</span><span style="color:var(--shiki-token-punctuation)">:</span><span style="color:var(--shiki-token-constant)"> 120</span><span style="color:var(--shiki-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--shiki-token-keyword)">    &quot;reruns&quot;</span><span style="color:var(--shiki-token-punctuation)">:</span><span style="color:var(--shiki-token-constant)"> 2</span></span>
+<span class="line"><span style="color:var(--shiki-foreground)">  }</span></span>
+<span class="line"><span style="color:var(--shiki-foreground)">}</span></span></code></pre></div><div class="rp-code-button-group"><button class="rp-code-button-group__button rp-code-wrap-button" title="Toggle code wrap"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" class="rp-code-button-group__icon rp-code-button-group__icon--wrapped"><path fill="#22a041" d="M21 5H3v2h18zM3 19h7v-2H3zm0-6h15c1 0 2 .43 2 2s-1 2-2 2h-2v-2l-4 3 4 3v-2h2c2.95 0 4-1.27 4-4 0-2.72-1-4-4-4H3z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" class="rp-code-button-group__icon rp-code-button-group__icon--wrap"><path fill="currentColor" d="M16 7H3V5h13zM3 19h13v-2H3zm19-7-4-3v2H3v2h15v2z"></path></svg></button><button class="rp-code-button-group__button rp-code-copy-button" title="复制代码"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 30 30" class="rp-code-button-group__icon rp-code-copy-button__icon rp-code-copy-button__icon--copy"><path fill="currentColor" d="M28 10v18H10V10zm0-2H10a2 2 0 0 0-2 2v18a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2"></path><path fill="currentColor" d="M4 18H2V4a2 2 0 0 1 2-2h14v2H4Z"></path></svg><svg width="32" height="32" viewBox="0 0 30 30" class="rp-code-button-group__icon rp-code-copy-button__icon rp-code-copy-button__icon--success"><path fill="#49cd37" d="m13 24-9-9 1.414-1.414L13 21.171 26.586 7.586 28 9z"></path></svg></button></div></div></div>
+<div class="rp-codeblock language-bash"><div class="rp-codeblock__content"><div class="rp-codeblock__content__scroll-container rp-scrollbar rp-scrollbar--always"><pre class="shiki css-variables" style="background-color:var(--shiki-background);color:var(--shiki-foreground)" tabindex="0" data-lang="bash"><code><span class="line"><span style="color:var(--shiki-token-function)">swarm</span><span style="color:var(--shiki-token-string)"> run</span><span style="color:var(--shiki-token-string)"> --config</span><span style="color:var(--shiki-token-string)"> task.json</span></span></code></pre></div><div class="rp-code-button-group"><button class="rp-code-button-group__button rp-code-wrap-button" title="Toggle code wrap"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" class="rp-code-button-group__icon rp-code-button-group__icon--wrapped"><path fill="#22a041" d="M21 5H3v2h18zM3 19h7v-2H3zm0-6h15c1 0 2 .43 2 2s-1 2-2 2h-2v-2l-4 3 4 3v-2h2c2.95 0 4-1.27 4-4 0-2.72-1-4-4-4H3z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" class="rp-code-button-group__icon rp-code-button-group__icon--wrap"><path fill="currentColor" d="M16 7H3V5h13zM3 19h13v-2H3zm19-7-4-3v2H3v2h15v2z"></path></svg></button><button class="rp-code-button-group__button rp-code-copy-button" title="复制代码"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 30 30" class="rp-code-button-group__icon rp-code-copy-button__icon rp-code-copy-button__icon--copy"><path fill="currentColor" d="M28 10v18H10V10zm0-2H10a2 2 0 0 0-2 2v18a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2"></path><path fill="currentColor" d="M4 18H2V4a2 2 0 0 1 2-2h14v2H4Z"></path></svg><svg width="32" height="32" viewBox="0 0 30 30" class="rp-code-button-group__icon rp-code-copy-button__icon rp-code-copy-button__icon--success"><path fill="#49cd37" d="m13 24-9-9 1.414-1.414L13 21.171 26.586 7.586 28 9z"></path></svg></button></div></div></div>
+<h3 class="rp-toc-include" id="管理任务"><a href="#管理任务" class="rp-header-anchor rp-link" aria-hidden="true">#</a>管理任务</h3>
+<div class="rp-codeblock language-bash"><div class="rp-codeblock__content"><div class="rp-codeblock__content__scroll-container rp-scrollbar rp-scrollbar--always"><pre class="shiki css-variables" style="background-color:var(--shiki-background);color:var(--shiki-foreground)" tabindex="0" data-lang="bash"><code><span class="line"><span style="color:var(--shiki-token-function)">swarm</span><span style="color:var(--shiki-token-string)"> task</span><span style="color:var(--shiki-token-string)"> list</span><span style="color:var(--shiki-token-comment)">                   # 查看所有任务</span></span>
+<span class="line"><span style="color:var(--shiki-token-function)">swarm</span><span style="color:var(--shiki-token-string)"> task</span><span style="color:var(--shiki-token-string)"> list</span><span style="color:var(--shiki-token-string)"> --status</span><span style="color:var(--shiki-token-string)"> running</span><span style="color:var(--shiki-token-comment)">  # 按状态筛选</span></span>
+<span class="line"><span style="color:var(--shiki-token-function)">swarm</span><span style="color:var(--shiki-token-string)"> task</span><span style="color:var(--shiki-token-string)"> info</span><span style="color:var(--shiki-token-keyword)"> &lt;</span><span style="color:var(--shiki-token-string)">task_i</span><span style="color:var(--shiki-foreground)">d</span><span style="color:var(--shiki-token-keyword)">&gt;</span><span style="color:var(--shiki-token-comment)">         # 查看任务详情</span></span>
+<span class="line"><span style="color:var(--shiki-token-function)">swarm</span><span style="color:var(--shiki-token-string)"> task</span><span style="color:var(--shiki-token-string)"> cancel</span><span style="color:var(--shiki-token-keyword)"> &lt;</span><span style="color:var(--shiki-token-string)">task_i</span><span style="color:var(--shiki-foreground)">d</span><span style="color:var(--shiki-token-keyword)">&gt;</span><span style="color:var(--shiki-token-comment)">       # 取消任务</span></span></code></pre></div><div class="rp-code-button-group"><button class="rp-code-button-group__button rp-code-wrap-button" title="Toggle code wrap"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" class="rp-code-button-group__icon rp-code-button-group__icon--wrapped"><path fill="#22a041" d="M21 5H3v2h18zM3 19h7v-2H3zm0-6h15c1 0 2 .43 2 2s-1 2-2 2h-2v-2l-4 3 4 3v-2h2c2.95 0 4-1.27 4-4 0-2.72-1-4-4-4H3z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" class="rp-code-button-group__icon rp-code-button-group__icon--wrap"><path fill="currentColor" d="M16 7H3V5h13zM3 19h13v-2H3zm19-7-4-3v2H3v2h15v2z"></path></svg></button><button class="rp-code-button-group__button rp-code-copy-button" title="复制代码"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 30 30" class="rp-code-button-group__icon rp-code-copy-button__icon rp-code-copy-button__icon--copy"><path fill="currentColor" d="M28 10v18H10V10zm0-2H10a2 2 0 0 0-2 2v18a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2"></path><path fill="currentColor" d="M4 18H2V4a2 2 0 0 1 2-2h14v2H4Z"></path></svg><svg width="32" height="32" viewBox="0 0 30 30" class="rp-code-button-group__icon rp-code-copy-button__icon rp-code-copy-button__icon--success"><path fill="#49cd37" d="m13 24-9-9 1.414-1.414L13 21.171 26.586 7.586 28 9z"></path></svg></button></div></div></div>
+<h2 class="rp-toc-include" id="架构概览"><a href="#架构概览" class="rp-header-anchor rp-link" aria-hidden="true">#</a>架构概览</h2>
+<div></div>
+<h3 class="rp-toc-include" id="任务执行流程"><a href="#任务执行流程" class="rp-header-anchor rp-link" aria-hidden="true">#</a>任务执行流程</h3>
+<ol>
+<li>用户通过 CLI 或 API 创建任务 → 服务端生成任务（状态：pending）</li>
+<li>服务端 Collector 模块解析 test_paths，通过 pytest --collect-only 发现测试文件</li>
+<li>空闲客户端通过 WebSocket 发送 <code>next</code> 请求领取任务</li>
+<li>服务端将单个测试文件分配给该客户端（状态：running）</li>
+<li>客户端执行流水线：<strong>Git Clone → 创建虚拟环境 → 安装依赖 → pytest 执行 → 上传 Allure 结果</strong></li>
+<li>客户端上报结果后继续请求下一个文件</li>
+<li>所有文件完成后，服务端调用 Allure CLI 生成 HTML 报告</li>
+<li>通过 API 即可访问报告</li>
+</ol>
+<h2 class="rp-toc-include" id="通信协议"><a href="#通信协议" class="rp-header-anchor rp-link" aria-hidden="true">#</a>通信协议</h2>
+<h3 class="rp-toc-include" id="websocket-协议"><a href="#websocket-协议" class="rp-header-anchor rp-link" aria-hidden="true">#</a>WebSocket 协议</h3>
+<p>服务端与客户端通过 WebSocket 长连接通信。</p>
+<p><strong>客户端 → 服务端：</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="rp-table-scroll-container rp-scrollbar"><table><thead><tr><th>action</th><th>说明</th><th>携带数据</th></tr></thead><tbody><tr><td><code>register</code></td><td>注册客户端</td><td>hostname, ip, os, python_version</td></tr><tr><td><code>heartbeat</code></td><td>心跳保活</td><td>—</td></tr><tr><td><code>next</code></td><td>请求下一个任务</td><td>task_id（上一个任务ID）, result</td></tr><tr><td><code>log</code></td><td>推送执行日志</td><td>message, task_id</td></tr></tbody></table></div>
+<p><strong>服务端 → 客户端：</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="rp-table-scroll-container rp-scrollbar"><table><thead><tr><th>action</th><th>说明</th><th>携带数据</th></tr></thead><tbody><tr><td><code>registered</code></td><td>注册确认</td><td>client_id</td></tr><tr><td><code>task</code></td><td>分配任务</td><td>task_id, test_file, repo_url, branch, client_args</td></tr><tr><td><code>cancel</code></td><td>取消通知</td><td>task_id</td></tr><tr><td><code>no_task</code></td><td>无待处理任务</td><td>message</td></tr><tr><td><code>heartbeat_ack</code></td><td>心跳响应</td><td>—</td></tr></tbody></table></div>
+<h3 class="rp-toc-include" id="rest-api"><a href="#rest-api" class="rp-header-anchor rp-link" aria-hidden="true">#</a>REST API</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="rp-table-scroll-container rp-scrollbar"><table><thead><tr><th>方法</th><th>路径</th><th>说明</th></tr></thead><tbody><tr><td><code>POST</code></td><td><code>/api/tasks</code></td><td>创建任务</td></tr><tr><td><code>GET</code></td><td><code>/api/tasks</code></td><td>任务列表（支持 <code>?status=</code> 筛选）</td></tr><tr><td><code>GET</code></td><td><code>/api/tasks/{task_id}</code></td><td>任务详情</td></tr><tr><td><code>DELETE</code></td><td><code>/api/tasks/{task_id}</code></td><td>取消任务</td></tr><tr><td><code>POST</code></td><td><code>/api/tasks/{task_id}/retry</code></td><td>重试任务</td></tr><tr><td><code>POST</code></td><td><code>/api/tasks/{task_id}/upload</code></td><td>上传 Allure 结果（multipart）</td></tr><tr><td><code>GET</code></td><td><code>/api/clients</code></td><td>客户端列表</td></tr><tr><td><code>GET</code></td><td><code>/api/clients/{client_id}</code></td><td>客户端详情</td></tr><tr><td><code>GET</code></td><td><code>/api/reports/{task_id}</code></td><td>查看测试报告</td></tr><tr><td><code>GET</code></td><td><code>/health</code></td><td>健康检查</td></tr></tbody></table></div>
+<h2 class="rp-toc-include" id="配置文件"><a href="#配置文件" class="rp-header-anchor rp-link" aria-hidden="true">#</a>配置文件</h2>
+<h3 class="rp-toc-include" id="服务端配置"><a href="#服务端配置" class="rp-header-anchor rp-link" aria-hidden="true">#</a>服务端配置</h3>
+<p>通过环境变量（<code>SWARM_</code> 前缀）配置，使用 pydantic-settings：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="rp-table-scroll-container rp-scrollbar"><table><thead><tr><th>配置项</th><th>默认值</th><th>环境变量</th></tr></thead><tbody><tr><td>监听地址</td><td>0.0.0.0</td><td>SWARM_HOST</td></tr><tr><td>端口</td><td>8000</td><td>SWARM_PORT</td></tr><tr><td>Debug 模式</td><td>False</td><td>SWARM_DEBUG</td></tr><tr><td>数据目录</td><td>./data</td><td>SWARM_DATA_DIR</td></tr><tr><td>心跳间隔</td><td>30s</td><td>SWARM_HEARTBEAT_INTERVAL</td></tr><tr><td>心跳超时</td><td>60s</td><td>SWARM_HEARTBEAT_TIMEOUT</td></tr><tr><td>日志保留天数</td><td>7</td><td>SWARM_LOG_RETENTION_DAYS</td></tr></tbody></table></div>
+<h3 class="rp-toc-include" id="cli-配置"><a href="#cli-配置" class="rp-header-anchor rp-link" aria-hidden="true">#</a>CLI 配置</h3>
+<p>配置文件路径：<code>~/.swarm/config.yaml</code>（用户级）或 <code>./swarm.config.yaml</code>（项目级，优先级更高）</p>
+<div class="rp-codeblock language-yaml"><div class="rp-codeblock__content"><div class="rp-codeblock__content__scroll-container rp-scrollbar rp-scrollbar--always"><pre class="shiki css-variables" style="background-color:var(--shiki-background);color:var(--shiki-foreground)" tabindex="0" data-lang="yaml"><code><span class="line"><span style="color:var(--shiki-token-keyword)">task</span><span style="color:var(--shiki-token-keyword)">:</span></span>
+<span class="line"><span style="color:var(--shiki-token-keyword)">  list</span><span style="color:var(--shiki-token-keyword)">:</span></span>
+<span class="line"><span style="color:var(--shiki-token-keyword)">    columns</span><span style="color:var(--shiki-token-keyword)">:</span></span>
+<span class="line"><span style="color:var(--shiki-foreground)">      - </span><span style="color:var(--shiki-token-string-expression)">id</span></span>
+<span class="line"><span style="color:var(--shiki-foreground)">      - </span><span style="color:var(--shiki-token-string-expression)">name</span></span>
+<span class="line"><span style="color:var(--shiki-foreground)">      - </span><span style="color:var(--shiki-token-string-expression)">status</span></span>
+<span class="line"><span style="color:var(--shiki-foreground)">      - </span><span style="color:var(--shiki-token-string-expression)">created_at</span></span>
+<span class="line"><span style="color:var(--shiki-foreground)">      - </span><span style="color:var(--shiki-token-string-expression)">duration</span></span>
+<span class="line"><span style="color:var(--shiki-foreground)">      - </span><span style="color:var(--shiki-token-string-expression)">ip</span></span>
+<span class="line"><span style="color:var(--shiki-foreground)">      - </span><span style="color:var(--shiki-token-string-expression)">passed</span></span>
+<span class="line"><span style="color:var(--shiki-foreground)">      - </span><span style="color:var(--shiki-token-string-expression)">failed</span></span>
+<span class="line"><span style="color:var(--shiki-foreground)">      - </span><span style="color:var(--shiki-token-string-expression)">report_url</span></span>
+<span class="line"><span style="color:var(--shiki-token-keyword)">    width</span><span style="color:var(--shiki-token-keyword)">:</span></span>
+<span class="line"><span style="color:var(--shiki-token-keyword)">      id</span><span style="color:var(--shiki-token-keyword)">:</span><span style="color:var(--shiki-token-constant)"> 36</span></span>
+<span class="line"><span style="color:var(--shiki-token-keyword)">      name</span><span style="color:var(--shiki-token-keyword)">:</span><span style="color:var(--shiki-token-constant)"> 20</span></span>
+<span class="line"><span style="color:var(--shiki-token-keyword)">      report_url</span><span style="color:var(--shiki-token-keyword)">:</span><span style="color:var(--shiki-token-constant)"> 30</span></span>
+<span class="line"><span style="color:var(--shiki-token-keyword)">    color</span><span style="color:var(--shiki-token-keyword)">:</span></span>
+<span class="line"><span style="color:var(--shiki-token-keyword)">      passed</span><span style="color:var(--shiki-token-keyword)">:</span><span style="color:var(--shiki-token-string-expression)"> green</span></span>
+<span class="line"><span style="color:var(--shiki-token-keyword)">      failed</span><span style="color:var(--shiki-token-keyword)">:</span><span style="color:var(--shiki-token-string-expression)"> red</span></span>
+<span class="line"><span style="color:var(--shiki-token-keyword)">      running</span><span style="color:var(--shiki-token-keyword)">:</span><span style="color:var(--shiki-token-string-expression)"> yellow</span></span>
+<span class="line"><span style="color:var(--shiki-token-keyword)">      pending</span><span style="color:var(--shiki-token-keyword)">:</span><span style="color:var(--shiki-token-string-expression)"> blue</span></span>
+<span class="line"><span style="color:var(--shiki-token-keyword)">      completed</span><span style="color:var(--shiki-token-keyword)">:</span><span style="color:var(--shiki-token-string-expression)"> green</span></span>
+<span class="line"><span style="color:var(--shiki-token-keyword)">      cancelled</span><span style="color:var(--shiki-token-keyword)">:</span><span style="color:var(--shiki-token-string-expression)"> gray</span></span></code></pre></div><div class="rp-code-button-group"><button class="rp-code-button-group__button rp-code-wrap-button" title="Toggle code wrap"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" class="rp-code-button-group__icon rp-code-button-group__icon--wrapped"><path fill="#22a041" d="M21 5H3v2h18zM3 19h7v-2H3zm0-6h15c1 0 2 .43 2 2s-1 2-2 2h-2v-2l-4 3 4 3v-2h2c2.95 0 4-1.27 4-4 0-2.72-1-4-4-4H3z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" class="rp-code-button-group__icon rp-code-button-group__icon--wrap"><path fill="currentColor" d="M16 7H3V5h13zM3 19h13v-2H3zm19-7-4-3v2H3v2h15v2z"></path></svg></button><button class="rp-code-button-group__button rp-code-copy-button" title="复制代码"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 30 30" class="rp-code-button-group__icon rp-code-copy-button__icon rp-code-copy-button__icon--copy"><path fill="currentColor" d="M28 10v18H10V10zm0-2H10a2 2 0 0 0-2 2v18a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2"></path><path fill="currentColor" d="M4 18H2V4a2 2 0 0 1 2-2h14v2H4Z"></path></svg><svg width="32" height="32" viewBox="0 0 30 30" class="rp-code-button-group__icon rp-code-copy-button__icon rp-code-copy-button__icon--success"><path fill="#49cd37" d="m13 24-9-9 1.414-1.414L13 21.171 26.586 7.586 28 9z"></path></svg></button></div></div></div>
+<h2 class="rp-toc-include" id="项目结构"><a href="#项目结构" class="rp-header-anchor rp-link" aria-hidden="true">#</a>项目结构</h2>
+<div class="rp-codeblock language-txt"><div class="rp-codeblock__content"><div class="rp-codeblock__content__scroll-container rp-scrollbar rp-scrollbar--always"><pre class="shiki css-variables" style="background-color:var(--shiki-background);color:var(--shiki-foreground)" tabindex="0" data-lang="txt"><code><span class="line"><span>swarm/</span></span>
+<span class="line"><span>├── swarm/</span></span>
+<span class="line"><span>│   ├── server/           # 服务端</span></span>
+<span class="line"><span>│   │   ├── main.py      # FastAPI 应用入口</span></span>
+<span class="line"><span>│   │   ├── api.py       # REST API 路由</span></span>
+<span class="line"><span>│   │   ├── websocket.py # WebSocket 连接管理</span></span>
+<span class="line"><span>│   │   ├── task.py      # 任务 CRUD 和状态管理</span></span>
+<span class="line"><span>│   │   ├── client.py    # 客户端注册和心跳管理</span></span>
+<span class="line"><span>│   │   ├── collector.py # 测试文件发现</span></span>
+<span class="line"><span>│   │   ├── report.py    # Allure 报告生成</span></span>
+<span class="line"><span>│   │   ├── models.py    # Pydantic 数据模型</span></span>
+<span class="line"><span>│   │   └── config.py    # 服务端配置</span></span>
+<span class="line"><span>│   ├── client/          # 客户端</span></span>
+<span class="line"><span>│   │   ├── main.py     # 客户端 CLI 入口</span></span>
+<span class="line"><span>│   │   ├── runner.py   # 核心执行循环</span></span>
+<span class="line"><span>│   │   ├── git.py      # Git clone/pull 操作</span></span>
+<span class="line"><span>│   │   ├── venv.py     # 虚拟环境管理</span></span>
+<span class="line"><span>│   │   └── uploader.py # 结果上传</span></span>
+<span class="line"><span>│   └── cli/            # CLI</span></span>
+<span class="line"><span>│       ├── main.py     # Click CLI 入口</span></span>
+<span class="line"><span>│       ├── task.py     # 任务相关命令</span></span>
+<span class="line"><span>│       └── config.py   # CLI 配置管理</span></span>
+<span class="line"><span>├── tests/              # 测试套件</span></span>
+<span class="line"><span>├── docs/               # 文档</span></span>
+<span class="line"><span>│   ├── requirements.md # 需求规格说明书</span></span>
+<span class="line"><span>│   └── architecture.md # 架构设计文档</span></span>
+<span class="line"><span>├── pyproject.toml     # 项目配置</span></span>
+<span class="line"><span>└── README.md</span></span></code></pre></div><div class="rp-code-button-group"><button class="rp-code-button-group__button rp-code-wrap-button" title="Toggle code wrap"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" class="rp-code-button-group__icon rp-code-button-group__icon--wrapped"><path fill="#22a041" d="M21 5H3v2h18zM3 19h7v-2H3zm0-6h15c1 0 2 .43 2 2s-1 2-2 2h-2v-2l-4 3 4 3v-2h2c2.95 0 4-1.27 4-4 0-2.72-1-4-4-4H3z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" class="rp-code-button-group__icon rp-code-button-group__icon--wrap"><path fill="currentColor" d="M16 7H3V5h13zM3 19h13v-2H3zm19-7-4-3v2H3v2h15v2z"></path></svg></button><button class="rp-code-button-group__button rp-code-copy-button" title="复制代码"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 30 30" class="rp-code-button-group__icon rp-code-copy-button__icon rp-code-copy-button__icon--copy"><path fill="currentColor" d="M28 10v18H10V10zm0-2H10a2 2 0 0 0-2 2v18a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2"></path><path fill="currentColor" d="M4 18H2V4a2 2 0 0 1 2-2h14v2H4Z"></path></svg><svg width="32" height="32" viewBox="0 0 30 30" class="rp-code-button-group__icon rp-code-copy-button__icon rp-code-copy-button__icon--success"><path fill="#49cd37" d="m13 24-9-9 1.414-1.414L13 21.171 26.586 7.586 28 9z"></path></svg></button></div></div></div>
+<h2 class="rp-toc-include" id="技术栈"><a href="#技术栈" class="rp-header-anchor rp-link" aria-hidden="true">#</a>技术栈</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="rp-table-scroll-container rp-scrollbar"><table><thead><tr><th>类别</th><th>技术</th></tr></thead><tbody><tr><td>Web 框架</td><td>FastAPI</td></tr><tr><td>ASGI 服务</td><td>Uvicorn</td></tr><tr><td>WebSocket</td><td>websockets</td></tr><tr><td>数据验证</td><td>Pydantic v2</td></tr><tr><td>数据设置</td><td>pydantic-settings</td></tr><tr><td>CLI</td><td>Click</td></tr><tr><td>终端表格</td><td>Rich</td></tr><tr><td>HTTP 客户端</td><td>httpx</td></tr><tr><td>日志</td><td>loguru</td></tr><tr><td>Git 操作</td><td>GitPython</td></tr><tr><td>虚拟环境</td><td>uv / pipenv / venv</td></tr><tr><td>测试报告</td><td>Allure</td></tr><tr><td>配置文件</td><td>PyYAML</td></tr></tbody></table></div>
+<h3 class="rp-toc-include" id="开发工具链"><a href="#开发工具链" class="rp-header-anchor rp-link" aria-hidden="true">#</a>开发工具链</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="rp-table-scroll-container rp-scrollbar"><table><thead><tr><th>类别</th><th>技术</th></tr></thead><tbody><tr><td>测试框架</td><td>pytest + pytest-asyncio</td></tr><tr><td>代码检查</td><td>ruff</td></tr><tr><td>类型检查</td><td>mypy (strict)</td></tr><tr><td>构建系统</td><td>setuptools</td></tr></tbody></table></div>
+<h2 class="rp-toc-include" id="测试"><a href="#测试" class="rp-header-anchor rp-link" aria-hidden="true">#</a>测试</h2>
+<div class="rp-codeblock language-bash"><div class="rp-codeblock__content"><div class="rp-codeblock__content__scroll-container rp-scrollbar rp-scrollbar--always"><pre class="shiki css-variables" style="background-color:var(--shiki-background);color:var(--shiki-foreground)" tabindex="0" data-lang="bash"><code><span class="line"><span style="color:var(--shiki-token-comment)"># 运行全部测试</span></span>
+<span class="line"><span style="color:var(--shiki-token-function)">pytest</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--shiki-token-comment)"># 测试覆盖</span></span>
+<span class="line"><span style="color:var(--shiki-token-function)">tests/</span></span>
+<span class="line"><span style="color:var(--shiki-token-function)">├──</span><span style="color:var(--shiki-token-string)"> test_api.py</span><span style="color:var(--shiki-token-comment)">        # API 端点测试（FastAPI TestClient）</span></span>
+<span class="line"><span style="color:var(--shiki-token-function)">├──</span><span style="color:var(--shiki-token-string)"> test_task.py</span><span style="color:var(--shiki-token-comment)">       # 任务管理单元测试</span></span>
+<span class="line"><span style="color:var(--shiki-token-function)">├──</span><span style="color:var(--shiki-token-string)"> test_client.py</span><span style="color:var(--shiki-token-comment)">     # 客户端模块测试</span></span>
+<span class="line"><span style="color:var(--shiki-token-function)">├──</span><span style="color:var(--shiki-token-string)"> test_collector.py</span><span style="color:var(--shiki-token-comment)">  # 测试文件发现测试</span></span>
+<span class="line"><span style="color:var(--shiki-token-function)">├──</span><span style="color:var(--shiki-token-string)"> test_config.py</span><span style="color:var(--shiki-token-comment)">     # 服务端配置测试</span></span>
+<span class="line"><span style="color:var(--shiki-token-function)">└──</span><span style="color:var(--shiki-token-string)"> test_models.py</span><span style="color:var(--shiki-token-comment)">     # Pydantic 模型测试</span></span></code></pre></div><div class="rp-code-button-group"><button class="rp-code-button-group__button rp-code-wrap-button" title="Toggle code wrap"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" class="rp-code-button-group__icon rp-code-button-group__icon--wrapped"><path fill="#22a041" d="M21 5H3v2h18zM3 19h7v-2H3zm0-6h15c1 0 2 .43 2 2s-1 2-2 2h-2v-2l-4 3 4 3v-2h2c2.95 0 4-1.27 4-4 0-2.72-1-4-4-4H3z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" class="rp-code-button-group__icon rp-code-button-group__icon--wrap"><path fill="currentColor" d="M16 7H3V5h13zM3 19h13v-2H3zm19-7-4-3v2H3v2h15v2z"></path></svg></button><button class="rp-code-button-group__button rp-code-copy-button" title="复制代码"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 30 30" class="rp-code-button-group__icon rp-code-copy-button__icon rp-code-copy-button__icon--copy"><path fill="currentColor" d="M28 10v18H10V10zm0-2H10a2 2 0 0 0-2 2v18a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2"></path><path fill="currentColor" d="M4 18H2V4a2 2 0 0 1 2-2h14v2H4Z"></path></svg><svg width="32" height="32" viewBox="0 0 30 30" class="rp-code-button-group__icon rp-code-copy-button__icon rp-code-copy-button__icon--success"><path fill="#49cd37" d="m13 24-9-9 1.414-1.414L13 21.171 26.586 7.586 28 9z"></path></svg></button></div></div></div>
+<h2 class="rp-toc-include" id="开发状态"><a href="#开发状态" class="rp-header-anchor rp-link" aria-hidden="true">#</a>开发状态</h2>
+<p>版本：<code>0.1.0</code>（Alpha）</p>
+<p>核心功能全部完成（14/16 任务），尚在积极的开发迭代中。</p>
+<h2 class="rp-toc-include" id="license"><a href="#license" class="rp-header-anchor rp-link" aria-hidden="true">#</a>License</h2>
+<p>MIT</p><!--/$--></div><div align="left" style="font-size:0.8em;color:gray">声明：本站所有文章，均为本站原创发布。任何个人或组织，在未征得本站同意时，禁止复制、盗用、采集、发布本站内容到任何网站、书籍等各类媒体平台。<a href="https://github.com/mikigo/" style="color:#1cc088">-- mikigo</a></div><footer class="rp-doc-footer"><div class="rp-doc-footer__edit"><div class="rp-last-updated"><p>最后更新于<!-- -->: <span>2026/6/22 11:06:50</span></p></div></div><div class="rp-doc-footer__divider"></div><div class="rp-prev-next-page"><a href="/project/safe-vitepress.html" class="rp-prev-next-page__item rp-prev-next-page__prev rp-link"><span class="rp-prev-next-page__item__desc">上一页</span><span class="rp-prev-next-page__item__title"><svg width="1em" height="1em" viewBox="0 0 32 32" class="rp-prev-next-page__icon rp-prev-next-page__rotate_180"><path fill="currentColor" d="M22 16 12 26l-1.4-1.4 8.6-8.6-8.6-8.6L12 6z"></path></svg><span>🔒 safe-vitepress — 带身份认证的 VitePress 文档站</span></span></a><a href="/project/test-runner.html" class="rp-prev-next-page__item rp-prev-next-page__next rp-link"><span class="rp-prev-next-page__item__desc">下一页</span><span class="rp-prev-next-page__item__title"><span>🏃 TestRunner — 自动化测试任务可视化管理平台</span><svg width="1em" height="1em" viewBox="0 0 32 32" class="rp-prev-next-page__icon"><path fill="currentColor" d="M22 16 12 26l-1.4-1.4 8.6-8.6-8.6-8.6L12 6z"></path></svg></span></a></div></footer></main></div><aside class="rp-doc-layout__outline rp-scrollbar"><div class="rp-outline"><div class="rp-outline__title">目录<svg width="14" height="14" class="rp-progress-circle"><circle cx="7" cy="7" r="6" stroke-linecap="round" fill="none" stroke="var(--rp-c-divider-light)" stroke-width="2"></circle><circle cx="7" cy="7" r="6" stroke-linecap="round" fill="none" stroke="var(--rp-c-brand)" stroke-width="2" stroke-dasharray="37.69911184307752" stroke-dashoffset="37.69911184307752" transform="rotate(-90 7 7)" style="transition:stroke-dashoffset 0.3s"></circle></svg></div><nav class="rp-outline__toc rp-scrollbar"><a href="#概述" class="rp-toc-item rp-link" title="概述" style="padding-left:0" data-depth="0"><span class="rp-toc-item__text rp-doc">概述</span></a><a href="#解决的痛点" class="rp-toc-item rp-link" title="解决的痛点" style="padding-left:0" data-depth="0"><span class="rp-toc-item__text rp-doc">解决的痛点</span></a><a href="#核心特性" class="rp-toc-item rp-link" title="核心特性" style="padding-left:0" data-depth="0"><span class="rp-toc-item__text rp-doc">核心特性</span></a><a href="#快速开始" class="rp-toc-item rp-link" title="快速开始" style="padding-left:0" data-depth="0"><span class="rp-toc-item__text rp-doc">快速开始</span></a><a href="#安装" class="rp-toc-item rp-link" title="安装" style="padding-left:12px" data-depth="1"><span class="rp-toc-item__text rp-doc">安装</span></a><a href="#启动服务端" class="rp-toc-item rp-link" title="启动服务端" style="padding-left:12px" data-depth="1"><span class="rp-toc-item__text rp-doc">启动服务端</span></a><a href="#启动客户端" class="rp-toc-item rp-link" title="启动客户端" style="padding-left:12px" data-depth="1"><span class="rp-toc-item__text rp-doc">启动客户端</span></a><a href="#创建并执行任务" class="rp-toc-item rp-link" title="创建并执行任务" style="padding-left:12px" data-depth="1"><span class="rp-toc-item__text rp-doc">创建并执行任务</span></a><a href="#管理任务" class="rp-toc-item rp-link" title="管理任务" style="padding-left:12px" data-depth="1"><span class="rp-toc-item__text rp-doc">管理任务</span></a><a href="#架构概览" class="rp-toc-item rp-link" title="架构概览" style="padding-left:0" data-depth="0"><span class="rp-toc-item__text rp-doc">架构概览</span></a><a href="#任务执行流程" class="rp-toc-item rp-link" title="任务执行流程" style="padding-left:12px" data-depth="1"><span class="rp-toc-item__text rp-doc">任务执行流程</span></a><a href="#通信协议" class="rp-toc-item rp-link" title="通信协议" style="padding-left:0" data-depth="0"><span class="rp-toc-item__text rp-doc">通信协议</span></a><a href="#websocket-协议" class="rp-toc-item rp-link" title="WebSocket 协议" style="padding-left:12px" data-depth="1"><span class="rp-toc-item__text rp-doc">WebSocket 协议</span></a><a href="#rest-api" class="rp-toc-item rp-link" title="REST API" style="padding-left:12px" data-depth="1"><span class="rp-toc-item__text rp-doc">REST API</span></a><a href="#配置文件" class="rp-toc-item rp-link" title="配置文件" style="padding-left:0" data-depth="0"><span class="rp-toc-item__text rp-doc">配置文件</span></a><a href="#服务端配置" class="rp-toc-item rp-link" title="服务端配置" style="padding-left:12px" data-depth="1"><span class="rp-toc-item__text rp-doc">服务端配置</span></a><a href="#cli-配置" class="rp-toc-item rp-link" title="CLI 配置" style="padding-left:12px" data-depth="1"><span class="rp-toc-item__text rp-doc">CLI 配置</span></a><a href="#项目结构" class="rp-toc-item rp-link" title="项目结构" style="padding-left:0" data-depth="0"><span class="rp-toc-item__text rp-doc">项目结构</span></a><a href="#技术栈" class="rp-toc-item rp-link" title="技术栈" style="padding-left:0" data-depth="0"><span class="rp-toc-item__text rp-doc">技术栈</span></a><a href="#开发工具链" class="rp-toc-item rp-link" title="开发工具链" style="padding-left:12px" data-depth="1"><span class="rp-toc-item__text rp-doc">开发工具链</span></a><a href="#测试" class="rp-toc-item rp-link" title="测试" style="padding-left:0" data-depth="0"><span class="rp-toc-item__text rp-doc">测试</span></a><a href="#开发状态" class="rp-toc-item rp-link" title="开发状态" style="padding-left:0" data-depth="0"><span class="rp-toc-item__text rp-doc">开发状态</span></a><a href="#license" class="rp-toc-item rp-link" title="License" style="padding-left:0" data-depth="0"><span class="rp-toc-item__text rp-doc">License</span></a></nav><div class="rp-outline__divider"></div><div class="rp-outline__bottom"><button class="rp-outline__scroll-to-top"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.99967 14.6667C11.6816 14.6667 14.6663 11.6819 14.6663 8.00001C14.6663 4.31811 11.6816 1.33334 7.99967 1.33334C4.31777 1.33334 1.33301 4.31811 1.33301 8.00001C1.33301 11.6819 4.31777 14.6667 7.99967 14.6667Z" stroke="currentColor" stroke-opacity="0.8" stroke-width="1.33333"></path><path d="M7.99967 14.6667C11.6816 14.6667 14.6663 11.6819 14.6663 8.00001C14.6663 4.31811 11.6816 1.33334 7.99967 1.33334C4.31777 1.33334 1.33301 4.31811 1.33301 8.00001C1.33301 11.6819 4.31777 14.6667 7.99967 14.6667Z" stroke="currentColor" stroke-opacity="0.8" stroke-width="1.33333" stroke-linejoin="round"></path><path d="M11 9L8 6L5 9" stroke="currentColor" stroke-opacity="0.8" stroke-width="1.33333" stroke-linecap="round" stroke-linejoin="round"></path></svg><span>回到顶部</span></button></div></div></aside></div></div>
+    <div id="__rspress_modal_container"></div>
+  </body>
+</html>

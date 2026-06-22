@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="zh">
+  <head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>🔒 safe-vitepress — 带身份认证的 VitePress 文档站 - mikigo.site</title>
+<script src="/counter.js">
+  <script>{;const saved = localStorage.getItem('rspress-theme-appearance');const preferDark = window.matchMedia('(prefers-color-scheme: dark)').matches;const isDark = !saved || saved === 'auto' ? preferDark : saved === 'dark';document.documentElement.classList.toggle('dark', isDark);document.documentElement.classList.toggle('rp-dark', isDark);document.documentElement.style.colorScheme = isDark ? 'dark' : 'light';}</script>
+<link href="/static/css/styles.562d17e9.css" rel="stylesheet">
+<script defer src="/static/js/styles.e775c89e.js"></script>
+<script defer src="/static/js/lib-react.cd61bfb4.js"></script>
+<script defer src="/static/js/lib-router.5bdbca0e.js"></script>
+<script defer src="/static/js/9792.6f2a662b.js"></script>
+<script defer src="/static/js/index.335b27d8.js"></script>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Rspress v2.0.2">
+<link rel="icon" href="/favicon.ico">
+<meta property="og:type" content="website">
+<meta property="og:title" content="🔒 safe-vitepress — 带身份认证的 VitePress 文档站 - mikigo.site">
+<meta name="description" content="&quot;文档站也能有登录，公开页面随便看，受保护页面要登录。&quot;"></head>
+
+  <body>
+    <div id="__rspress_root"><header class="rp-nav"><div class="rp-nav__left"><div class="rp-nav__title"><a href="/" class="rp-nav__title__link rp-link"><span>mikigo.site</span></a></div></div><div class="rp-nav__right"><button class="rp-search-button"><div class="rp-search-button__content"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="none" viewBox="0 0 20 21" class="rp-search-button__icon"><path fill="currentColor" d="M8.333 1.913A6.667 6.667 0 0 1 15 8.58c0 1.54-.525 2.957-1.402 4.085l4.49 4.492a.834.834 0 0 1-1.177 1.178l-4.491-4.49a6.64 6.64 0 0 1-4.087 1.402 6.667 6.667 0 0 1 0-13.334m0 1.667a5 5 0 1 0 0 10 5 5 0 0 0 0-10"></path></svg><span class="rp-search-button__word">搜索</span></div><div class="rp-search-button__hotkey" style="opacity:0"><span></span><span>K</span></div></button><div class="rp-search-button--mobile"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="none" viewBox="0 0 20 21"><path fill="currentColor" d="M8.333 1.913A6.667 6.667 0 0 1 15 8.58c0 1.54-.525 2.957-1.402 4.085l4.49 4.492a.834.834 0 0 1-1.177 1.178l-4.491-4.49a6.64 6.64 0 0 1-4.087 1.402 6.667 6.667 0 0 1 0-13.334m0 1.667a5 5 0 1 0 0 10 5 5 0 0 0 0-10"></path></svg></div><ul class="rp-nav-menu rp-nav-menu--right"><li class="rp-nav-menu__item"><a href="/index.html" class="rp-nav-menu__item__container rp-link">🏠首页</a></li><li class="rp-nav-menu__item"><a href="/program/index.html" class="rp-nav-menu__item__container rp-link">💻编程</a></li><li class="rp-nav-menu__item"><a href="/tech_doc/index.html" class="rp-nav-menu__item__container rp-link">🤓技术文档</a></li><li class="rp-nav-menu__item"><a href="/blog/index.html" class="rp-nav-menu__item__container rp-link">✍️博客</a></li><li class="rp-nav-menu__item"><a href="/cookbook/index.html" class="rp-nav-menu__item__container rp-link">🧑‍🍳菜谱</a></li><li class="rp-nav-menu__item"><a href="/leaderboard.html" class="rp-nav-menu__item__container rp-link">📊排行榜</a></li></ul><div class="rp-nav__others"><div class="rp-nav-menu__divider"></div><div class="rp-switch-appearance"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24" class="rp-switch-appearance__icon rp-switch-appearance__icon--sun"><path fill="currentColor" d="m7.001 15.848-1.226 1.226a.58.58 0 0 0 0 .818.58.58 0 0 0 .818 0l1.226-1.226a.58.58 0 0 0 0-.818.58.58 0 0 0-.818 0m-.352-8.735a.584.584 0 0 0 .825-.825L6.237 5.051a.584.584 0 0 0-.825.825zM5.011 11.07h-1.75a.584.584 0 0 0 0 1.167h1.75c.324 0 .584-.26.584-.583a.585.585 0 0 0-.584-.584m7.003-5.835c.324 0 .584-.26.584-.584V2.9a.58.58 0 0 0-.584-.584.58.58 0 0 0-.583.583V4.65c0 .323.262.584.583.584m5.616 1.621 1.226-1.225a.58.58 0 0 0 0-.818.58.58 0 0 0-.818 0l-1.226 1.225a.58.58 0 0 0 0 .818.576.576 0 0 0 .818 0m3.138 4.214h-1.75a.58.58 0 0 0-.584.584c0 .324.26.584.583.584h1.751a.584.584 0 1 0 0-1.167m-3.389 5.124a.584.584 0 0 0-.825.825l1.238 1.238a.584.584 0 0 0 .825-.826zm-5.365-9.795a5.256 5.256 0 0 0-5.257 5.258 5.256 5.256 0 0 0 5.257 5.257 5.256 5.256 0 0 0 5.257-5.257 5.256 5.256 0 0 0-5.257-5.258m0 11.675a.58.58 0 0 0-.583.583v1.751a.582.582 0 1 0 1.167 0v-1.75a.584.584 0 0 0-.584-.584"></path></svg><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" fill="currentColor" viewBox="0 0 19 19" class="rp-switch-appearance__icon rp-switch-appearance__icon--moon"><path fill="currentColor" d="M9.166 0a9.2 9.2 0 0 1 1.857.188.834.834 0 0 1 .042 1.623 4.47 4.47 0 1 0 5.457 5.457l.048-.135a.834.834 0 0 1 1.575.177q.186.902.188 1.856A9.168 9.168 0 1 1 9.166 0"></path></svg></div><div class="rp-social-links"><a href="https://github.com/mikigo/" target="_blank" rel="noopener noreferrer" class="rp-social-links__item"><div class="rp-social-links__icon"><div class="rp-social-links__icon"><svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 24 24"><path fill="currentColor" d="M12 .297c-6.63 0-12 5.373-12 12c0 5.303 3.438 9.8 8.205 11.385c.6.113.82-.258.82-.577c0-.285-.01-1.04-.015-2.04c-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729c1.205.084 1.838 1.236 1.838 1.236c1.07 1.835 2.809 1.305 3.495.998c.108-.776.417-1.305.76-1.605c-2.665-.3-5.466-1.332-5.466-5.93c0-1.31.465-2.38 1.235-3.22c-.135-.303-.54-1.523.105-3.176c0 0 1.005-.322 3.3 1.23c.96-.267 1.98-.399 3-.405c1.02.006 2.04.138 3 .405c2.28-1.552 3.285-1.23 3.285-1.23c.645 1.653.24 2.873.12 3.176c.765.84 1.23 1.91 1.23 3.22c0 4.61-2.805 5.625-5.475 5.92c.42.36.81 1.096.81 2.22c0 1.606-.015 2.896-.015 3.286c0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></div></div></a><ul class="rp-hover-group rp-hover-group--hidden rp-hover-group--right"></ul></div></div><button aria-label="mobile hamburger" class="rp-nav-hamburger rp-nav-hamburger__sm"><svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" fill="none" viewBox="0 0 21 21"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.667" d="M3.645 5.225h13.333M3.645 10.225h13.333M3.645 15.225h13.333"></path></svg></button><button aria-label="mobile hamburger" class="rp-nav-hamburger rp-nav-hamburger__md"><svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" fill="none" viewBox="0 0 21 21"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.667" d="M3.645 5.225h13.333M3.645 10.225h13.333M3.645 15.225h13.333"></path></svg><ul class="rp-hover-group rp-hover-group--hidden rp-hover-group--right"><div class="rp-nav-menu__others-mobile__container"><div class="rp-nav-hamburger__md__hover-group"><div class="rp-nav-screen-appearance"><div class="rp-nav-screen-appearance__left">主题</div><div class="rp-nav-screen-appearance__right"></div></div><div class="rp-nav-screen-divider"></div><div class="rp-social-links"><a href="https://github.com/mikigo/" target="_blank" rel="noopener noreferrer" class="rp-social-links__item"><div class="rp-social-links__icon"><div class="rp-social-links__icon"><svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 24 24"><path fill="currentColor" d="M12 .297c-6.63 0-12 5.373-12 12c0 5.303 3.438 9.8 8.205 11.385c.6.113.82-.258.82-.577c0-.285-.01-1.04-.015-2.04c-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729c1.205.084 1.838 1.236 1.838 1.236c1.07 1.835 2.809 1.305 3.495.998c.108-.776.417-1.305.76-1.605c-2.665-.3-5.466-1.332-5.466-5.93c0-1.31.465-2.38 1.235-3.22c-.135-.303-.54-1.523.105-3.176c0 0 1.005-.322 3.3 1.23c.96-.267 1.98-.399 3-.405c1.02.006 2.04.138 3 .405c2.28-1.552 3.285-1.23 3.285-1.23c.645 1.653.24 2.873.12 3.176c.765.84 1.23 1.91 1.23 3.22c0 4.61-2.805 5.625-5.475 5.92c.42.36.81 1.096.81 2.22c0 1.606-.015 2.896-.015 3.286c0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></div></div></a><ul class="rp-hover-group rp-hover-group--hidden rp-hover-group--right"></ul></div></div></div></ul></button></div></header><div class="rp-doc-layout__menu"><div class="rp-sidebar-menu"><div class="rp-sidebar-menu__left"></div><button type="button" class="rp-sidebar-menu__right"><span>目录</span><svg width="14" height="14" class="rp-progress-circle"><circle cx="7" cy="7" r="6" stroke-linecap="round" fill="none" stroke="var(--rp-c-divider-light)" stroke-width="2"></circle><circle cx="7" cy="7" r="6" stroke-linecap="round" fill="none" stroke="var(--rp-c-brand)" stroke-width="2" stroke-dasharray="37.69911184307752" stroke-dashoffset="37.69911184307752" transform="rotate(-90 7 7)" style="transition:stroke-dashoffset 0.3s"></circle></svg><svg width="1em" height="1em" viewBox="0 0 32 32" style="transform:rotate(0deg);transition:transform 0.2s ease-out"><path fill="currentColor" d="M22 16 12 26l-1.4-1.4 8.6-8.6-8.6-8.6L12 6z"></path></svg></button></div></div><div class="rp-doc-layout__container"><aside class="rp-doc-layout__sidebar-placeholder"></aside><div class="rp-doc-layout__doc"><main class="rp-doc-layout__doc-container"><div align="left" style="font-size:0.85em;color:gray;margin-bottom:24px"><span style="display:none" class="counter-container">阅读量 <span data-pv-page=""></span> 次</span></div><div class="rp-doc rspress-doc"><!--$--><h1 class="rp-toc-include" id="-safe-vitepress--带身份认证的-vitepress-文档站"><a href="#-safe-vitepress--带身份认证的-vitepress-文档站" class="rp-header-anchor rp-link" aria-hidden="true">#</a>🔒 safe-vitepress — 带身份认证的 VitePress 文档站<!-- --> </h1>
+<blockquote>
+<p>&quot;文档站也能有登录，公开页面随便看，受保护页面要登录。&quot;</p>
+</blockquote>
+<h2 class="rp-toc-include" id="概述"><a href="#概述" class="rp-header-anchor rp-link" aria-hidden="true">#</a>概述</h2>
+<p><code>safe-vitepress</code> 是一个参考演示项目，展示如何将 VitePress 静态文档站点与 FastAPI 后端结合，实现基于 JWT 的身份认证和角色权限控制。核心理念：部分文档页面公开访问，部分需要用户登录后才能查看。VitePress 前端检测每个页面的 <code>protected</code> frontmatter 标记，对未认证用户显示登录弹窗。</p>
+<p><strong>GitHub</strong>: <a href="https://github.com/mikigo/safe-vitepress" target="_blank" rel="noopener noreferrer" class="rp-link">https://github.com/mikigo/safe-vitepress</a></p>
+<h2 class="rp-toc-include" id="解决的痛点"><a href="#解决的痛点" class="rp-header-anchor rp-link" aria-hidden="true">#</a>解决的痛点</h2>
+<ul>
+<li>内部文档需要权限控制，但 VitePress 是纯静态站点，没有内置认证机制</li>
+<li>希望部分页面全员可看，部分页面仅登录用户可看</li>
+<li>需要一个轻量级的认证方案，不需要复杂的全栈框架</li>
+<li>作为参考实现，演示 VitePress + FastAPI 结合的最佳实践</li>
+</ul>
+<h2 class="rp-toc-include" id="核心流程"><a href="#核心流程" class="rp-header-anchor rp-link" aria-hidden="true">#</a>核心流程</h2>
+<div class="rp-codeblock language-txt"><div class="rp-codeblock__content"><div class="rp-codeblock__content__scroll-container rp-scrollbar rp-scrollbar--always"><pre class="shiki css-variables" style="background-color:var(--shiki-background);color:var(--shiki-foreground)" tabindex="0" data-lang="txt"><code><span class="line"><span>用户访问页面 → AuthGuard 检查 frontmatter.protected → 未登录则弹窗 → 用户名密码登录 → JWT 下发 → 页面内容显示</span></span></code></pre></div><div class="rp-code-button-group"><button class="rp-code-button-group__button rp-code-wrap-button" title="Toggle code wrap"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" class="rp-code-button-group__icon rp-code-button-group__icon--wrapped"><path fill="#22a041" d="M21 5H3v2h18zM3 19h7v-2H3zm0-6h15c1 0 2 .43 2 2s-1 2-2 2h-2v-2l-4 3 4 3v-2h2c2.95 0 4-1.27 4-4 0-2.72-1-4-4-4H3z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" class="rp-code-button-group__icon rp-code-button-group__icon--wrap"><path fill="currentColor" d="M16 7H3V5h13zM3 19h13v-2H3zm19-7-4-3v2H3v2h15v2z"></path></svg></button><button class="rp-code-button-group__button rp-code-copy-button" title="复制代码"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 30 30" class="rp-code-button-group__icon rp-code-copy-button__icon rp-code-copy-button__icon--copy"><path fill="currentColor" d="M28 10v18H10V10zm0-2H10a2 2 0 0 0-2 2v18a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2"></path><path fill="currentColor" d="M4 18H2V4a2 2 0 0 1 2-2h14v2H4Z"></path></svg><svg width="32" height="32" viewBox="0 0 30 30" class="rp-code-button-group__icon rp-code-copy-button__icon rp-code-copy-button__icon--success"><path fill="#49cd37" d="m13 24-9-9 1.414-1.414L13 21.171 26.586 7.586 28 9z"></path></svg></button></div></div></div>
+<h2 class="rp-toc-include" id="核心特性"><a href="#核心特性" class="rp-header-anchor rp-link" aria-hidden="true">#</a>核心特性</h2>
+<h3 class="rp-toc-include" id="页面级访问控制"><a href="#页面级访问控制" class="rp-header-anchor rp-link" aria-hidden="true">#</a>页面级访问控制</h3>
+<p>每篇 Markdown 页面通过 frontmatter 声明是否需要保护：</p>
+<div class="rp-codeblock language-yaml"><div class="rp-codeblock__content"><div class="rp-codeblock__content__scroll-container rp-scrollbar rp-scrollbar--always"><pre class="shiki css-variables" style="background-color:var(--shiki-background);color:var(--shiki-foreground)" tabindex="0" data-lang="yaml"><code><span class="line"><span style="color:var(--shiki-foreground)">---</span></span>
+<span class="line"><span style="color:var(--shiki-token-keyword)">protected</span><span style="color:var(--shiki-token-keyword)">:</span><span style="color:var(--shiki-token-constant)"> true</span><span style="color:var(--shiki-token-comment)">   # 需要登录</span></span>
+<span class="line"><span style="color:var(--shiki-token-keyword)">protected</span><span style="color:var(--shiki-token-keyword)">:</span><span style="color:var(--shiki-token-constant)"> false</span><span style="color:var(--shiki-token-comment)">  # 公开访问</span></span>
+<span class="line"><span style="color:var(--shiki-foreground)">---</span></span></code></pre></div><div class="rp-code-button-group"><button class="rp-code-button-group__button rp-code-wrap-button" title="Toggle code wrap"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" class="rp-code-button-group__icon rp-code-button-group__icon--wrapped"><path fill="#22a041" d="M21 5H3v2h18zM3 19h7v-2H3zm0-6h15c1 0 2 .43 2 2s-1 2-2 2h-2v-2l-4 3 4 3v-2h2c2.95 0 4-1.27 4-4 0-2.72-1-4-4-4H3z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" class="rp-code-button-group__icon rp-code-button-group__icon--wrap"><path fill="currentColor" d="M16 7H3V5h13zM3 19h13v-2H3zm19-7-4-3v2H3v2h15v2z"></path></svg></button><button class="rp-code-button-group__button rp-code-copy-button" title="复制代码"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 30 30" class="rp-code-button-group__icon rp-code-copy-button__icon rp-code-copy-button__icon--copy"><path fill="currentColor" d="M28 10v18H10V10zm0-2H10a2 2 0 0 0-2 2v18a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2"></path><path fill="currentColor" d="M4 18H2V4a2 2 0 0 1 2-2h14v2H4Z"></path></svg><svg width="32" height="32" viewBox="0 0 30 30" class="rp-code-button-group__icon rp-code-copy-button__icon rp-code-copy-button__icon--success"><path fill="#49cd37" d="m13 24-9-9 1.414-1.414L13 21.171 26.586 7.586 28 9z"></path></svg></button></div></div></div>
+<h3 class="rp-toc-include" id="前端认证组件"><a href="#前端认证组件" class="rp-header-anchor rp-link" aria-hidden="true">#</a>前端认证组件</h3>
+<p>自定义的 VitePress 主题注入了三个组件到导航栏 <code>#nav-bar-content-before</code> 插槽：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="rp-table-scroll-container rp-scrollbar"><table><thead><tr><th>组件</th><th>显示条件</th><th>功能</th></tr></thead><tbody><tr><td><code>LoginButton</code></td><td>未登录</td><td>显示登录按钮 + 模态弹窗表单</td></tr><tr><td><code>LogoutButton</code></td><td>已登录</td><td>退出登录</td></tr><tr><td><code>UserProfile</code></td><td>已登录</td><td>用户头像/名称缩写展示</td></tr></tbody></table></div>
+<h3 class="rp-toc-include" id="authguard-守卫组件"><a href="#authguard-守卫组件" class="rp-header-anchor rp-link" aria-hidden="true">#</a>AuthGuard 守卫组件</h3>
+<p><code>AuthGuard.vue</code> 包裹整个布局，在挂载时尝试获取当前用户信息。渲染页面时检查 <code>frontmatter.protected</code>：</p>
+<ul>
+<li>为 <code>true</code> 且未认证 → 显示登录提示，隐藏页面内容</li>
+<li>为 <code>false</code> → 直接渲染页面</li>
+</ul>
+<h3 class="rp-toc-include" id="jwt-认证"><a href="#jwt-认证" class="rp-header-anchor rp-link" aria-hidden="true">#</a>JWT 认证</h3>
+<p>后端使用 OAuth2 密码流签发 JWT Token（HS256），有效期 30 分钟。Token 存储在前端 <code>localStorage</code>，Axios 拦截器自动为所有请求附加 <code>Authorization: Bearer &lt;token&gt;</code> 头。</p>
+<h3 class="rp-toc-include" id="角色控制"><a href="#角色控制" class="rp-header-anchor rp-link" aria-hidden="true">#</a>角色控制</h3>
+<p>用户模型包含 <code>is_admin</code> 字段，创建新用户需要 admin 权限。</p>
+<h3 class="rp-toc-include" id="前端状态管理"><a href="#前端状态管理" class="rp-header-anchor rp-link" aria-hidden="true">#</a>前端状态管理</h3>
+<p>通过 Vue composable <code>useAuth()</code> 管理认证状态，使用 <code>@vueuse/core</code> 的 <code>useStorage</code> 将 token 持久化到 localStorage。页面刷新后自动恢复登录态。</p>
+<h2 class="rp-toc-include" id="技术栈"><a href="#技术栈" class="rp-header-anchor rp-link" aria-hidden="true">#</a>技术栈</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="rp-table-scroll-container rp-scrollbar"><table><thead><tr><th>层级</th><th>技术</th><th>版本</th></tr></thead><tbody><tr><td>静态站点生成</td><td>VitePress</td><td>1.6.3</td></tr><tr><td>前端框架</td><td>Vue 3</td><td>3.5.13</td></tr><tr><td>构建工具</td><td>Vite</td><td>6.2.1</td></tr><tr><td>包管理器</td><td>pnpm</td><td>10</td></tr><tr><td>后端框架</td><td>FastAPI</td><td>0.104.1</td></tr><tr><td>ASGI 服务器</td><td>Uvicorn</td><td>0.24.0</td></tr><tr><td>ORM</td><td>Tortoise-ORM</td><td>0.20.0</td></tr><tr><td>数据库迁移</td><td>Aerich</td><td>0.7.0</td></tr><tr><td>数据库</td><td>SQLite</td><td>—</td></tr><tr><td>JWT</td><td>python-jose</td><td>3.3.0</td></tr><tr><td>密码哈希</td><td>passlib[bcrypt]</td><td>—</td></tr><tr><td>HTTP 客户端</td><td>Axios</td><td>1.11.0</td></tr><tr><td>Vue 工具库</td><td>@vueuse/core</td><td>13.6.0</td></tr></tbody></table></div>
+<h2 class="rp-toc-include" id="项目结构"><a href="#项目结构" class="rp-header-anchor rp-link" aria-hidden="true">#</a>项目结构</h2>
+<div class="rp-codeblock language-txt"><div class="rp-codeblock__content"><div class="rp-codeblock__content__scroll-container rp-scrollbar rp-scrollbar--always"><pre class="shiki css-variables" style="background-color:var(--shiki-background);color:var(--shiki-foreground)" tabindex="0" data-lang="txt"><code><span class="line"><span>safe-vitepress/</span></span>
+<span class="line"><span>├── backend/                        # FastAPI 后端</span></span>
+<span class="line"><span>│   ├── main.py                     # FastAPI 应用入口 + 路由</span></span>
+<span class="line"><span>│   ├── auth.py                     # JWT 签发、验证、用户依赖注入</span></span>
+<span class="line"><span>│   └── models/</span></span>
+<span class="line"><span>│       └── user.py                 # Tortoise-ORM User 模型 + Pydantic schema</span></span>
+<span class="line"><span>├── docs/                           # VitePress 内容</span></span>
+<span class="line"><span>│   ├── .vitepress/</span></span>
+<span class="line"><span>│   │   ├── config.mts              # 站点配置（标题、导航、搜索、base路径）</span></span>
+<span class="line"><span>│   │   ├── theme/</span></span>
+<span class="line"><span>│   │   │   ├── index.ts            # 主题入口（继承 DefaultTheme）</span></span>
+<span class="line"><span>│   │   │   ├── Layout.vue          # 自定义布局，注入认证组件到导航栏</span></span>
+<span class="line"><span>│   │   │   └── styles.css          # 全局样式</span></span>
+<span class="line"><span>│   │   ├── auth/</span></span>
+<span class="line"><span>│   │   │   └── authService.ts      # useAuth() 组合式函数（状态 + Axios）</span></span>
+<span class="line"><span>│   │   └── components/</span></span>
+<span class="line"><span>│   │       ├── AuthGuard.vue       # 页面守卫（检查 protected 标记）</span></span>
+<span class="line"><span>│   │       ├── LoginButton.vue     # 登录按钮 + 模态弹窗</span></span>
+<span class="line"><span>│   │       ├── LogoutButton.vue    # 退出按钮</span></span>
+<span class="line"><span>│   │       └── UserProfile.vue     # 用户头像展示</span></span>
+<span class="line"><span>│   ├── index.md                    # 首页（公开）</span></span>
+<span class="line"><span>│   ├── markdown-examples.md        # Markdown 示例（受保护）</span></span>
+<span class="line"><span>│   ├── api-examples.md             # API 示例（受保护）</span></span>
+<span class="line"><span>│   └── non-protected.md            # 非保护页面（公开）</span></span>
+<span class="line"><span>├── run.py                          # 后端启动入口</span></span>
+<span class="line"><span>├── create_admin_db.py              # 管理员创建脚本</span></span>
+<span class="line"><span>├── requirements.txt                # Python 依赖</span></span>
+<span class="line"><span>└── package.json                    # Node.js 依赖</span></span></code></pre></div><div class="rp-code-button-group"><button class="rp-code-button-group__button rp-code-wrap-button" title="Toggle code wrap"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" class="rp-code-button-group__icon rp-code-button-group__icon--wrapped"><path fill="#22a041" d="M21 5H3v2h18zM3 19h7v-2H3zm0-6h15c1 0 2 .43 2 2s-1 2-2 2h-2v-2l-4 3 4 3v-2h2c2.95 0 4-1.27 4-4 0-2.72-1-4-4-4H3z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" class="rp-code-button-group__icon rp-code-button-group__icon--wrap"><path fill="currentColor" d="M16 7H3V5h13zM3 19h13v-2H3zm19-7-4-3v2H3v2h15v2z"></path></svg></button><button class="rp-code-button-group__button rp-code-copy-button" title="复制代码"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 30 30" class="rp-code-button-group__icon rp-code-copy-button__icon rp-code-copy-button__icon--copy"><path fill="currentColor" d="M28 10v18H10V10zm0-2H10a2 2 0 0 0-2 2v18a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2"></path><path fill="currentColor" d="M4 18H2V4a2 2 0 0 1 2-2h14v2H4Z"></path></svg><svg width="32" height="32" viewBox="0 0 30 30" class="rp-code-button-group__icon rp-code-copy-button__icon rp-code-copy-button__icon--success"><path fill="#49cd37" d="m13 24-9-9 1.414-1.414L13 21.171 26.586 7.586 28 9z"></path></svg></button></div></div></div>
+<h2 class="rp-toc-include" id="后端-api"><a href="#后端-api" class="rp-header-anchor rp-link" aria-hidden="true">#</a>后端 API</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="rp-table-scroll-container rp-scrollbar"><table><thead><tr><th>方法</th><th>路径</th><th>认证要求</th><th>说明</th></tr></thead><tbody><tr><td><code>GET</code></td><td><code>/</code></td><td>无</td><td>欢迎信息</td></tr><tr><td><code>GET</code></td><td><code>/health</code></td><td>无</td><td>健康检查</td></tr><tr><td><code>POST</code></td><td><code>/token</code></td><td>用户名+密码</td><td>登录，返回 JWT</td></tr><tr><td><code>GET</code></td><td><code>/users/me</code></td><td>任意活跃用户</td><td>当前用户信息</td></tr><tr><td><code>POST</code></td><td><code>/users/</code></td><td>admin</td><td>创建新用户</td></tr></tbody></table></div>
+<h2 class="rp-toc-include" id="数据模型"><a href="#数据模型" class="rp-header-anchor rp-link" aria-hidden="true">#</a>数据模型</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="rp-table-scroll-container rp-scrollbar"><table><thead><tr><th>字段</th><th>类型</th><th>说明</th></tr></thead><tbody><tr><td><code>id</code></td><td>UUID</td><td>主键</td></tr><tr><td><code>username</code></td><td>str</td><td>唯一用户名</td></tr><tr><td><code>email</code></td><td>str</td><td>唯一邮箱</td></tr><tr><td><code>hashed_password</code></td><td>str</td><td>bcrypt 哈希密码</td></tr><tr><td><code>is_active</code></td><td>bool</td><td>是否激活（默认 true）</td></tr><tr><td><code>is_admin</code></td><td>bool</td><td>是否管理员（默认 false）</td></tr><tr><td><code>created_at</code></td><td>datetime</td><td>创建时间</td></tr><tr><td><code>updated_at</code></td><td>datetime</td><td>更新时间</td></tr></tbody></table></div>
+<h2 class="rp-toc-include" id="使用方式"><a href="#使用方式" class="rp-header-anchor rp-link" aria-hidden="true">#</a>使用方式</h2>
+<h3 class="rp-toc-include" id="环境要求"><a href="#环境要求" class="rp-header-anchor rp-link" aria-hidden="true">#</a>环境要求</h3>
+<ul>
+<li>Python 3.10+</li>
+<li>Node.js 18+</li>
+<li>pnpm</li>
+</ul>
+<h3 class="rp-toc-include" id="后端启动"><a href="#后端启动" class="rp-header-anchor rp-link" aria-hidden="true">#</a>后端启动</h3>
+<div class="rp-codeblock language-bash"><div class="rp-codeblock__content"><div class="rp-codeblock__content__scroll-container rp-scrollbar rp-scrollbar--always"><pre class="shiki css-variables" style="background-color:var(--shiki-background);color:var(--shiki-foreground)" tabindex="0" data-lang="bash"><code><span class="line"><span style="color:var(--shiki-token-function)">pipenv</span><span style="color:var(--shiki-token-string)"> --python</span><span style="color:var(--shiki-token-constant)"> 3</span></span>
+<span class="line"><span style="color:var(--shiki-token-function)">pipenv</span><span style="color:var(--shiki-token-string)"> shell</span></span>
+<span class="line"><span style="color:var(--shiki-token-function)">pip</span><span style="color:var(--shiki-token-string)"> install</span><span style="color:var(--shiki-token-string)"> -r</span><span style="color:var(--shiki-token-string)"> requirements.txt</span></span>
+<span class="line"><span style="color:var(--shiki-token-function)">python</span><span style="color:var(--shiki-token-string)"> run.py</span><span style="color:var(--shiki-token-comment)">                      # 启动在 http://0.0.0.0:8000</span></span></code></pre></div><div class="rp-code-button-group"><button class="rp-code-button-group__button rp-code-wrap-button" title="Toggle code wrap"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" class="rp-code-button-group__icon rp-code-button-group__icon--wrapped"><path fill="#22a041" d="M21 5H3v2h18zM3 19h7v-2H3zm0-6h15c1 0 2 .43 2 2s-1 2-2 2h-2v-2l-4 3 4 3v-2h2c2.95 0 4-1.27 4-4 0-2.72-1-4-4-4H3z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" class="rp-code-button-group__icon rp-code-button-group__icon--wrap"><path fill="currentColor" d="M16 7H3V5h13zM3 19h13v-2H3zm19-7-4-3v2H3v2h15v2z"></path></svg></button><button class="rp-code-button-group__button rp-code-copy-button" title="复制代码"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 30 30" class="rp-code-button-group__icon rp-code-copy-button__icon rp-code-copy-button__icon--copy"><path fill="currentColor" d="M28 10v18H10V10zm0-2H10a2 2 0 0 0-2 2v18a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2"></path><path fill="currentColor" d="M4 18H2V4a2 2 0 0 1 2-2h14v2H4Z"></path></svg><svg width="32" height="32" viewBox="0 0 30 30" class="rp-code-button-group__icon rp-code-copy-button__icon rp-code-copy-button__icon--success"><path fill="#49cd37" d="m13 24-9-9 1.414-1.414L13 21.171 26.586 7.586 28 9z"></path></svg></button></div></div></div>
+<h3 class="rp-toc-include" id="创建管理员"><a href="#创建管理员" class="rp-header-anchor rp-link" aria-hidden="true">#</a>创建管理员</h3>
+<div class="rp-codeblock language-bash"><div class="rp-codeblock__content"><div class="rp-codeblock__content__scroll-container rp-scrollbar rp-scrollbar--always"><pre class="shiki css-variables" style="background-color:var(--shiki-background);color:var(--shiki-foreground)" tabindex="0" data-lang="bash"><code><span class="line"><span style="color:var(--shiki-token-function)">python</span><span style="color:var(--shiki-token-string)"> create_admin_db.py</span></span></code></pre></div><div class="rp-code-button-group"><button class="rp-code-button-group__button rp-code-wrap-button" title="Toggle code wrap"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" class="rp-code-button-group__icon rp-code-button-group__icon--wrapped"><path fill="#22a041" d="M21 5H3v2h18zM3 19h7v-2H3zm0-6h15c1 0 2 .43 2 2s-1 2-2 2h-2v-2l-4 3 4 3v-2h2c2.95 0 4-1.27 4-4 0-2.72-1-4-4-4H3z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" class="rp-code-button-group__icon rp-code-button-group__icon--wrap"><path fill="currentColor" d="M16 7H3V5h13zM3 19h13v-2H3zm19-7-4-3v2H3v2h15v2z"></path></svg></button><button class="rp-code-button-group__button rp-code-copy-button" title="复制代码"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 30 30" class="rp-code-button-group__icon rp-code-copy-button__icon rp-code-copy-button__icon--copy"><path fill="currentColor" d="M28 10v18H10V10zm0-2H10a2 2 0 0 0-2 2v18a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2"></path><path fill="currentColor" d="M4 18H2V4a2 2 0 0 1 2-2h14v2H4Z"></path></svg><svg width="32" height="32" viewBox="0 0 30 30" class="rp-code-button-group__icon rp-code-copy-button__icon rp-code-copy-button__icon--success"><path fill="#49cd37" d="m13 24-9-9 1.414-1.414L13 21.171 26.586 7.586 28 9z"></path></svg></button></div></div></div>
+<p>交互式输入用户名和密码，直接通过 Tortoise-ORM 写入数据库，<code>is_admin=True</code>。</p>
+<h3 class="rp-toc-include" id="前端启动"><a href="#前端启动" class="rp-header-anchor rp-link" aria-hidden="true">#</a>前端启动</h3>
+<div class="rp-codeblock language-bash"><div class="rp-codeblock__content"><div class="rp-codeblock__content__scroll-container rp-scrollbar rp-scrollbar--always"><pre class="shiki css-variables" style="background-color:var(--shiki-background);color:var(--shiki-foreground)" tabindex="0" data-lang="bash"><code><span class="line"><span style="color:var(--shiki-token-function)">pnpm</span><span style="color:var(--shiki-token-string)"> i</span></span>
+<span class="line"><span style="color:var(--shiki-token-function)">pnpm</span><span style="color:var(--shiki-token-string)"> dev</span><span style="color:var(--shiki-token-comment)">      # http://localhost:5173</span></span></code></pre></div><div class="rp-code-button-group"><button class="rp-code-button-group__button rp-code-wrap-button" title="Toggle code wrap"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" class="rp-code-button-group__icon rp-code-button-group__icon--wrapped"><path fill="#22a041" d="M21 5H3v2h18zM3 19h7v-2H3zm0-6h15c1 0 2 .43 2 2s-1 2-2 2h-2v-2l-4 3 4 3v-2h2c2.95 0 4-1.27 4-4 0-2.72-1-4-4-4H3z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" class="rp-code-button-group__icon rp-code-button-group__icon--wrap"><path fill="currentColor" d="M16 7H3V5h13zM3 19h13v-2H3zm19-7-4-3v2H3v2h15v2z"></path></svg></button><button class="rp-code-button-group__button rp-code-copy-button" title="复制代码"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 30 30" class="rp-code-button-group__icon rp-code-copy-button__icon rp-code-copy-button__icon--copy"><path fill="currentColor" d="M28 10v18H10V10zm0-2H10a2 2 0 0 0-2 2v18a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2"></path><path fill="currentColor" d="M4 18H2V4a2 2 0 0 1 2-2h14v2H4Z"></path></svg><svg width="32" height="32" viewBox="0 0 30 30" class="rp-code-button-group__icon rp-code-copy-button__icon rp-code-copy-button__icon--success"><path fill="#49cd37" d="m13 24-9-9 1.414-1.414L13 21.171 26.586 7.586 28 9z"></path></svg></button></div></div></div>
+<h3 class="rp-toc-include" id="页面保护配置"><a href="#页面保护配置" class="rp-header-anchor rp-link" aria-hidden="true">#</a>页面保护配置</h3>
+<p>在任意 <code>.md</code> 文件的 frontmatter 中添加：</p>
+<div class="rp-codeblock language-yaml"><div class="rp-codeblock__content"><div class="rp-codeblock__content__scroll-container rp-scrollbar rp-scrollbar--always"><pre class="shiki css-variables" style="background-color:var(--shiki-background);color:var(--shiki-foreground)" tabindex="0" data-lang="yaml"><code><span class="line"><span style="color:var(--shiki-foreground)">---</span></span>
+<span class="line"><span style="color:var(--shiki-token-keyword)">protected</span><span style="color:var(--shiki-token-keyword)">:</span><span style="color:var(--shiki-token-constant)"> true</span></span>
+<span class="line"><span style="color:var(--shiki-foreground)">---</span></span></code></pre></div><div class="rp-code-button-group"><button class="rp-code-button-group__button rp-code-wrap-button" title="Toggle code wrap"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" class="rp-code-button-group__icon rp-code-button-group__icon--wrapped"><path fill="#22a041" d="M21 5H3v2h18zM3 19h7v-2H3zm0-6h15c1 0 2 .43 2 2s-1 2-2 2h-2v-2l-4 3 4 3v-2h2c2.95 0 4-1.27 4-4 0-2.72-1-4-4-4H3z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" class="rp-code-button-group__icon rp-code-button-group__icon--wrap"><path fill="currentColor" d="M16 7H3V5h13zM3 19h13v-2H3zm19-7-4-3v2H3v2h15v2z"></path></svg></button><button class="rp-code-button-group__button rp-code-copy-button" title="复制代码"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 30 30" class="rp-code-button-group__icon rp-code-copy-button__icon rp-code-copy-button__icon--copy"><path fill="currentColor" d="M28 10v18H10V10zm0-2H10a2 2 0 0 0-2 2v18a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2"></path><path fill="currentColor" d="M4 18H2V4a2 2 0 0 1 2-2h14v2H4Z"></path></svg><svg width="32" height="32" viewBox="0 0 30 30" class="rp-code-button-group__icon rp-code-copy-button__icon rp-code-copy-button__icon--success"><path fill="#49cd37" d="m13 24-9-9 1.414-1.414L13 21.171 26.586 7.586 28 9z"></path></svg></button></div></div></div>
+<h3 class="rp-toc-include" id="配置项"><a href="#配置项" class="rp-header-anchor rp-link" aria-hidden="true">#</a>配置项</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="rp-table-scroll-container rp-scrollbar"><table><thead><tr><th>变量</th><th>用途</th></tr></thead><tbody><tr><td><code>API_URL</code></td><td>后端 API 地址（默认 <code>http://localhost:8000</code>）</td></tr><tr><td><code>SECRET_KEY</code></td><td>JWT 签名密钥（生产环境务必修改）</td></tr><tr><td><code>DATABASE_URL</code></td><td>数据库连接 URL（默认 <code>sqlite://./db.sqlite3</code>）</td></tr></tbody></table></div>
+<h3 class="rp-toc-include" id="部署"><a href="#部署" class="rp-header-anchor rp-link" aria-hidden="true">#</a>部署</h3>
+<p><code>.github/workflows/deploy.yml</code>：推送 <code>main</code> 分支自动构建 VitePress 并部署到 GitHub Pages。注意后端需要单独部署，GitHub Pages 仅托管前端静态文件。</p>
+<h2 class="rp-toc-include" id="设计说明"><a href="#设计说明" class="rp-header-anchor rp-link" aria-hidden="true">#</a>设计说明</h2>
+<ul>
+<li><strong>演示项目</strong>：这是一个参考实现，展示了 VitePress + FastAPI 结合的最佳实践，安全密钥使用占位符，CORS 全开放，适合作为学习或定制起点</li>
+<li><strong>认证状态持久化</strong>：token 存储在 localStorage，刷新页面自动恢复登录状态</li>
+<li><strong>VitePress 主题扩展</strong>：通过 <code>#nav-bar-content-before</code> 插槽注入认证组件，不破坏默认主题结构</li>
+</ul>
+<h2 class="rp-toc-include" id="许可证"><a href="#许可证" class="rp-header-anchor rp-link" aria-hidden="true">#</a>许可证</h2>
+<p>Apache 2.0</p><!--/$--></div><div align="left" style="font-size:0.8em;color:gray">声明：本站所有文章，均为本站原创发布。任何个人或组织，在未征得本站同意时，禁止复制、盗用、采集、发布本站内容到任何网站、书籍等各类媒体平台。<a href="https://github.com/mikigo/" style="color:#1cc088">-- mikigo</a></div><footer class="rp-doc-footer"><div class="rp-doc-footer__edit"><div class="rp-last-updated"><p>最后更新于<!-- -->: <span>2026/6/22 11:06:50</span></p></div></div><div class="rp-doc-footer__divider"></div><div class="rp-prev-next-page"><a href="/project/repopress.html" class="rp-prev-next-page__item rp-prev-next-page__prev rp-link"><span class="rp-prev-next-page__item__desc">上一页</span><span class="rp-prev-next-page__item__title"><svg width="1em" height="1em" viewBox="0 0 32 32" class="rp-prev-next-page__icon rp-prev-next-page__rotate_180"><path fill="currentColor" d="M22 16 12 26l-1.4-1.4 8.6-8.6-8.6-8.6L12 6z"></path></svg><span>📝 RepoPress — 文档仓库在线编辑 CMS</span></span></a><a href="/project/swarm.html" class="rp-prev-next-page__item rp-prev-next-page__next rp-link"><span class="rp-prev-next-page__item__desc">下一页</span><span class="rp-prev-next-page__item__title"><span>🐝 Swarm - 分布式自动化测试执行框架</span><svg width="1em" height="1em" viewBox="0 0 32 32" class="rp-prev-next-page__icon"><path fill="currentColor" d="M22 16 12 26l-1.4-1.4 8.6-8.6-8.6-8.6L12 6z"></path></svg></span></a></div></footer></main></div><aside class="rp-doc-layout__outline rp-scrollbar"><div class="rp-outline"><div class="rp-outline__title">目录<svg width="14" height="14" class="rp-progress-circle"><circle cx="7" cy="7" r="6" stroke-linecap="round" fill="none" stroke="var(--rp-c-divider-light)" stroke-width="2"></circle><circle cx="7" cy="7" r="6" stroke-linecap="round" fill="none" stroke="var(--rp-c-brand)" stroke-width="2" stroke-dasharray="37.69911184307752" stroke-dashoffset="37.69911184307752" transform="rotate(-90 7 7)" style="transition:stroke-dashoffset 0.3s"></circle></svg></div><nav class="rp-outline__toc rp-scrollbar"><a href="#概述" class="rp-toc-item rp-link" title="概述" style="padding-left:0" data-depth="0"><span class="rp-toc-item__text rp-doc">概述</span></a><a href="#解决的痛点" class="rp-toc-item rp-link" title="解决的痛点" style="padding-left:0" data-depth="0"><span class="rp-toc-item__text rp-doc">解决的痛点</span></a><a href="#核心流程" class="rp-toc-item rp-link" title="核心流程" style="padding-left:0" data-depth="0"><span class="rp-toc-item__text rp-doc">核心流程</span></a><a href="#核心特性" class="rp-toc-item rp-link" title="核心特性" style="padding-left:0" data-depth="0"><span class="rp-toc-item__text rp-doc">核心特性</span></a><a href="#页面级访问控制" class="rp-toc-item rp-link" title="页面级访问控制" style="padding-left:12px" data-depth="1"><span class="rp-toc-item__text rp-doc">页面级访问控制</span></a><a href="#前端认证组件" class="rp-toc-item rp-link" title="前端认证组件" style="padding-left:12px" data-depth="1"><span class="rp-toc-item__text rp-doc">前端认证组件</span></a><a href="#authguard-守卫组件" class="rp-toc-item rp-link" title="AuthGuard 守卫组件" style="padding-left:12px" data-depth="1"><span class="rp-toc-item__text rp-doc">AuthGuard 守卫组件</span></a><a href="#jwt-认证" class="rp-toc-item rp-link" title="JWT 认证" style="padding-left:12px" data-depth="1"><span class="rp-toc-item__text rp-doc">JWT 认证</span></a><a href="#角色控制" class="rp-toc-item rp-link" title="角色控制" style="padding-left:12px" data-depth="1"><span class="rp-toc-item__text rp-doc">角色控制</span></a><a href="#前端状态管理" class="rp-toc-item rp-link" title="前端状态管理" style="padding-left:12px" data-depth="1"><span class="rp-toc-item__text rp-doc">前端状态管理</span></a><a href="#技术栈" class="rp-toc-item rp-link" title="技术栈" style="padding-left:0" data-depth="0"><span class="rp-toc-item__text rp-doc">技术栈</span></a><a href="#项目结构" class="rp-toc-item rp-link" title="项目结构" style="padding-left:0" data-depth="0"><span class="rp-toc-item__text rp-doc">项目结构</span></a><a href="#后端-api" class="rp-toc-item rp-link" title="后端 API" style="padding-left:0" data-depth="0"><span class="rp-toc-item__text rp-doc">后端 API</span></a><a href="#数据模型" class="rp-toc-item rp-link" title="数据模型" style="padding-left:0" data-depth="0"><span class="rp-toc-item__text rp-doc">数据模型</span></a><a href="#使用方式" class="rp-toc-item rp-link" title="使用方式" style="padding-left:0" data-depth="0"><span class="rp-toc-item__text rp-doc">使用方式</span></a><a href="#环境要求" class="rp-toc-item rp-link" title="环境要求" style="padding-left:12px" data-depth="1"><span class="rp-toc-item__text rp-doc">环境要求</span></a><a href="#后端启动" class="rp-toc-item rp-link" title="后端启动" style="padding-left:12px" data-depth="1"><span class="rp-toc-item__text rp-doc">后端启动</span></a><a href="#创建管理员" class="rp-toc-item rp-link" title="创建管理员" style="padding-left:12px" data-depth="1"><span class="rp-toc-item__text rp-doc">创建管理员</span></a><a href="#前端启动" class="rp-toc-item rp-link" title="前端启动" style="padding-left:12px" data-depth="1"><span class="rp-toc-item__text rp-doc">前端启动</span></a><a href="#页面保护配置" class="rp-toc-item rp-link" title="页面保护配置" style="padding-left:12px" data-depth="1"><span class="rp-toc-item__text rp-doc">页面保护配置</span></a><a href="#配置项" class="rp-toc-item rp-link" title="配置项" style="padding-left:12px" data-depth="1"><span class="rp-toc-item__text rp-doc">配置项</span></a><a href="#部署" class="rp-toc-item rp-link" title="部署" style="padding-left:12px" data-depth="1"><span class="rp-toc-item__text rp-doc">部署</span></a><a href="#设计说明" class="rp-toc-item rp-link" title="设计说明" style="padding-left:0" data-depth="0"><span class="rp-toc-item__text rp-doc">设计说明</span></a><a href="#许可证" class="rp-toc-item rp-link" title="许可证" style="padding-left:0" data-depth="0"><span class="rp-toc-item__text rp-doc">许可证</span></a></nav><div class="rp-outline__divider"></div><div class="rp-outline__bottom"><button class="rp-outline__scroll-to-top"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.99967 14.6667C11.6816 14.6667 14.6663 11.6819 14.6663 8.00001C14.6663 4.31811 11.6816 1.33334 7.99967 1.33334C4.31777 1.33334 1.33301 4.31811 1.33301 8.00001C1.33301 11.6819 4.31777 14.6667 7.99967 14.6667Z" stroke="currentColor" stroke-opacity="0.8" stroke-width="1.33333"></path><path d="M7.99967 14.6667C11.6816 14.6667 14.6663 11.6819 14.6663 8.00001C14.6663 4.31811 11.6816 1.33334 7.99967 1.33334C4.31777 1.33334 1.33301 4.31811 1.33301 8.00001C1.33301 11.6819 4.31777 14.6667 7.99967 14.6667Z" stroke="currentColor" stroke-opacity="0.8" stroke-width="1.33333" stroke-linejoin="round"></path><path d="M11 9L8 6L5 9" stroke="currentColor" stroke-opacity="0.8" stroke-width="1.33333" stroke-linecap="round" stroke-linejoin="round"></path></svg><span>回到顶部</span></button></div></div></aside></div></div>
+    <div id="__rspress_modal_container"></div>
+  </body>
+</html>
