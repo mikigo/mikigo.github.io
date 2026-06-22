@@ -12,6 +12,8 @@ sidebar: false
 
 **GitHub**: [https://github.com/mikigo/RepoPress](https://github.com/mikigo/RepoPress)
 
+![RepoPress Logo](/images/project/repopress/logo.png)
+
 ## 解决的痛点
 
 - 文档站点内容修改需要走 Git 工作流，非技术人员无法直接参与

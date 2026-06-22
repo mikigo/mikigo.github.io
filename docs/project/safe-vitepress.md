@@ -140,6 +140,24 @@ safe-vitepress/
 | `created_at` | datetime | 创建时间 |
 | `updated_at` | datetime | 更新时间 |
 
+## 效果展示
+
+**受保护页面需要登录**：
+
+![受保护页面](/images/project/safe-vitepress/1.png)
+
+**登录弹窗**：
+
+![登录弹窗](/images/project/safe-vitepress/2.png)
+
+**登录成功**：
+
+![登录成功](/images/project/safe-vitepress/3.png)
+
+**用户信息和登出**：
+
+![用户信息](/images/project/safe-vitepress/4.png)
+
 ## 使用方式
 
 ### 环境要求

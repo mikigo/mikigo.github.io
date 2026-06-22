@@ -70,6 +70,8 @@ TestMyCase().click_button("提交")
 
 终端输出格式：`系统架构-IP尾号: 时间戳 | LEVEL | [方法名]: 日志内容`
 
+![终端输出效果](/images/project/funnylog/log.png)
+
 ### 智能 DEBUG 日志
 
 若调用方是 `test_` 开头的测试用例函数，`debug()` 方法会自动升级为 `info` 级别输出，确保测试步骤在默认日志级别下可见。

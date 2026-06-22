@@ -16,6 +16,8 @@ sidebar: false
 
 **当前版本**: 1.6.0
 
+![Allure3 Server API 文档页](/images/project/allure3-server/docs.png)
+
 ## 解决的痛点
 
 - Allure 报告生成需要在本地安装 Allure CLI，团队其他成员无法直接查看

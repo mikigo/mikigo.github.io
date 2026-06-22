@@ -92,6 +92,24 @@ django-blog/
 └── requirements.txt             # pip 依赖列表
 ```
 
+## 效果展示
+
+**首页**：
+
+![博客首页](/images/project/django-blog/home.png)
+
+**文章详情**：
+
+![博客详情](/images/project/django-blog/detail.png)
+
+**后台管理**：
+
+![后台管理](/images/project/django-blog/admin.png)
+
+**Markdown 编辑器**：
+
+![Markdown编辑](/images/project/django-blog/admin_md.png)
+
 ## 使用方式
 
 ### 环境准备
