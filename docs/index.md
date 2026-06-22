@@ -34,7 +34,7 @@ features:
   - title: Swarm
     details: 🐝 Swarm - 分布式自动化测试执行框架。
     icon: 🐝
-    link: /project/swarm.htmlswarm.html
+    link: /project/swarm.html
   - title: FastAPI-Self-Hosting-Docs
     details: 一个用于 FastAPI 应用程序的自托管文档解决方案，提供本地化的 Swagger UI 和 ReDoc 文档界面。
     icon: 📚
