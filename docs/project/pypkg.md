@@ -28,8 +28,8 @@ sidebar: false
 ```mermaid
 flowchart LR
     A[空目录] -->|"pypkg 命令"| B[复制模板 tpl_pkg]
-    B --> C[目录名替换<br/>${app_name} → 实际包名]
-    C --> D[文件内容替换<br/>变量占位符 → 实际值]
+    B --> C["目录名替换<br/>${app_name} → 实际包名"]
+    C --> D["文件内容替换<br/>变量占位符 → 实际值"]
     D --> E[去除 -tpl 后缀]
     E --> F[完整的 Python 包工程]
 ```
