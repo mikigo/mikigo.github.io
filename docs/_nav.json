@@ -25,6 +25,11 @@
     "activeMatch": "/cookbook/"
   },
   {
+    "text": "Ogden`s Basic English",
+    "link": "/ogden_basic_english/index",
+    "activeMatch": "/ogden_basic_english/"
+  },
+  {
     "text": "📊排行榜",
     "link": "/leaderboard",
     "activeMatch": "/leaderboard"
