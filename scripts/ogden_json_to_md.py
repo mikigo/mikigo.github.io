@@ -7,8 +7,8 @@ output_dir = 'docs/ogden_basic_english'
 
 # Category metadata: code -> (english_name, chinese_name, filename)
 CATEGORY_META = {
-    'gt': ('General Things', '通用事物', 'general-things'),
     'op': ('Operations', '操作', 'operations'),
+    'gt': ('General Things', '通用事物', 'general-things'),
     'pt': ('Picturable', '可图示事物', 'picturable'),
     'qg': ('Qualities General', '通用性质', 'qualities-general'),
     'qo': ('Opposites', '反义词', 'opposites'),
