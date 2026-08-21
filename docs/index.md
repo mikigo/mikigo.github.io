@@ -4,9 +4,9 @@ pageType: home
 hero:
   name: mikigo.site
   text: |
-    代码改变世界 ✨
-    文字记录成长
-  tagline: 日拱一卒，功不唐捐。
+        代码里见天地，
+        文字中见自己。✨
+  tagline: 把理想敲进每一行代码，把热爱写进每一个字里。所有的坚持都会在冰封的土地上，开出十万朵怒放的蔷薇。
   actions:
     - theme: brand
       text: AutoTest
@@ -15,7 +15,7 @@ hero:
       text: GitHub
       link: https://github.com/mikigo
   image:
-      src: /logo.png
+      src: /logo.b.png
       alt: mikigo
 
 features:

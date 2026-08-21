@@ -28,7 +28,7 @@ video,
 #logo {
   margin-left: atuo;
   margin-right: auto;
-  box-shadow: 0 2px 6px #262726 !important;
+  /* box-shadow: 0 2px 6px #262726 !important; */
   border-radius: 6px !important;
 }
 
@@ -39,14 +39,14 @@ video,
 .rp-nav__title__link {
   font-size: 1.5rem !important;
   color: #009048;
-  text-shadow: 0 0.5px 2px #00773b;
+  /* text-shadow: 0 0.5px 2px #00773b; */
 }
 
 h1{
   font-size: 2.5rem !important;
-  text-shadow: 0 0.5px 2px #262726;
+  /* text-shadow: 0 0.5px 2px #262726; */
 }
 
-.rp-home-hero__subtitle {
-  text-shadow: 0 0.5px 2px #262726 !important;
-}
+/* .rp-home-hero__subtitle { */
+  /* text-shadow: 0 0.5px 2px #262726 !important; */
+/* } */
