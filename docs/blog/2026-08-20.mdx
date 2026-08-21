@@ -1,0 +1,85 @@
+---
+date: 2026-08-20
+authors: ['mikigo']
+description: 'Wayland 键鼠控制调研：从 dogtail/ponytail 的 GNOME 专有 hack，到 libei 与 XDG Portal 的标准化路线，以及一个新项目的可行性判断。'
+sidebar: false
+pageType: doc-wide
+---
+
+# 在 Wayland 下点鼠标到底有多难
+
+翻 dogtail 源码这事，起因是想搞清楚它在 Wayland 下怎么点鼠标。结果翻出了整个 Wayland 输入注入的生态，还顺带想明白一件事：如果有机会重新做一个专注 Wayland 键鼠控制的项目，现在可能是最好的时候。
+
+## XTest 没了，问题就来了
+
+X11 时代合成输入很简单。XTest 扩展允许任何客户端制造全局键鼠事件，xdotool 一行命令点哪打哪，做测试自动化的人从来没为"怎么点鼠标"操过心。
+
+Wayland 把这个口子焊死了。协议设计上就不允许普通客户端向整个会话注入输入。理由很正当：如果随便哪个进程都能敲你的键盘，还谈什么安全。代价是，所有 GUI 自动化工具到了 Wayland 都要重新回答一个问题：事件从哪进？
+
+翻了一圈，答案有四条路。先看 dogtail 当年怎么选的。
+
+## dogtail 的选择：请个外援
+
+dogtail 在 Wayland 下不自己合成输入，而是通过 D-Bus 驱动一个叫 gnome-ponytail-daemon 的守护进程（ponytail 是马尾辫的意思，也不知道作者为什么起这个名字）。这个 daemon 站在三个 GNOME API 上：Screen Cast、Remote Desktop，还有 org.gnome.Shell.Introspect。第一个用来录屏，第二个才真正负责注入事件，第三个用来枚举窗口。
+
+用法上有个挺反直觉的规矩：先 connect，再 generate。`connectWindow(id)` 连到单个窗口，此时发出去的坐标是窗口局部坐标，mutter 内部的 RecordWindow 机制会把它们翻译成全局坐标。`connectMonitor()` 连整个屏幕，坐标直接用全局的。
+
+为什么分两种？因为 Wayland 下 AT-SPI 拿到的就是窗口局部坐标，而事件注入要全局坐标，中间必须有人做翻译。ponytail 把这个活外包给了 mutter。这是整个方案里最聪明的部分，也是它离不开 GNOME 的原因。
+
+坐标之外，dogtail 每次输入前还会跑一段连接状态机：看看当前连的窗口是不是还活着，是不是还有焦点，如果是 Xwayland 窗口就换 monitor 用全局坐标。代码里到处都是 `disconnect()` 加 `sleep(1)` 再重连的组合，像在给 compositor 施法。注释里反复出现 "Prevent any race conditions"，能感觉到作者和竞态条件搏斗了很久。
+
+键盘事件的处理更有意思。键盘永远连 monitor，不连窗口。原因写在注释里："Always use monitor, window will often get closed before final release." 比如 Alt-F4，释放按键之前窗口就没了，如果你连的是窗口，事件直接蒸发。跟一个会自杀的目标通信，确实不如对着整个屏幕喊话。
+
+## 两个不体面的地方
+
+这套方案在 GNOME 上跑了五年，能用，但有两个地方不太体面。
+
+第一，它要求开 GNOME Shell 的 unsafe mode。具体操作是在 Looking Glass 里执行 `global.context.unsafe_mode = true`。为了用上安全特性，先把安全特性关掉，这名字本身就是个冷笑话。dogtail 的 headless 脚本里甚至有专门的逻辑去改 systemd unit 文件，给 gnome-shell 加 `--unsafe-mode` 参数。
+
+第二，Introspect 和 RecordWindow 都是 mutter 专有的非正式 API，换个 compositor 全废。wayland-devel 邮件列表上 2019 年就有人评价："mostly considered as a hack only for testing and not for production use"。说得不算冤枉。
+
+顺带发现一个彩蛋。dogtail 的 `release_key` 在 Wayland 分支调用的方法是 `generateKeycodePress`，和 `hold_key` 一模一样。按下函数和释放函数调同一个方法，这大概率是个 bug，也可能是某种我没参透的玄学。有缘人可以提个 MR。
+
+## 2026 年，路多了
+
+过去六年生态变了不少，候选路线有四条。
+
+libei（Emulated Input）是 freedesktop 的标准库，也是当前的正解。三件套分工明确：libei 是客户端库，libeis 跑在 compositor 里，liboeffis 封装 XDG Portal 的 D-Bus 通信。2025 年 libei 1.6.0 补上了 keysym 和 UTF-8 文本事件，早年最难受的键盘映射问题现在有标准解了。GNOME 46+ 原生支持，KDE Plasma 6 在跟进。
+
+官方指定的入口是 XDG Desktop Portal。RemoteDesktop portal 负责注入，InputCapture portal 负责捕获，底层都是 libei 传事件。代价是授权弹窗："Allow remote interaction?"。注入能力必须用户点头，这是设计，不是缺陷。但到了 CI 里，弹窗就成了纯粹的障碍。
+
+wlroots 系（Sway、Hyprland）基本没跟 libei，还在用老一套 unstable 协议：`zwp_virtual_keyboard` 发键盘，`zwlr_virtual_pointer` 发鼠标，`zwlr_foreign_toplevel_management` 拿窗口列表和几何。简单直接，没弹窗，就是只覆盖 wlroots 系。
+
+最后是 uinput：直接写 `/dev/uinput` 模拟真实键鼠设备，内核级，compositor 会把你当成一把真键盘。要 root 权限，但对所有 compositor 通吃，ydotool 走的就是这条路。
+
+还有个黑色幽默：xdotool 在 Wayland 下其实还能用。走 XWayland，XTest 请求会被 XWayland 转发给 RemoteDesktop portal，绕一大圈再回来，代价是每次操作弹一次授权窗。2025 年有人专门做了跨合成器实验，结论就是上面这堆碎片化。
+
+## 已经有人踩过坑了
+
+wdotool，Rust 写的 CLI 加库，五个后端自动检测，portal/libei 优先，wlroots 协议、KWin 脚本、uinput 依次兜底。它缓存 libei 的 restore token，把授权弹窗次数压到最低。这个项目证明了多后端抽象这条路走得通。
+
+enigo-rs 是库形态，portal 优先。Java 这边，JDK-8357584 在 2025 年给 JavaFX 的 Robot 加了 portal 支持，桌面 Java 用户也被这个问题卡了很多年。
+
+还有两个已知坑值得记下来。mutter 上 RemoteDesktop 注入的事件会被 InputCapture 再捕获一次，合成事件和真实事件无法区分，两个 portal 同时用可能死循环，mutter 的 issue 里管这个叫 input loopback。另外 libei 不是为短命工具设计的，设备协商有状态，客户端必须活着，跑一次就退的 CLI 会反复触发弹窗。
+
+## 如果自己做一个
+
+调研完的结论：可行，而且现在比 2019 年条件好得多。如果真做，我会这样选。
+
+架构上做 daemon 加客户端库，不做纯 CLI。理由就是上面那条：libei 需要长连接，daemon 还能顺便缓存授权 token。ponytail 的架构方向是对的，要换掉的是它的后端。
+
+后端选 libei 加 Portal 做主线，wlroots 协议和 uinput 做回退，compositor 专有 API 不碰。这样一套 API 能覆盖 GNOME、KDE、Sway、Hyprland，root 场景还有 uinput 兜底。
+
+最值得花力气的是坐标翻译。每个后端配一个"窗口局部坐标转全局坐标"的解析器：GNOME 走 RecordWindow 的思路，wlroots 拿 toplevel 几何，兜底用 libei 的 region 事件。这才是这类项目真正的技术含量，注入本身反而是体力活。
+
+立项前必须想清楚的只有一件事：CI 怎么免弹窗。PersistMode 持久化授权、缓存 restore token、RDP 预授权，方案都有，但要在第一天就设计进去，别等 demo 跑通了才发现 CI 里全是弹窗。
+
+Wayland 的安全模型把输入注入变成了特权操作，方向是对的。测试自动化恰好是合法需要这项特权的少数场景之一。门开了一条缝，剩下的都是工程活。
+
+## 参考
+
+- [gnome-ponytail-daemon](https://gitlab.gnome.org/ofourdan/gnome-ponytail-daemon)
+- [wdotool](https://github.com/cushycush/wdotool)
+- [xdotool 跨合成器输入模拟实验](https://blog.hotdry.top/posts/2025/11/21/wayland-protocol-fragmentation-xdotool-input-simulation-diagnosis-bridging/)
+- [mutter: Input loopback between libei sender and receiver](https://gitlab.gnome.org/GNOME/mutter/-/work_items/4883)
+- [wayland-devel: Wayland compositors and accessibility](https://lists.x.org/archives/wayland-devel/2019-April/040438.html)
