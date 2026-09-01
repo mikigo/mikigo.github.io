@@ -30,6 +30,11 @@
     "activeMatch": "/ogden_basic_english/"
   },
   {
+    "text": "摘抄",
+    "link": "/quotes/index",
+    "activeMatch": "/quotes/"
+  },
+  {
     "text": "📊排行榜",
     "link": "/leaderboard",
     "activeMatch": "/leaderboard"
