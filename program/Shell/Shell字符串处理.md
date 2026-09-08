@@ -1,0 +1,33 @@
+# Shell字符串处理
+
+import { Badge } from '@rspress/core/theme'; 
+
+<Badge type="tip">
+  <img style={{ height: '20px' }} src="/logo.png" />
+
+  <span>mikigo</span>
+</Badge>
+
+## 1. 字母与ASCII码值的转换
+
+### 1.1 ASCII
+
+ASCII 是美国对于信息交换的标准代码,使用7位二进制数来表示所有的大写和小写字母，数字0 到9、标点符号，以及在美式英语中使用的特殊控制字符。
+
+可以使用`man ascii`查看ASCII值列表，我们通常比较字符的大小，实际上是比对的ASCII码值。
+
+### 1.1 字母转换为ASCII码值
+
+* 方法一：`printf`
+
+```bash
+test@test-PC:~/share/5$ printf "%d\n" "'a"
+97
+test@test-PC:~/share/5$ printf "%d\n" \'a
+97
+test@test-PC:~/share/5$ printf "%d\n" "'\\"
+92
+test@test-PC:~/share/5$ chr='?'
+test@test-PC:~/share/5$ printf "%d\n" "'${chr}"
+63
+```
