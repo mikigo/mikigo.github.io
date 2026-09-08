@@ -1,5 +1,6 @@
 import { defineConfig } from '@rspress/core';
 import { pluginSitemap } from '@rspress/plugin-sitemap';
+import { pluginLlms } from '@rspress/plugin-llms';
 import mermaid from 'rspress-plugin-mermaid';
 import path from "node:path";
 
@@ -23,6 +24,7 @@ export default defineConfig({
         exclude: ['components/**'],
     },
     themeConfig: {
+        llmsUI: true,
         enableContentAnimation: true,
         enableAppearanceAnimation: true,
         enableScrollToTop: true,
@@ -51,6 +53,7 @@ export default defineConfig({
         ],
     },
     plugins: [
+        pluginLlms(),
         pluginSitemap({
             siteUrl,
         }),
