@@ -25,11 +25,6 @@
     "activeMatch": "/cookbook/"
   },
   {
-    "text": "Ogden`s Basic English",
-    "link": "/ogden_basic_english/index",
-    "activeMatch": "/ogden_basic_english/"
-  },
-  {
     "text": "摘抄",
     "link": "/quotes/index",
     "activeMatch": "/quotes/"
