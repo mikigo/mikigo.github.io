@@ -225,15 +225,6 @@
 - [鸡汤](/cookbook/营养汤/鸡汤.md)
 - [鸽子汤](/cookbook/营养汤/鸽子汤.md)
 
-## Ogden`s Basic English
-
-- [Ogden's Basic English 850](/ogden_basic_english/index.md): Ogden's Basic English 由 Charles Kay Ogden 于 1930 年提出， 旨在用最少的词汇表达最广泛的意思。这 850 个核心词汇分为五大类。
-- [Operations · 操作 · 100](/ogden_basic_english/operations.md)
-- [General Things · 通用事物 · 400](/ogden_basic_english/general-things.md)
-- [Picturable · 可图示事物 · 200](/ogden_basic_english/picturable.md)
-- [Qualities General · 通用性质 · 100](/ogden_basic_english/qualities-general.md)
-- [Opposites · 反义词 · 50](/ogden_basic_english/opposites.md)
-
 ## 摘抄
 
 - [摘抄——酷酷的话](/quotes/index.md)
