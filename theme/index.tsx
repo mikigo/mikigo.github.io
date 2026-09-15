@@ -2,6 +2,7 @@ import {
   Layout as BasicLayout,
   getCustomMDXComponent as basicGetCustomMDXComponent,
 } from '@rspress/core/theme-original';
+import { PatentGrid } from '../components/Patent';
 import './index.css';
 
 const myStyle = {
@@ -19,6 +20,7 @@ const Layout = () => (
             </h1>
           </div>
         }
+    afterFeatures={<PatentGrid />}
     beforeDocContent={
             <div align="left" style={{fontSize: "0.85em", color: "gray", marginBottom: "24px"}}>
                 <span style={{display:"none"}} className="counter-container">

@@ -29,6 +29,10 @@ features:
     details: 一个用于 Linux 桌面 GUI 自动化测试的 Python 模块，支持多种元素定位方法和键鼠操作。
     icon: 🐧
     link: https://youqu.uniontech.com/pylinuxauto/
+  - title: PyWaylandAuto
+    details: 一个用于 Wayland 环境下键鼠模拟操作的 Python 库。
+    icon: 🖱️
+    link: https://github.com/mikigo/pywaylandauto
   - title: Swarm
     details: 🐝 Swarm - 分布式自动化测试执行框架。
     icon: 🐝

@@ -5,3 +5,97 @@
     width: 12vw !important;
   }
 }
+
+/* ===== 专利展示区（shadcn-ui 风格）===== */
+.patent-section {
+  max-width: 1200px;
+  margin: 96px auto 64px;
+  padding: 0 24px;
+}
+
+.patent-section__header {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.patent-section__title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--rp-c-text-1);
+  margin: 0 0 8px;
+}
+
+.patent-section__desc {
+  font-size: 0.875rem;
+  color: var(--rp-c-text-3);
+  margin: 0;
+}
+
+.patent-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 960px) {
+  .patent-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .patent-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.patent-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px 24px;
+  border-radius: 0.75rem;
+  border: 1px solid var(--rp-c-border);
+  background: var(--rp-c-bg-soft);
+  text-decoration: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.patent-card:hover {
+  border-color: var(--rp-c-brand);
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.06), 0 1px 2px -1px rgb(0 0 0 / 0.06);
+}
+
+.patent-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.patent-card__number {
+  font-family: 'SF Mono', 'Fira Code', 'JetBrains Mono', 'Consolas', monospace;
+  font-size: 0.75rem;
+  color: var(--rp-c-text-3);
+  letter-spacing: 0.03em;
+}
+
+.patent-card__arrow {
+  color: var(--rp-c-text-3);
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.patent-card:hover .patent-card__arrow {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.patent-card__title {
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.6;
+  color: var(--rp-c-text-1);
+  margin: 0;
+}
