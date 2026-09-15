@@ -55,11 +55,11 @@
   flex-direction: column;
   gap: 12px;
   padding: 20px 24px;
-  border-radius: 0.75rem;
+  border-radius: var(--radius, 0.75rem);
   border: 1px solid var(--rp-c-border);
   background: var(--rp-c-bg-soft);
   text-decoration: none;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .patent-card:hover {
@@ -84,7 +84,7 @@
   color: var(--rp-c-text-3);
   opacity: 0;
   transform: translateX(-4px);
-  transition: opacity 0.15s ease, transform 0.15s ease;
+  transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
 .patent-card:hover .patent-card__arrow {
