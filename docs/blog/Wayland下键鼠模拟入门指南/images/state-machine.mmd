@@ -1,0 +1,17 @@
+stateDiagram-v2
+    [*] --> INIT: daemon 启动
+    
+    INIT --> STARTING: session.start()<br/>或自动触发
+    STARTING --> STARTING: 等待 Portal 响应
+    
+    STARTING --> STARTED: Start 响应 code=0<br/>(用户点了"允许")
+    STARTING --> STOPPED: Start 响应 code=1<br/>(用户拒绝)
+    
+    STARTED --> STOPPED: Portal Closed 信号<br/>或探测失败
+    
+    STOPPED --> STARTING: session.start()<br/>重新授权
+    STOPPED --> [*]: daemon 退出
+
+    note right of INIT: 啥都没干，等着
+    note right of STARTED: 可以发 input.* 命令了
+    note right of STOPPED: 拒绝后不自动重启<br/>防止弹窗风暴

@@ -8,6 +8,10 @@
     "type": "section-header",
     "label": "博客"
   },
+  {
+    "type": "file",
+    "name": "/Wayland下键鼠模拟入门指南/docs"
+  },
   "2026-08-20",
   "2026-06-17",
   "2026-06-12",

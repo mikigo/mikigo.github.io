@@ -1,0 +1,29 @@
+flowchart LR
+    subgraph Client["客户端"]
+        CLI["pywaylandauto CLI"]
+        API["pwa.click()"]
+    end
+
+    Client <-->|"Unix Socket\nJSON-line 协议"| Daemon
+
+    subgraph Daemon["Daemon 守护进程"]
+        HUB["后端调度"]
+        STATE["状态机\nINIT→STARTING→STARTED→STOPPED"]
+        TOKEN["Token 缓存\n~/.local/state/..."]
+    end
+
+    HUB -->|"① 优先"| KYLIN["EIS Kylin\nkylin-wlcom D-Bus\n无弹窗"]
+    HUB -->|"② 回退"| PORTAL["EIS Portal\nXDG Desktop Portal\n弹窗一次"]
+    HUB -->|"③ 兜底"| WLR["wlroots 协议\nzwlr_virtual_pointer\n无弹窗"]
+
+    KYLIN --> EIS["EIS fd → libei 线协议 → 合成器"]
+    PORTAL --> EIS
+    WLR --> COMP["直接 Wayland 协议 → 合成器"]
+
+    style Client fill:#7aa2f7,stroke:#3b5fbf,color:#fff
+    style Daemon fill:#9ece6a,stroke:#5a8e3a,color:#1a1b26
+    style KYLIN fill:#e0af68,stroke:#b8860b,color:#1a1b26
+    style PORTAL fill:#bb9af7,stroke:#7a5ccc,color:#1a1b26
+    style WLR fill:#73daca,stroke:#4a9e8a,color:#1a1b26
+    style EIS fill:#f7768e,stroke:#c94060,color:#1a1b26
+    style COMP fill:#f7768e,stroke:#c94060,color:#1a1b26

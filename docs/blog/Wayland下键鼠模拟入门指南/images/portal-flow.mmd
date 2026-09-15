@@ -1,0 +1,40 @@
+sequenceDiagram
+    participant App as 你的程序
+    participant Portal as XDG Desktop Portal
+    participant User as 用户
+    participant Mutter as mutter (合成器)
+
+    Note over App,Mutter: 步骤 1-3：申请授权
+    
+    App->>Portal: CreateSession<br/>"开个号"
+    Portal-->>App: request 对象路径
+
+    App->>Portal: SelectDevices<br/>"我要键盘+鼠标"
+    Portal-->>App: code=0
+
+    App->>Portal: Start<br/>persist_mode=2, restore_token
+
+    Portal->>User: 弹窗 "Allow remote interaction?"
+    
+    alt 用户点"允许"
+        User-->>Portal: 允许
+        Portal-->>App: code=0, session_handle, new_token
+        App->>App: 保存 new_token 到本地
+    else 用户点"拒绝"
+        User-->>Portal: 拒绝
+        Portal-->>App: code=1
+        Portal->>Portal: 销毁会话对象
+    end
+
+    Note over App,Mutter: 步骤 6-7：建立 EIS 通道
+
+    App->>Portal: ConnectToEIS<br/>"开直连通道"
+    Portal-->>App: 返回 EIS fd
+
+    App->>Mutter: libei 握手 (通过 fd)<br/>handshake_version, context_type
+    Mutter-->>App: connection, seat, device
+
+    App->>Mutter: bind (能力绑定)
+    Mutter-->>App: device 子对象, region, keymap
+
+    Note over App,Mutter: 握手完成，可以发输入事件了

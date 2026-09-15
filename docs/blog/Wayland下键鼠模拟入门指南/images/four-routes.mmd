@@ -1,0 +1,29 @@
+flowchart TB
+    SCRIPT["你的自动化脚本"]
+    
+    SCRIPT --> GNOME["GNOME 桌面"]
+    SCRIPT --> KDE["KDE 桌面"]
+    SCRIPT --> WL["Sway / Hyprland<br/>Kylin / UOS"]
+    
+    GNOME --> R1["libei + Portal<br/>官方正解，弹窗一次"]
+    GNOME --> R1b["ponytail<br/>老路，不推荐了"]
+    
+    KDE --> R1
+    
+    WL --> R3["wlroots 虚拟设备<br/>协议直连，无弹窗"]
+    
+    R1 --> NOTE1["GNOME 46+ / KDE Plasma 6"]
+    R1b --> NOTE1b["仅 GNOME，需 unsafe mode"]
+    R3 --> NOTE3["zwlr_virtual_pointer + keyboard"]
+    
+    R4["uinput 内核级<br/>通吃一切，需 root"]
+    SCRIPT -.->|"兜底"| R4
+
+    style SCRIPT fill:#7aa2f7,stroke:#3b5fbf,color:#fff
+    style GNOME fill:#9ece6a,stroke:#5a8e3a,color:#1a1b26
+    style KDE fill:#9ece6a,stroke:#5a8e3a,color:#1a1b26
+    style WL fill:#9ece6a,stroke:#5a8e3a,color:#1a1b26
+    style R1 fill:#e0af68,stroke:#b8860b,color:#1a1b26
+    style R1b fill:#565f89,stroke:#3b4261,color:#a9b1d6
+    style R3 fill:#e0af68,stroke:#b8860b,color:#1a1b26
+    style R4 fill:#f7768e,stroke:#c94060,color:#1a1b26
