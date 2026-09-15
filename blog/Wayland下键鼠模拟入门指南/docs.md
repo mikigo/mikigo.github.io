@@ -1,0 +1,571 @@
+# Wayland下键鼠模拟入门指南
+
+## 1. 从最简单的问题开始
+
+你有一个需求：写个脚本，自动移动鼠标、点击、敲键盘。
+
+听起来简单到可笑，对吧？谁没写过呢。
+
+但当你把脚本放到一台 2026 年的 Ubuntu 电脑上运行时，它不动了。你查了半天，最后发现——不是脚本错了，是**整个底层世界变了**。
+
+这个变化，要从四十年前说起。
+
+***
+
+## 2. 背景：你的电脑是怎么"看见"鼠标和键盘的
+
+### 2.1 显示服务器：一个被所有人忽略的隐形管家
+
+打开你的电脑，桌面上有几个窗口：浏览器、编辑器、终端。它们彼此重叠，有的在前有的在后，你用鼠标点击哪个，哪个就"获得焦点"开始接收你的键盘输入。
+
+你有没有想过一个问题：**谁来负责把每个窗口的画面拼成你最终看到的那一屏？谁来确保你敲的键盘、滑的鼠标，被送到了"对"的那个窗口？**
+
+这个隐形的角色，叫**显示服务器**（Display Server）。
+
+打个比方：显示服务器像一个**快递分拣中心**。
+
+* 每个应用（浏览器、编辑器、游戏）是一个**包裹**——它画好自己的界面，交给分拣中心。
+* 你的键盘和鼠标是**寄件人**——你按了一个键，这个"输入快递"先到分拣中心。
+* 分拣中心根据"哪个窗口在最前面"来判断——这个键该投递给谁。
+
+过去四十年，这个分拣中心一直由一个叫 **X11** 的协议来运行。2026 年，它换人了——新的叫做 **Wayland**。
+
+***
+
+### 2.2 名词速查表（先记一下，后面反复用到）
+
+| 名词 | 是什么 |
+|---|---|
+| **显示服务器** (Display Server) | 管画面拼合和输入分发的底层程序 |
+| **合成器** (Compositor) | 显示服务器的具体实现 |
+| **X11 / Xorg** | 老牌显示服务器协议和实现 |
+| **Wayland** | 新一代显示服务器协议 |
+| **mutter** | GNOME 桌面的合成器 |
+| **KWin** | KDE 桌面的合成器 |
+| **wlroots** | Sway/Hyprland 的合成器基础库 |
+
+如果你用的是 Ubuntu 默认桌面（GNOME），那你的合成器就是 **mutter**。
+
+***
+
+## 3. X11 的四十年——简单、好用、千疮百孔
+
+> 注：本节参考了微信公众号「Ubuntu」的文章《X11 撑了 40 年，为什么 2026 年 Linux 桌面集体弃用？》。如果你对发行版切换的时间线感兴趣，强烈建议去读原文。我们这里只讲和"键鼠模拟"相关的部分。
+
+### 3.1 X11 是怎么工作的？（一句话版）
+
+在 X11 的世界里，**一切都要经过中央转发**。你点了一下鼠标，这个事件走的路线是：
+
+```
+鼠标硬件 → 内核驱动 → X Server（中央枢纽）→ 窗口管理器 → 合成器 → 目标应用
+```
+
+中间倒了四手。这就是 X11 的"客户端-服务器"架构——X Server 是服务器，所有应用是客户端，每个客户端都必须和 X Server 通信。
+
+### 3.2 XTest：一个"所有人都可以假扮键盘"的设计
+
+X11 有一个扩展叫 **XTest**，它的设计理念极其直白：
+
+> **任何应用都可以向整个桌面注入键盘和鼠标事件。**
+
+注意两个关键词：
+
+* **任何应用**——不需要 root 权限，不需要用户授权。
+* **整个桌面**——不只是自己的窗口，是所有窗口。
+
+这就发明了一个叫 `xdotool` 的工具。它的用法简单到令人发指：
+
+```bash
+xdotool mousemove 500 300    # 把鼠标移到坐标 (500, 300)
+xdotool click 1               # 点一下左键
+xdotool type "hello"          # 敲出 "hello"
+```
+
+做测试自动化的人从来没为"怎么点鼠标"操过心。xdotool 一行命令点哪打哪。
+
+### 3.3 一个问题：如果有人在你电脑上跑恶意程序呢？
+
+XTest 的设计假设是"电脑上跑的都是可信程序"。这个假设在 1984 年是成立的——那时候一台电脑上就跑几个程序，都是你自己装的。
+
+到了 2026 年，这个假设早已崩溃。你装一个浏览器扩展、下一个"免费 PDF 工具"、跑一个不知来源的安装脚本——它们**都可以**：
+
+* **监听你全局的键盘**——你在银行网站上输入的密码，它能全读下来。
+* **截取整个屏幕**——包括其他窗口的隐私内容。
+* **伪造鼠标键盘事件**——往别的窗口里自动点"确认转账"。
+
+\*\*而且这些都不需要 root 权限。\*\*换句话说，X11 的密钥记录器（keylogger）是"天生就能写"的。
+
+更扎心的是：这个问题补不了。它不是某个 bug，而是 **1984 年设计架构时就刻在骨头里的漏洞**。想在 X11 上做安全隔离，唯一的办法是换一个协议——也就是 Wayland。
+
+> 补充背景：2024 年 X.Org 进入仅维护模式，不再加新功能。2025 年初又曝出三个高危漏洞（CVE-2025-62229/62230/62231），部分代码可追溯到 20 多年前。
+
+***
+
+## 4. Wayland 来了——安全，但是代价呢？
+
+### 4.1 Wayland 的核心理念
+
+2008 年，一位 Red Hat 工程师、X.Org 核心开发者 Kristian Høgsberg 开了一个个人项目，目标极为激进——**"每一帧都完美"（every frame is perfect）**。这就是 Wayland。
+
+Wayland 的架构和 X11 截然不同：
+
+![X11 vs Wayland 架构对比](./images/x11-vs-wayland.png)
+
+| 维度 | X11（Xorg） | Wayland |
+|---|---|---|
+| **架构比喻** | 老式电话总机——所有通话都要经过接线员转接 | 直拨电话——两端直接通话 |
+| **实际流程** | 应用 → X Server → 窗口管理器 → 合成器 → 屏幕 | 应用 → 合成器（合成器自己就是显示服务器） → 屏幕 |
+| **画面渲染** | 多次内存拷贝，一帧一帧复制像素 | 零拷贝，GPU 缓冲直接渲染到屏幕 |
+| **安全模型** | 开放信任——任何应用可以看全局 | 隔离优先——应用只能看到自己的窗口 |
+
+Wayland 的核心安全规则只有一条：**应用默认只能看到自己的窗口，不能看别人的，更不能往别人的窗口里塞东西。**
+
+这个设计和 iOS/Android 的沙盒机制是一个道理——每个应用都被关在自己的小格子里。想跨格子做事？必须走正式申请渠道。
+
+### 4.2 这对 xdotool 意味着什么？
+
+**一句话：废了。**
+
+xdotool 的工作原理是调用 XTest 扩展，往 X Server 发送"全局输入事件"。在 Wayland 下：
+
+* 没有 X Server 了，xdotool 找不到它要连的服务器。
+* 即使通过 XWayland（Wayland 里跑的一个迷你 X Server 来兼容老应用）绕过去，每次发一个事件都会弹一次授权窗。
+
+你的 `xdotool click 1` 从"一秒完成"变成了"一秒弹一个窗"。这不是能用，这是要命。
+
+### 4.3 但合法需求怎么办？
+
+测试自动化、远程桌面（像微软 RDP 或 VNC）、无障碍辅助（屏幕阅读器）、宏录制……这些不是恶意程序，它们是**堂堂正正的需求**。
+
+Wayland 没有忽视这些需求。它给的答案是：
+
+> **你可以做这些事，但必须走正式的授权通道。用户必须知道并同意。**
+
+这个"正式通道"，就是我们接下来要讲的：四条路线。
+
+***
+
+## 5. 四条路：Wayland 下模拟键鼠的全部方案
+
+先甩一张全景图，别怕，后面会逐条解释。
+
+| 路线 | 怎么做到 | 覆盖哪些桌面 | 代价 |
+|---|---|---|---|
+| **路线一** dogtail + ponytail | 通过 GNOME 私有 API 注入事件 | 只有 GNOME | 需要开启 unsafe mode，换桌面全废 |
+| **路线二** libei + Portal | 通过官方授权通道获得注入能力 | GNOME 46+、KDE 跟进中 | 首次弹授权窗 |
+| **路线三** wlroots 协议 | 用 wlroots 自己的虚拟设备协议 | Sway、Hyprland | 只覆盖 wlroots 系，GNOME/KDE 不认 |
+| **路线四** uinput | 直接写内核接口，模拟真实设备 | 所有桌面（包括 X11） | 需要 root 权限 |
+
+***
+
+### 5.1 路线一：dogtail + gnome-ponytail-daemon（GNOME 的黑魔法）
+
+#### 背景
+
+在 Wayland 生态还一片荒芜的年代，`dogtail`（GNOME 桌面的 GUI 自动化测试框架）就面临一个灵魂拷问：**怎么才能在 Wayland 下继续点鼠标？**
+
+答案是：**请个外援**。
+
+dogtail 自己不合成输入，而是通过 D-Bus 驱动一个叫 `gnome-ponytail-daemon` 的守护进程。（ponytail 是马尾巴辫的意思，到今天也没人知道作者为什么取这个名字。）
+
+#### D-Bus 是什么？（先解释一下）
+
+D-Bus 是 Linux 桌面上程序之间互相"传话"的通信机制。可以理解为**桌面程序的对讲机**——程序 A 想叫程序 B 做件事，不用打电话，拿起对讲机喊一句就行。
+
+gnome-ponytail-daemon 就是 dogtail 的"外援"——dogtail 通过 D-Bus 对它喊话："把鼠标移到 (500, 300)"，"点一下左键"。
+
+#### ponytail 怎么做到注入？
+
+ponytail-daemon 踩着三个 GNOME 私有 API 的肩膀：
+
+| API | 干什么的 |
+|---|---|
+| **Screen Cast** | 录屏（ponytail 用它……其实主要是放在那，真正干活的是下面两个） |
+| **Remote Desktop** | 远程桌面协议——这个接口可以合法地注入键鼠事件 |
+| **org.gnome.Shell.Introspect** | 窗口枚举——"桌面上现在有哪些窗口？每个的坐标在哪？" |
+
+#### 坐标翻译：整个方案最聪明的地方
+
+这里要先解释一个基础知识：**窗口局部坐标 vs 全局坐标**。
+
+* **全局坐标**：以屏幕左上角为原点 (0, 0)，单位是像素。屏幕中央大概在 (960, 540)（如果你用 1080p 屏幕）。
+* **窗口局部坐标**：以**某个窗口**的左上角为原点。比如浏览器窗口挪到了屏幕右侧，窗口内的 (100, 200) 指的是窗口内部距离窗口左上角 100 像素、距离顶部 200 像素的位置。
+
+dogtail 拿到的是窗口局部坐标（Via AT-SPI 无障碍接口），但注入事件需要全局坐标。这中间差了一个"翻译"步骤——谁来做？
+
+ponytail 的答案是：**外包给 mutter**。
+
+* `connectWindow(id)`：连到某个窗口，发给 ponytail 的坐标是**窗口局部坐标**。mutter 内部有一个叫 RecordWindow 的机制，自动把局部坐标翻译成全局坐标。
+* `connectMonitor()`：连整个屏幕，坐标直接就用全局坐标——不需要翻译。
+
+#### 键盘事件的一个细节：永远连屏幕，不连窗口
+
+ponytail 对键盘处理有一个很讲究的设计：键盘事件永远发给整个屏幕（monitor），不发给单个窗口。
+
+为什么？代码注释里有一句经典回答：
+
+> "Always use monitor, window will often get closed before final release."
+
+翻译：假设你按的是 Alt-F4（关闭窗口），那么在你释放按键之前，那个窗口已经被你关掉了。如果你之前连接的是那个窗口，释放事件就蒸发了——"往一个已经不存在的窗口发事件"，这和往空号打电话一样。
+
+跟一个会自杀的目标通信，不如对着整个屏幕喊话。
+
+#### ponytaill 的代价
+
+这个方案在 GNOME 上跑了五年，能用，但有两个硬伤：
+
+**硬伤一：unsafe mode**。要使用 Remote Desktop API，必须先关闭 GNOME Shell 的安全特性。具体操作：打开 GNOME 的隐藏控制台 Looking Glass（按 Alt-F2，输入 `lg`），然后执行 `global.context.unsafe_mode = true`。
+
+为了用上安全特性，先把安全特性关掉。这个名字本身就是个冷笑话。
+
+**硬伤二：只认 GNOME**。Introspect 和 RecordWindow 都是 mutter 的私有 API。换个合成器——比如 KDE 的 KWin，或者 Sway——这套方案全废。
+
+2019 年 wayland-devel 邮件列表上有人评价："mostly considered as a hack only for testing and not for production use"——大家都觉得这是拿来测测能跑就行的东西，别当真。
+
+**一个彩蛋**：dogtail 的 `release_key`（释放按键）和 `hold_key`（按下按键）在 Wayland 分支调的是**同一个方法**。按下和释放调同一个函数——大概率是个 bug，也可能是什么我没参透的玄学。
+
+***
+
+### 5.2 路线二：libei + XDG Desktop Portal（官方正派，2026 年的正解）
+
+这是本文的重点——生态公认的标准答案。
+
+#### 四个关键角色
+
+先认识一下这条路线上登场的四个角色，后面会反复出现：
+
+| 角色 | 是什么 | 谁实现的 |
+|---|---|---|
+| **libei** (Emulated Input Library) | 客户端库，你的程序用它发送模拟输入事件 | freedesktop.org 标准 |
+| **libeis** | 服务端库，运行在合成器内部，接收并处理 libei 发来的事件 | 集成在 mutter/KWin 等合成器里 |
+| **liboeffis** | 胶水层，封装和 Portal 通信的 D-Bus 细节 | freedesktop.org 标准 |
+| **XDG Desktop Portal** | "桌面能力超市"——截屏、录屏、远程桌面、输入注入……都通过它申请 | GNOME 有 gnome-portal，KDE 有 kde-portal |
+
+简单说：
+
+> **你的程序 → libei（打包事件） → Portal（申请授权） → libeis（在合成器里执行）**
+
+#### Portal 是什么？——桌面上的"办事大厅"
+
+![Portal 办事大厅概念图](./images/portal-concept.png)
+
+如果你去办过护照，就很容易理解 Portal。
+
+* 你要办事（截屏、录屏、注入键鼠），不能自己闯进后台系统——你必须走办事大厅（Portal）。
+* 到了办事大厅，你填申请表（发一个 D-Bus 请求）。
+* 工作人员审核（弹一个授权窗："Allow remote interaction?"）。
+* 你签字同意（点"允许"）。
+* 工作人员给你一个通行证（返回一个文件描述符 fd 和 restore\_token）。
+* 拿着通行证，你就可以进后台做事了（通过 fd 发送 libei 事件）。
+
+这就是 Portal 的逻辑：**能力不是天生的，是申请的。**
+
+#### 一次完整的授权流程
+
+![Portal 授权流程](./images/portal-flow.svg)
+
+具体来说：
+
+#### 两种传输方式：EIS（快的）和 Notify（慢的）
+
+Portal 支持两种方式发送输入事件：
+
+| | EIS 传输 | Notify 传输 |
+|---|---|---|
+| **通道** | ConnectToEIS 返回的 fd，走二进制协议 | D-Bus 方法调用（NotifyPointerMotion 等） |
+| **绝对移动**（移到指定坐标） | ✅ 支持，走 region 虚拟表面 | ❌ GNOME 上不可用 |
+| **相对移动**（从当前位置挪多少） | ✅ | ✅ |
+| **速度** | 快（二进制协议，16字节头） | 慢（每次调用走 D-Bus 序列化） |
+| **结论** | **默认选择** | 仅作回退 |
+
+一个血泪教训：**Notify 路径在 GNOME 上无法做绝对移动**。
+
+GNOME 的合成器 mutter 对 `NotifyPointerMotionAbsolute`（通知鼠标绝对移动）的校验逻辑是：坐标必须在一个 screen cast stream 的范围内。但 RemoteDesktop portal 根本**不支持屏幕流类型**——所以任何绝对坐标都会被拒绝，报 "Invalid position"。
+
+这就是为什么 EIS 是必选项——EIS 的 `motion_absolute` 走的是虚拟表面（region），不需要 screen cast stream。
+
+> 注：wdotool 和 KDE Connect 在 GNOME 上也用 EIS，证明这是目前唯一的正确解法。
+
+#### EIS-mode 门控：选了就不能回头
+
+Portal 有一个隐藏规则：一旦你调用了 `ConnectToEIS`，这个会话就永远进入了 "EIS 模式"——此后所有的 Notify 方法调用都会被永久拒绝，Portal 会冷冰冰地回你一句：
+
+> "Session is not allowed to call NotifyPointer methods"
+
+所以传输选择必须在 Start 之后、ConnectToEIS 之前完成。选了就不能回头——像一个单向门。
+
+#### token 技术：让弹窗只出现一次
+
+你一定在想：**"难道我每次跑脚本都要弹一次窗？"**
+
+不。Portal 设计了 **persist\_mode**（持久模式）和 **restore\_token**（恢复令牌）来解决这个问题。
+
+工作原理：
+
+1. **第一次**：用户点"允许" → Portal 在 Start 响应里附带一个 `restore_token`。
+2. **你的程序**：把这个 token 存到本地文件里。
+3. **第二次**：启动时带上这个 token → Portal 看到 token，"哦，上次来过"，直接静默恢复授权 → 不弹窗。
+4. **注意**：每次 Start 响应都会返回一个**新的 token**——你必须覆盖保存旧的，用新的替换。
+
+`persist_mode` 有三个档次：
+
+| 值 | 含义 |
+|---|---|
+| 0 | 不持久——每次弹窗 |
+| 1 | 存活期内有效——重启失效 |
+| 2 | 永久有效——直到用户主动撤销 |
+
+token 存在哪？`~/.local/state/pywaylandauto/portal.token`。目录权限 0700，文件权限 0600，写入方式为**原子写**——先写临时文件，再 `os.replace` 移动。防止写到一半断电，留下一个烂 token。
+
+#### CI 怎么办？——免弹窗的工程解
+
+在 CI（持续集成）环境里，没有人坐在电脑前点弹窗。目前社区的做法是：
+
+1. 在 CI 机器上手动跑一次，点"允许"，拿到 token。
+2. 把这个 token 文件作为 CI 环境变量或 secret 注入。
+3. 后续每次 CI 跑，程序带 token 启动 → Portal 静默恢复 → 不弹窗。
+
+这不是优雅的方案，但是目前能用的方案。更终极的解法（InputCapture portal 白名单模式）还在评估中。
+
+#### PropertiesChanged 的幽灵
+
+理论上，Portal 会话的状态变化应该通过 D-Bus 的 `PropertiesChanged` 信号通知你的程序。比如："会话关闭了"、"设备变化了"。
+
+实测结果：**在 GNOME 50 上，这个信号从头到尾没触发过一次。**
+
+教训：你的状态机必须以 Response 码为唯一真相源。PropertiesChanged 只能当"有最好、没有也能活"的增强。如果你把所有状态转换都挂在 PropertiesChanged 上——你的程序会安静地卡死，然后你不知道为什么。
+
+***
+
+### 5.3 路线三：wlroots 协议（社区的土路，但能跑）
+
+wlroots 系（Sway、Hyprland 等）基本没跟 libei，而是自己制定了一套虚拟设备协议：
+
+| 协议 | 干什么 |
+|---|---|
+| `zwp_virtual_keyboard_v1` | 虚拟键盘——发按键事件 |
+| `zwlr_virtual_pointer_v1` | 虚拟鼠标——移动、点击、滚轮 |
+| `zwlr_foreign_toplevel_management_v1` | 窗口列表——拿每个窗口的位置和大小 |
+
+**优点**：简单直接。一个请求直接创建虚拟设备，不需要走 Portal 那套七步仪式，没有弹窗。
+
+**缺点**：只认 wlroots 系。GNOME 和 KDE 不实现这些协议——所以这条路的覆盖面比较窄。它就像村里自己修的土路，村里开车舒服，但上了国道就没了。
+
+***
+
+### 5.4 路线四：uinput（内核级核武器）
+
+**什么是 uinput？**
+
+uinput 是 Linux 内核提供的一个机制：你写一个文件 `/dev/uinput`，向系统注册一个虚拟的输入设备。从合成器的视角看，这个设备和你的真实键盘鼠标**没有区别**——它就是一把"真"键盘、一个"真"鼠标。
+
+**优点**：对所有合成器通吃，包括 X11。合成器完全不知道这是个假的——因为在内核层面，它就是真的。
+
+**缺点**：需要 root 权限。你得 `sudo` 才能用。
+
+走这条路线的工具代表是 `ydotool`。这是最后兜底的方案——当前面三条路都走不通的时候，uinput 永远在。
+
+***
+
+### 5.5 四条路的关系（一张图讲清楚）
+
+![四条路线全景图](./images/four-routes.svg)
+
+***
+
+## 6. 深入：PyWaylandAuto 怎么做
+
+### 6.0 为什么需要 PyWaylandAuto：与 wdotool 的分野
+
+在进入实现细节之前，必须回答一个问题：**wdotool 已经用 Rust 写了一个多后端键鼠工具，为什么还要再来一个 Python 的？**
+
+答案在三个差异上：
+
+**差异一：国产发行版适配**
+
+麒麟 V11 的合成器 `kylin-wlcom` 和 UOS 的 `Treeland`，底层都基于 wlroots。这意味着 PyWaylandAuto 的 wlroots 后端在两家上都能跑，和 Sway/Hyprland 共享同一套 `zwlr_virtual_pointer` + `zwlr_virtual_keyboard` 协议。
+
+但麒麟多做了一层：`kylin-wlcom` 额外暴露了一个 EIS D-Bus 接口（`com.kylin.Wlcom.EIS.RemoteDesktop`），可以直接拿 EIS 文件描述符，跳过 Portal 的整套授权流程——无弹窗、无 token、无需 unsafe mode。PyWaylandAuto 的后端优先级把这条路排在第一：先测 Kylin EIS，测不到就回退到 wlroots 协议，都走不通才试 Portal。wdotool 虽有 wlroots 后端，但不会接麒麟这个 D-Bus 捷径。
+
+麒麟在国内政企和信创场景是事实标准。如果要做国产发行版 Wayland 下的自动化测试、合规验收、批量部署——PyWaylandAuto 是目前唯一同时覆盖麒麟和 UOS、且为麒麟做了专属优化的项目。
+
+**差异二：中文输入**
+
+wdotool 只能发送 keycode（物理键码）。中文不能通过 keycode 来"敲"——你需要输入法（fcitx/ibus）把拼音转成汉字，而输入法是独立进程，和合成器不在同一个上下文里。wdotool 遇到中文要么报错跳过，要么乱码。
+
+PyWaylandAuto 的解决方案是：检测到非 Latin-1 字符时，走**剪贴板粘贴**路线——把中文写入系统剪贴板，然后模拟 Ctrl+V。不经过输入法，直接完成文本注入。对于自动化场景（往搜索框填中文、往表单填中文、验证中文显示），这比逐键模拟实用得多。
+
+**差异三：Python 生态**
+
+`pip install pywaylandauto`，`import pywaylandauto as pwa`，`pwa.click(500, 300)`。三行代码，开箱即用。pytest、Ansible、Robot Framework、任何 Python 自动化脚本都能直接集成。不需要编译 Rust，不需要学新 CLI 语法，不需要调 subprocess。
+
+***
+
+### 6.1 为什么选 daemon 架构而不是纯 CLI？
+
+一句话：**libei 不是为短命工具设计的。**
+
+libei 的设备协商是有状态的——每次新建一个会话，都要走完整的握手流程：
+
+* 配设备（seat、device）
+* 收键盘布局（36345 字节的 XKB keymap 文本文件）
+* 协商能力（指针、绝对移动、滚动、按键、键盘）
+
+这个握手在一次会话里只走一次。如果你写一个"跑一次就退"的 CLI 小工具，那么：
+
+* 第一次运行 → 完整握手 + 弹窗 → 退出
+* 第二次运行 → 又是完整握手 + 弹窗 → 退出
+* 第三次运行 → 还是完整握手 + 弹窗……
+
+每次都要弹窗，每次都要走完整握手——这完全违背了 token 缓存的设计初衷。
+
+**daemon（守护进程）方案**：一个常驻进程跑在后台，它持有唯一的 Portal 会话。你的脚本启动时，连到这个 daemon 的 socket，发送 JSON 请求，daemon 代为执行操作。
+
+![PyWaylandAuto 架构](./images/architecture.svg)
+
+弹窗只在 daemon **首次启动**时出现一次。之后所有操作都走已有会话。
+
+### 6.2 通信协议：零依赖的 JSON over UNIX Socket
+
+daemon 和客户端之间怎么通信？用了最朴素的方法——**UNIX socket + 换行分隔的 JSON**。
+
+```json
+// 客户端说：帮我点一下左键
+{"id": 1, "method": "input.click", "params": {"button": "left"}}
+
+// daemon 说：搞定
+{"id": 1, "ok": true, "result": {}}
+
+// 或者：还不行，先去弹窗授权
+{"id": 1, "ok": false, "error": {"code": "permission_pending", "message": "弹窗在等你"}}
+```
+
+设计原则：零外部依赖、纯标准库、任何语言都能对接。你拿着 cURL 连 socket 也能发包。
+
+### 6.3 EIS 线协议：一行代码，16 字节头
+
+EIS 的线协议极其紧凑——比 JSON 快得多：
+
+```
+每帧：
+[16 字节头，本机字节序]
+  u64 object_id    → 发给哪个对象（0=握手、1=连接、2=seat、3=设备、10=指针、13=按键……）
+  u32 length       → 整帧长度（含头）
+  u32 opcode       → 方法/事件编号
+
+[参数，4 字节对齐]
+  int/float → 4 字节
+  string    → 4字节长度 + 数据 + 补齐
+  fd        → 0 字节负载（文件描述符通过 SCM_RIGHTS 附带，不占空间）
+```
+
+**一次点击的实际流程**：
+
+```
+start_emulating(序列号, 序号)
+  → button(press) → frame(序列号, 微秒时间戳)
+start_emulating(序列号, 序号)    ← 又是一帧开始
+  → button(release) → frame(序列号, 微秒时间戳)
+stop_emulating(序列号)
+```
+
+关键规则：\*\*press 和 release 必须在不同帧里。\*\*同帧 press+release 在 libei 里等于什么都没发生——这是帧语义，不是 bug。
+
+一个踩过坑的细节：**float 是 4 字节，不是 8 字节**。brei 协议的 C 源码里有一个测试断言 `buf[4]`，往里面塞 8 字节的 double 会直接翻车。
+
+### 6.4 键盘翻译：从"a"到"38 号键"有多远？
+
+你敲了一个字母 `a`。从你的角度看，这是一个键。但 EIS 协议不认识 `"a"`——它只认识 **keycode**（物理键码），比如美式键盘上 `a` 对应的是键码 38。
+
+**keycode 到字符的映射取决于键盘布局。**——德文键盘上键码 38 可能是另一个字符。所以不能在代码里写死 `"a" = 38`。
+
+解决方法是：mutter 在握手阶段发来一份 **XKB keymap** 文本文件——一个 36345 字节的超大配置文件，详细描述了这个键盘上每个物理位置对应什么字符，Shift 了又变成什么，CapsLock 亮了又变成什么。
+
+你的程序需要在客户端解析这份 keymap，建立一个查找表：
+
+```
+输入 "a" → 查表 → keycode=38 → 发给 mutter
+输入 "A" → 查表 → 需要 Shift → keycode=38 → Shift_L press → a press → a release → Shift_L release
+```
+
+\*\*Shift 为什么要自己管理？\*\*因为 mutter 有一个已知 bug（#3375）：EIS 客户端收不到键盘修饰键事件。你不知道 CapsLock 亮没亮，不知道 Shift 按没按。所以 PyWaylandAuto 的选择是：自己管理 Shift——需要大写就自己按一下 Shift，打完再松掉。
+
+如果 keymap 里找不到某个键（部分键盘布局的 keymap 可能不完整），就回退到内置的美国键盘表兜底。
+
+### 6.5 状态机：从生到死的五种状态
+
+![Daemon 状态机](./images/state-machine.svg)
+
+| 状态 | 含义 | 触发条件 |
+|---|---|---|
+| **INIT** | 初始，啥都没干 | daemon 刚启动 |
+| **STARTING** | 正在申请授权 | 用户调了 `session.start` 或自动触发 |
+| **STARTED** | 授权通过，可以干活 | Start 响应 code=0 |
+| **STOPPED** | 会话关闭 | 外部关闭（Portal 的 Closed 信号）或探测失败 |
+
+**关键规则**：
+
+* 任何 `input.*` 命令发出时，如果状态不是 STARTED，daemon 会自动发起会话流程 → 返回 `permission_pending` → CLI 提示用户去点弹窗。
+* 用户拒绝弹窗 → Portal 直接销毁会话对象 → 状态回到 STOPPED → 后续输入命令返回 `permission_denied`。
+* **拒绝后不自动重启**——防止弹窗风暴（用户拒绝一次你弹十次，这是找打）。重新授权要用户显式调 `session.start`。
+
+***
+
+## 7. 生态全景：2026 年的基准线
+
+| 桌面 | 合成器 | 底层 | 键鼠模拟走哪条路 |
+|---|---|---|---|
+| **GNOME** | mutter | mutter | libei + Portal（ponytail 已不推荐） |
+| **KDE Plasma** | KWin | KWin | libei + Portal（跟进中） |
+| **Kylin V11** | kylin-wlcom | wlroots | wlroots 协议 + EIS D-Bus 捷径（无弹窗） |
+| **UOS** | Treeland | wlroots | wlroots 虚拟设备协议 |
+| **Sway / Hyprland** | wlroots | wlroots | wlroots 虚拟设备协议 |
+| **Linux Mint Cinnamon** | muffin | muffin | 还在 X11 为主（最大钉子户） |
+
+**值得关注的项目**：
+
+| 项目 | 语言 | 特点 |
+|---|---|---|
+| **wdotool** | Rust | 五个后端自动降级（Portal → wlroots → KWin → uinput） |
+| **PyWaylandAuto** | Python | daemon 架构 + 国产发行版优先 + 中文剪贴板输入 |
+| **enigo-rs** | Rust | 库形态，适合嵌入你自己的 Rust 程序 |
+| **ydotool** | C | uinput 路线，需 root，通吃一切 |
+| **KDE Connect** | C++ | 手机控电脑，Wayland 下也用 EIS |
+
+***
+
+## 8. 我怎么知道我跑在 X11 还是 Wayland
+
+一条命令，一秒判断：
+
+```bash
+echo $XDG_SESSION_TYPE
+# wayland → 你在 Wayland 上
+# x11     → 你还在 Xorg 上
+```
+
+* 如果你看到 `wayland`：xdotool 那套该换掉了。你需要的是一条新路。
+* 如果你看到 `x11`：你还能苟一阵，但各大发行版在 2026 年正批量移除 X11 会话。这条路越走越窄。
+
+***
+
+## 9. 总结
+
+X11 的开发者没想过要防恶意软件。他们想的是网络透明、远程显示、开放架构——在 1984 年，这些想法没什么问题。
+
+四十年后，问题来了。Wayland 把输入注入从"谁都能干的事"变成了"你得先敲门"。这个方向没毛病——测试自动化正好是几个有资格敲门的场景之一。
+
+以前一行 `xdotool click` 搞定的事，现在需要懂 Portal、懂 libei、懂 token 缓存。麻烦，但不是无解。
+
+门开了一条缝。剩下的，就是写代码了。
+
+**参考**
+
+* 微信公众号 Ubuntu[《X11 撑了 40 年，为什么 2026 年 Linux 桌面集体弃用？》](https://mp.weixin.qq.com/s/Jsavlhqq1iJq_T8Jd1XTew)
+* [gnome-ponytail-daemon](https://gitlab.gnome.org/ofourdan/gnome-ponytail-daemon)
+* [wdotool](https://github.com/cushycush/wdotool)
+* [libei keysym/text 现状 (who-t)](http://who-t.blogspot.com/2026/07/libei-and-keysymtext-events.html)
+* [xdotool 跨合成器输入模拟实验](https://blog.hotdry.top/posts/2025/11/21/wayland-protocol-fragmentation-xdotool-input-simulation-diagnosis-bridging/)
+* [mutter input loopback #4883](https://gitlab.gnome.org/GNOME/mutter/-/work_items/4883)
+* [mutter 修饰键 #3375](https://gitlab.gnome.org/GNOME/mutter/-/work_items/3375)
+* [xdg-desktop-portal handle\_token 修复 #1549](https://github.com/flatpak/xdg-desktop-portal/issues/1549)

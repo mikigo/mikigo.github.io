@@ -106,6 +106,7 @@
 ## ✍️博客
 
 - [mikigo's blog](/blog/index.md)
+- [Wayland下键鼠模拟入门指南](/blog/Wayland下键鼠模拟入门指南/docs.md): Wayland下键鼠模拟入门指南
 - [在 Wayland 下点鼠标到底有多难](/blog/2026-08-20.md): Wayland 键鼠控制调研：从 dogtail/ponytail 的 GNOME 专有 hack，到 libei 与 XDG Portal 的标准化路线，以及一个新项目的可行性判断。
 - [系统开门迎客，动手才验身](/blog/2026-06-17.md): TestRunner 权限改造实录：让系统开门迎客，访客随便看，动手才验身。从 RBAC 到匿名访问的技术方案与实现细节。
 - [同事说"改个文档还要装 Git？算了我还是不写了"](/blog/2026-06-12.md): 同事想改一行文档，因为不想碰 Git 放弃了。于是我写了一个能在浏览器里直接改 GitHub 仓库 Markdown 的工具。
