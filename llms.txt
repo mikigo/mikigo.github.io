@@ -226,10 +226,6 @@
 - [鸡汤](/cookbook/营养汤/鸡汤.md)
 - [鸽子汤](/cookbook/营养汤/鸽子汤.md)
 
-## 摘抄
-
-- [摘抄——酷酷的话](/quotes/index.md)
-
 ## 📊排行榜
 
 - [](/leaderboard.md)
