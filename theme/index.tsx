@@ -3,6 +3,7 @@ import {
   getCustomMDXComponent as basicGetCustomMDXComponent,
 } from '@rspress/core/theme-original';
 import { PatentGrid } from '../components/Patent';
+import { HomeTabs } from '../components/HomeTabs';
 import './index.css';
 
 const myStyle = {
@@ -14,11 +15,14 @@ const myStyle = {
 const Layout = () => (
   <BasicLayout
     beforeFeatures={
-          <div>
-            <h1 align="center"  style={myStyle}>
-              我创建的开源项目
-            </h1>
-          </div>
+          <>
+            <HomeTabs />
+            <div>
+              <h1 align="center"  style={myStyle}>
+                我创建的开源项目
+              </h1>
+            </div>
+          </>
         }
     afterFeatures={<PatentGrid />}
     beforeDocContent={
