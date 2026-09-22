@@ -6,7 +6,7 @@ doc_build/
 node_modules/
 # C extensions
 *.so
-
+.superpowers/
 # Distribution / packaging
 .Python
 build/
