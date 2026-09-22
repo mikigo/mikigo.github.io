@@ -73,15 +73,6 @@
   white-space: nowrap;
 }
 
-.home-tabs__post-views {
-  font-size: 0.8rem;
-  color: var(--rp-c-text-3);
-  margin-left: 24px;
-  flex-shrink: 0;
-  min-width: 60px;
-  text-align: right;
-}
-
 .home-tabs__post-date {
   font-size: 0.8rem;
   color: var(--rp-c-text-3);
