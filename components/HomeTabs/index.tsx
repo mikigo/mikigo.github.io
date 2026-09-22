@@ -45,7 +45,7 @@ export function HomeTabs() {
                   <span className="home-tabs__post-title">{post.title}</span>
                   <span className="home-tabs__post-views">
                     <span className="counter-container">
-                      <span data-pv-page=""></span>
+                      👁 <span data-pv-page={post.href}></span>
                     </span>
                   </span>
                   {post.date && (
