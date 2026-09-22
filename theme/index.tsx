@@ -4,27 +4,18 @@ import {
 } from '@rspress/core/theme-original';
 import { PatentGrid } from '../components/Patent';
 import { HomeTabs } from '../components/HomeTabs';
+import { ProjectCarousel } from '../components/ProjectCarousel';
 import './index.css';
-
-const myStyle = {
-  fontSize: '2em',
-  fontWeight: 'bold',
-  center: true,
-}
 
 const Layout = () => (
   <BasicLayout
-    beforeFeatures={
+    beforeFeatures={<HomeTabs />}
+    afterFeatures={
           <>
-            <HomeTabs />
-            <div>
-              <h1 align="center"  style={myStyle}>
-                我创建的开源项目
-              </h1>
-            </div>
+            <ProjectCarousel />
+            <PatentGrid />
           </>
         }
-    afterFeatures={<PatentGrid />}
     beforeDocContent={
             <div align="left" style={{fontSize: "0.85em", color: "gray", marginBottom: "24px"}}>
                 <span style={{display:"none"}} className="counter-container">

@@ -6,6 +6,11 @@
   }
 }
 
+/* 隐藏 Rspress 原生 features，用 ProjectCarousel 替代 */
+.rp-home-feature {
+  display: none !important;
+}
+
 /* ===== 专利展示区（shadcn-ui 风格）===== */
 .patent-section {
   max-width: 1200px;

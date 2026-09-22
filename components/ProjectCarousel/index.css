@@ -1,0 +1,82 @@
+.project-carousel {
+  max-width: 1200px;
+  margin: 64px auto 0;
+  padding: 0 24px;
+}
+
+.project-carousel__title {
+  font-size: 2em;
+  font-weight: bold;
+  text-align: center;
+  margin: 0 0 32px;
+}
+
+.project-carousel__wrapper {
+  overflow: hidden;
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 5%,
+    black 95%,
+    transparent
+  );
+}
+
+.project-carousel__track {
+  display: flex;
+  gap: 16px;
+  animation: carousel-scroll 60s linear infinite;
+  width: max-content;
+}
+
+.project-carousel__wrapper:hover .project-carousel__track {
+  animation-play-state: paused;
+}
+
+.project-carousel__card {
+  flex-shrink: 0;
+  width: 220px;
+  padding: 20px 18px;
+  border-radius: 0.75rem;
+  border: 1px solid var(--rp-c-border);
+  background: var(--rp-c-bg-soft);
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.project-carousel__card:hover {
+  border-color: var(--rp-c-brand);
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.06), 0 1px 2px -1px rgb(0 0 0 / 0.06);
+}
+
+.project-carousel__card-icon {
+  font-size: 1.5rem;
+}
+
+.project-carousel__card-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--rp-c-text-1);
+}
+
+.project-carousel__card-desc {
+  font-size: 0.78rem;
+  color: var(--rp-c-text-3);
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+@keyframes carousel-scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
