@@ -227,12 +227,9 @@
 - [鸡汤](/cookbook/营养汤/鸡汤.md)
 - [鸽子汤](/cookbook/营养汤/鸽子汤.md)
 
-## 📊排行榜
-
-- [](/leaderboard.md)
-
 ## Other
 
+- [](/leaderboard.md)
 - [📋 allure-markdown — Allure 转 Markdown 报告工具](/project/allure-markdown.md): "零依赖，一行命令将 Allure 测试结果转为 Markdown 报告。"
 - [📊 allure3-server — Allure3 测试报告服务](/project/allure3-server.md): "上传测试结果，一键生成 Allure 报告，浏览器直接查看。"
 - [🧪 Autotest-Basic-Template — Pytest 自动化测试工程模板](/project/autotest-basic-template.md): "最小化的最佳实践，开箱即用的测试工程骨架。"
