@@ -4,6 +4,7 @@ authors: ['mikigo']
 description: '从文件名到断言，pytest 用一套"约定大于配置"的设计让你少写 80% 的样板代码。详细介绍测试发现、conftest 级联、fixture 注入、插件自动加载等六大约定体系，附可实操的完整示例。'
 sidebar: false
 pageType: doc-wide
+cover: ./cover.png
 ---
 
 # Pytest 中那些"约定大于配置"的设计
@@ -19,6 +20,8 @@ pageType: doc-wide
 这不是运气，这是一套精密的"约定大于配置"体系。它的哲学很简单：**如果这件事有一个显而易见的做法，那就把它变成默认，别让用户每次都要说一遍。**
 
 下面我们一层层拆开看，pytest 究竟藏了多少这样的约定。
+
+![](./image-01.png)
 
 ---
 
@@ -180,6 +183,8 @@ def test_user_creation(sample_user, mock_http_client):
 3. 子目录的 conftest.py 可以**覆盖**父目录的同名 fixture（后加载的优先）
 
 这就是为什么 pytest 项目里你几乎看不到 `from some_fixture import ...` —— conftest 约定让导入变得多余。fixture 在哪里定义不重要，重要的是它在测试函数**目录层级中**的 conftest 链上。
+
+![](./image-02.png)
 
 ### conftest 的另一个身份：Hook 实现
 
@@ -352,6 +357,8 @@ def test_name(db):            # 参数名叫 db → pytest 去找名叫 db 的 f
 ```
 
 不需要 `setUp`、不需要 `self.xxx`、不需要继承。参数名就是依赖声明。
+
+![](./image-03.png)
 
 ### 作用域约定
 
