@@ -35816,7 +35816,1204 @@ import { BlogList } from '../../components/Blog';
 
 
 ---
-url: /blog/2026-09-15/docs.md
+url: /blog/2026-09-29.md
+---
+
+# 给你的 AI Agent 搭一个技能商店：SkillHub 从零到上线全记录
+
+最近大家都在给 AI Agent 写 skill。写完一个又一个，放在 `~/.agent/skills` 目录里，隔壁同事问你要你就打个 zip 发过去。过两周你的 skill 更新了，又得重新发一遍。
+
+我们需要一个"技能商店"。不是 App Store 那种上架审核三个月的，是自己部署、团队内部用的那种。搜一下就有了，传上去就能装。
+
+这就是 SkillHub。
+
+## 它到底解决了什么问题
+
+先搞清楚一个概念：**skill 是什么？**
+
+AI agent 本质上是个对话接口。它能写代码、能分析数据、能做很多事——但得有人教它怎么做。每次对话都手把手教？太浪费上下文了。skill 就是把"怎么教"这个过程封装成一个包：一段 markdown 写的指南，加上必要的脚本和模板，打包放在某个地方，agent 需要的时候自动加载。
+
+就像你不会每次做饭都去菜市场现买锅碗瓢盆——你有一套厨房装备，拿出来就能用。skill 就是 agent 的厨房装备。
+
+SkillHub 解决的是**这些装备的统一管理和分发**。一个自托管的服务，跑在你自己的服务器上，团队成员搜到 skill 就能装。
+
+## 市面上有什么，还缺什么
+
+做之前扫了一圈同类项目。最有代表性的几个：
+
+| 项目 | 类型 | 亮点 | 局限 |
+|------|------|------|------|
+| [skills.sh](https://skills.sh) | 公共托管平台 | Vercel 出品，设计精美，排行榜、审计系统完善，装机量巨大 | 只能上传到公共仓库，不支持私有部署。你公司的内部 skill 没法放上去 |
+| [SkillSeeker](https://skill-seekers.pages.dev/) | 公共索引 | 社区维护的 skill 目录，按 agent 分类 | 纯目录，不能上传，只能浏览 |
+| 各 Agent 的 marketplace | 生态内 | Claude Code、Cursor 等都有自己的 skill/plugin 生态 | 绑定特定 agent，同一份 skill 不能跨 agent 用 |
+
+所以现状是：公共平台有，但看得到摸不着的东西你也不敢放上去（你的部署脚本、内部 API 文档、代码审查规则）。Agent 生态内的方案绑定太紧，换个 agent 就要重新适配。私有部署这一块，基本是空白。
+
+SkillHub 就是来填这个空白的。
+
+## 核心功能速览
+
+### 拖拽上传，自动识别
+
+上传一个 skill 不用敲命令。把文件夹拖进浏览器窗口，SkillHub 自动打包成 zip、自动扫描 `SKILL.md` 提取名称和描述、自动识别版本号。如果你不填版本，它还会自动给上个版本号 +0.0.1。
+
+这背后是一段手写的 CRC32 和 ZIP 生成代码——因为不想在浏览器端引入额外依赖。压缩包在浏览器里生成好，传到服务端直接存储。
+
+### 版本管理，随时回滚
+
+传过的 skill 可以追加新版本。旧版本不删，用户随时切回去。作者觉得某个版本有问题，点一下删掉就行。
+
+这个设计参考了 Docker Hub 的 tag 机制，但更简化——不需要理解 `latest` 和 `alpine` 的区别。
+
+### 注册审批 + 权限控制
+
+不是谁都能往仓库里传东西。新用户注册后默认是待审批状态，管理员点一下"通过"才能用。认证用的是 JWT + refresh token，BCrypt 加密，前端自动拦截 401 并用 refresh token 续期，对用户透明。
+
+### 主题 + 国际化
+
+亮色暗色一键切。中英文界面，默认中文。`config.json` 里换个 Logo、换个 favicon、换个标题——不用动代码。适合企业内网部署做品牌定制。
+
+### 搬运机制
+
+从外网搬运 skill 到内网，上传时填原作者和来源链接，详情页会同时显示"搬运者"和"原作者"，避免拿别人的成果当自己的。
+
+## 踩坑：一条 CSS 导致的暗色模式翻车
+
+shadcn/ui 默认的 CSS 变量是用 `hsl()` 包裹 `oklch()` 色值的，比如：
+
+```css
+.bg-primary {
+  background-color: hsl(var(--primary));
+}
+```
+
+`--primary` 的值是 `oklch(0.21 0.006 285.885)`，浏览器看到的最终表达式是 `hsl(oklch(…))`。这在标准里不合法。Chrome 对不带透明度的用法还能容错渲染，一旦加上透明度（`bg-primary/10`）就直接放弃——表现为一片空白。
+
+骨架屏（Skeleton 组件）的默认样式恰好是 `bg-primary/10`。于是暗色模式下，页面初始加载阶段本该显示的灰色占位块完全不渲染，看起来像白屏。
+
+修起来很简单，就是绕开 CSS 变量别名，直接用十六进制色值。但这提醒我一件事：**工具链的默认配置不一定在生产环境能稳稳跑**。Tailwind 的 `hsl()` 包装和新一代 CSS 颜色空间之间有个隐形的坑，掉进去过一次你才会注意到。
+
+## 三条命令跑起来
+
+```bash
+pip install skillhub-selfhost
+skillhub-selfhost admin-init
+skillhub-selfhost server-start
+```
+
+打开 `http://localhost:8000`，管理员账号登录，开始上传你的第一个 skill。
+
+要用 PostgreSQL 替代 SQLite？在启动目录下建个 `config.json`：
+
+```json
+{
+  "db_url": "postgres://user:pass@localhost:5432/skillhub"
+}
+```
+
+不需要装数据库管理工具，不需要配 Nginx 反向代理（当然生产环境建议加一层），前端页面已经打包进 Python 包里了。一条命令就是一个完整的服务。
+
+## 它是给谁用的
+
+如果你的团队在用 AI agent，有 3 个以上反复使用的流程——代码审查规则、部署脚本、某个框架的最佳实践——把它们写成 skill，统一放在 SkillHub 上管理。
+
+如果你只有一个人，那可以先不急着搭仓库。但一旦涉及"和别人共享 skill""在多台机器之间同步 skill""想让新人快速上手团队的 AI 工作流"，SkillHub 比 zip 包和 U 盘拷贝要好得多。
+
+源码在 [github.com/mikigo/skillhub-selfhost](https://github.com/mikigo/skillhub-selfhost)，Apache-2.0 协议。欢迎 Star、提 Issue、交 PR。
+
+
+
+---
+url: /blog/2026-09-23/doc.md
+---
+
+# Pytest-Xdist 多机器分布式执行是如何实现的
+
+从零拆解 pytest-xdist 的远程分布式架构，并与 Swarm 做全方位对比。
+
+## 当 `-n auto` 不够用的时候
+
+你大概率用过这行命令：
+
+```bash
+pytest -n auto
+```
+
+它让你的测试从"一个核慢慢跑"变成了"所有核一起上"，速度提升肉眼可见。这是 pytest-xdist 最出名的功能——**本地多进程并行**。
+
+但如果你的测试集有 5000 个用例，本机只有 8 核，跑完要 20 分钟，怎么办？最快的办法是把隔壁老王的那台 32 核机器也用上——这就是**多机器分布式执行**。
+
+本文带你从源码层面拆解 pytest-xdist 是怎么做到的，以及它和另一个分布式测试框架 Swarm 的对比。
+
+![](./images/image-01.png)
+
+## 基本概念：用 `-n auto` 打底
+
+在进入多机器之前，必须先搞懂单机并行——因为多机器只是在单机基础上**换了一条通信链路**而已。
+
+```mermaid
+sequenceDiagram
+    participant C as Controller
+    participant W1 as Worker1 gw0
+    participant W2 as Worker2 gw1
+
+    C->>W1: execnet fork, 加载 remote.py
+    C->>W2: execnet fork, 加载 remote.py
+
+    Note over W1,W2: 各自启动独立 pytest Session
+
+    W1->>C: workerready + workerinfo
+    W2->>C: workerready + workerinfo
+
+    Note over W1,W2: 各自全量收集所有测试
+
+    W1->>C: collectionfinish + nodeid列表
+    W2->>C: collectionfinish + nodeid列表
+
+    Note over C: 校验收集结果必须完全一致
+
+    C->>W1: runtests indices=[0,3,5,7]
+    C->>W2: runtests indices=[1,2,4,6]
+
+    loop 执行汇报循环
+        W1->>C: testreport
+        W1->>C: runtest_protocol_complete
+    end
+
+    C->>W1: shutdown
+    C->>W2: shutdown
+```
+
+核心设计：Worker 先**全量收集**，Controller 再通过**整数索引**告诉它"跑哪几个"。Worker 之间不需要知道彼此的存在。
+
+## 远程模式：当 Worker 不在本机时
+
+### 通信层：execnet + socketserver
+
+pytest-xdist 远程通信依赖 [execnet](https://codespeak.net/execnet)，专门为"跨进程执行 Python 代码"设计。它配合一个不到 133 行的 `socketserver.py` 实现远程 Worker 的启动。
+
+```mermaid
+flowchart LR
+    subgraph Controller机
+        C[Controller]
+        CH[execnet Channel]
+    end
+
+    subgraph 远程Worker机
+        SS[socketserver.py 监听端口]
+        W1[Worker 进程 remote.py]
+    end
+
+    C -->|execnet.connect| SS
+    SS -->|accept + exec| W1
+    CH <-->|双向 channel| W1
+```
+
+#### 启动步骤
+
+**远端机器**（只需做一次）：
+
+```bash
+# 下载 socketserver.py 并启动
+python socketserver.py
+# 输出: Entering Accept loop (0.0.0.0:8888)
+```
+
+> `socketserver.py` 兼容 Windows/Linux/macOS。Windows 上 `fcntl` 不可用时会自动降级，功能不受影响。
+
+**Controller 机器**：
+
+```bash
+pytest -d --tx socket=192.168.1.102:8888
+```
+
+#### 底层发生了什么
+
+```python
+# Controller 端 (workermanage.py)
+spec = execnet.XSpec("socket=192.168.1.102:8888")
+gateway = group.makegateway(spec)          # 建立 TCP 连接
+
+# 把 xdist/remote.py 推送到远端执行
+channel = gateway.remote_exec(remote_module)
+# 远端进程 exec(remote.py)
+# 进入 if __name__ == "__channelexec__": 分支
+
+# 发送初始数据——只发配置，不发代码！
+channel.send((workerinput, args, option_dict, change_sys_path))
+```
+
+**重要**：`remote_exec()` 只传了 `xdist/remote.py`（约 437 行的 runner 框架），你的测试代码**不会**通过 execnet 传输。测试代码必须已经存在于远程机器的文件系统上。
+
+### 单通道 vs 双通道
+
+```mermaid
+flowchart TB
+    subgraph PX ["pytest-xdist: 单通道复用 命令事件数据全走一条"]
+        C1[Controller] --> CH1[execnet Channel] --> WX[Worker]
+    end
+
+    subgraph SW ["Swarm: 双通道分离"]
+        S1[Server] -->|WebSocket 任务下发状态| CL1[Client]
+        S1 -->|HTTP 文件上传API| CL2[Client]
+    end
+```
+
+pytest-xdist 的 channel 是**双向的**：Controller 通过它发命令（`runtests`/`shutdown`/`steal`），Worker 通过它发事件（`testreport`/`collectionfinish`/`logstart`）。所有通信复用同一条 TCP 连接。
+
+### Worker 的完整生命周期
+
+```mermaid
+sequenceDiagram
+    participant C as Controller
+    participant W as 远程 Worker
+
+    C->>W: channel.send workerinput args
+    Note over W: remote.py __channelexec__ 入口
+
+    W->>W: _prepareconfig args
+    W->>W: 创建独立 pytest Config/Session
+    W->>W: 注册 WorkerInteractor 插件
+
+    W->>W: pytest_cmdline_main
+    Note over W: 启动完整 pytest 生命周期
+
+    W->>C: pytest_sessionstart workerready
+    Note over C: sched.add_node node
+
+    W->>W: pytest_collection 全量收集
+    W->>C: collectionfinish nodeid列表
+
+    Note over C: 校验所有Worker收集一致
+    Note over C: sched.schedule 开始分发
+
+    C->>W: runtests indices [0,3,7]
+    Note over W: torun.put 0 3 7
+
+    loop 测试执行循环
+        W->>W: torun.get item=items[idx]
+        W->>W: runtestprotocol item nextitem
+        W->>C: logstart testreport complete
+    end
+
+    C->>W: shutdown
+    W->>W: torun.put Marker.SHUTDOWN
+    W->>C: workerfinished
+```
+
+每个远程 Worker 内部跑的是一个**完整但被劫持了的 pytest Session**：
+
+```python
+# remote.py — Worker 进程入口
+config = _prepareconfig(args, None)          # ① 构建独立 Config
+setup_config(config, basetemp)               # ② 强制 dist=no
+config.workerinput = workerinput             # ③ 注入 Worker 身份
+config.workeroutput = {}                     # ④ workeroutput 通道
+interactor = WorkerInteractor(config, channel) # ⑤ 注册劫持插件
+config.hook.pytest_cmdline_main(config=config) # ⑥ 启动完整 pytest
+```
+
+> 一个 Worker 就是一个"被远程操控的 pytest"。它正常收集所有测试、正常创建 Session，只是 `runtestloop` 被 WorkerInteractor 劫持——不再自动遍历 `session.items`，而是从 Controller 的指令队列 `torun` 里取索引。
+
+## 五大调度策略
+
+pytest-xdist 提供了 **5 种调度器**，通过 `--dist` 参数选择：
+
+```mermaid
+flowchart TD
+    S[--dist 参数] --> E[each: 每个Worker跑全部]
+    S --> L[load: 负载均衡 按块分发]
+    S --> LS[loadscope: 按模块/类分组]
+    S --> LF[loadfile: 按文件分组]
+    S --> LG[loadgroup: 按xdist_group标记分组]
+    S --> WS[worksteal: 均匀分配+动态窃取]
+```
+
+### LoadScheduling：朴素的负载均衡
+
+```python
+# load.py — 发测试的逻辑极其简单
+def _send_tests(self, node, num):
+    tests_per_node = self.pending[:num]    # 从全局池子切 num 块
+    del self.pending[:num]                 # 从池子移除已分配
+    self.node2pending[node].extend(tests_per_node)  # 记账
+    node.send_runtest_some(tests_per_node)           # 发索引给Worker
+```
+
+```mermaid
+flowchart LR
+    P[pending: 0..7] --> W1[Worker1]
+    P --> W2[Worker2]
+    P --> PR[pending: 4..7]
+    W1 --> PR
+    PR --> W1
+```
+
+**low-watermark 机制**：Worker 待执行数低于阈值自动补充。如果单个测试慢（>0.1秒），减少补充量避免堆积：
+
+```python
+# load.py — 慢测试不急着塞
+if duration >= 0.1 and len(node_pending) >= 2:
+    return  # 等它跑完再给
+```
+
+### WorkStealingScheduling：快的别闲着
+
+场景：Worker1 分到了很多慢测试，Worker2 全是快测试，Worker2 跑完在发呆。
+
+```mermaid
+sequenceDiagram
+    participant W1 as Worker1 慢
+    participant C as Controller
+    participant W2 as Worker2 快
+
+    C->>W1: runtests [0..7]
+    C->>W2: runtests [8..15]
+
+    Note over W2: 快速执行完大半 只剩1个待执行
+    W2->>C: runtest_protocol_complete x7
+
+    Note over C: check_schedule: W2空闲
+    Note over C: steal_from=最忙的W1
+    Note over C: num_steal=偷一半
+
+    C->>W1: steal indices [4,5,6,7]
+    Note over W1: 原子偷取: 全在才偷
+    W1->>C: unscheduled [4,5,6,7]
+
+    C->>W2: runtests [4,5,6,7]
+    Note over W2: 继续干活
+```
+
+steal 的原子性保证：
+
+```python
+# worksteal.py — 要么全偷，要么一个不偷
+with self.torun.lock() as locked_queue:
+    stolen = list(i for i in locked_queue if i in requested_set)
+    if len(stolen) == len(requested_set):
+        # 所有请求的测试都还在队列 → 偷走
+        self.torun.replace(
+            i for i in locked_queue if i not in requested_set
+        )
+    else:
+        stolen = []  # 有一个已经跑了 → 一个不偷
+```
+
+> "要么全偷，要么一个不偷"——工作窃取的艺术。
+
+![](./images/image-02.png)
+
+### LoadScopeScheduling：别反复创建 fixture
+
+当你有 `session` 级别的 fixture（比如数据库连接），不同 Worker 反复创建/销毁非常浪费。`loadscope` 让共享 fixture 的测试尽可能留在同一个 Worker。
+
+```python
+# loadscope.py — scope 划分
+def _split_scope(self, nodeid):
+    return nodeid.rsplit("::", 1)[0]
+# test_module.py::test_a          → test_module.py        模块级
+# test_module.py::TestAPI::test_b  → test_module.py::TestAPI 类级
+```
+
+```mermaid
+flowchart LR
+    T1["test_user.py::test_login"]
+    T2["test_user.py::test_logout"]
+    T3["test_user.py::test_profile"]
+    T4["test_order.py::test_create"]
+    T5["test_order.py::test_cancel"]
+
+    T1 & T2 & T3 -->|scope:test_user.py| W1[Worker1]
+    T4 & T5 -->|scope:test_order.py| W2[Worker2]
+```
+
+同一个 scope 下的所有测试绑定到同一个 Worker，Worker 的 Session 内 `module`/`class` scoped fixture 只创建一次。
+
+## 崩溃恢复
+
+![](./images/image-03.png)
+
+```mermaid
+sequenceDiagram
+    participant W1 as Worker1 正常
+    participant C as Controller
+    participant W2 as Worker2 崩溃
+    participant W2b as Worker2 重生
+
+    W2--xC: 进程崩溃/网络断开
+
+    Note over C: channel 关闭 Marker.END
+    C->>C: process_from_remote END
+
+    Note over C: worker_errordown:
+    Note over C: 1. crashitem=remove_node
+    Note over C: 正在跑的→FAILED
+    Note over C: 未跑的→回pending池
+    Note over C: 2. 检查重启次数
+    Note over C: 3. _clone_node
+
+    C->>W2b: 重新连接 fork 新Worker
+    W2b->>C: workerready
+    C->>W2b: 分发回收的测试
+```
+
+```python
+# dsession.py — 崩溃恢复核心
+def worker_errordown(self, node, error):
+    crashitem = sched.remove_node(node)     # 回收未完成测试
+    self._failed_nodes_count += 1
+    maximum_reached = (
+        self._max_worker_restart is not None
+        and self._failed_nodes_count > self._max_worker_restart
+    )
+    if maximum_reached:
+        self.triggershutdown()               # 超过次数上限，散会
+    else:
+        self._clone_node(node)               # 复活吧，Worker
+```
+
+默认最大重启次数 = `Worker数量 × 4`，可通过 `--max-worker-restart` 调整。
+
+## 多机器实操步骤
+
+```mermaid
+flowchart TD
+    subgraph prep ["准备工作 每台远程机器一次性"]
+        A1["pip install pytest-xdist execnet"]
+        A2["git clone 测试仓库到相同路径"]
+        A3["pip install -r requirements.txt"]
+        A4["python socketserver.py"]
+    end
+
+    subgraph exec ["每次执行"]
+        B1["确认 socketserver 存活"]
+        B2["Controller: pytest -d --tx socket=IP1:8888<br/>--tx socket=IP2:8888 --dist=worksteal -n 0"]
+    end
+
+    A1 --> A2 --> A3 --> A4
+    A4 --> B1 --> B2
+```
+
+> `-n 0` 表示 Controller 本地不跑测试，全部发给远程 Worker。
+
+## pytest-xdist vs Swarm
+
+[Swarm](https://github.com/mikigo/swarm) 是另一个分布式测试框架，采用 Server-Client 架构。下面从**纯多机器远程测试**的角度做对比。
+
+### 连接模型
+
+```mermaid
+flowchart TB
+    subgraph PX ["pytest-xdist: 推模型"]
+        C1[Controller] -->|TCP| Wx1[Worker1]
+        C1 -->|TCP| Wx2[Worker2]
+    end
+
+    subgraph SW ["Swarm: 拉模型"]
+        S1[Server:8000]
+        CL1[Client1] -->|WebSocket| S1
+        CL2[Client2] -->|WebSocket| S1
+    end
+```
+
+| | pytest-xdist | Swarm |
+|---|---|---|
+| 连接方向 | Controller → Worker | Client → Server |
+| 网络要求 | Controller 必须直连每台 Worker | Worker 只需连 Server |
+| 防火墙友好度 | 每台 Worker 要开端口 | 只开 Server 一个端口 |
+| 动态加机器 | 改命令行加 `--tx`，重启 | 客户端随时连，热插拔 |
+
+### 分发粒度——最根本的差异
+
+```mermaid
+flowchart LR
+    subgraph PX2 ["pytest-xdist: 用例级"]
+        COL["session.items = a b c d"]
+        COL -->|索引0,2| WTa[Worker1: 跑a c]
+        COL -->|索引1,3| WTb[Worker2: 跑b d]
+    end
+
+    subgraph SW2 ["Swarm: 文件级"]
+        FILES["test_api.py test_db.py test_web.py"]
+        FILES -->|test_api.py| CLa[Client1]
+        FILES -->|test_db.py| CLb[Client2]
+        FILES -->|test_web.py| CLc[Client3空闲...]
+    end
+```
+
+假设 3 台机器，3 个文件。`test_slow.py` 100 个慢用例（每用例 5s），另外两个文件各 100 个快用例：
+
+| | pytest-xdist 用例级 | Swarm 文件级 |
+|---|---|---|
+| Worker1 耗时 | ~201s（慢用例被拆给 3 人） | 500s（独占整个慢文件） |
+| Worker2 耗时 | ~201s | 100s → 空闲 400s |
+| Worker3 耗时 | ~203s | 10s → 空闲 490s |
+| **总耗时** | **~203s** | **500s** |
+
+### 环境管理
+
+```
+pytest-xdist:
+  每台 Worker:
+    ① git clone 代码          ← 手动
+    ② pip install 依赖         ← 手动
+    ③ python socketserver.py   ← 手动
+    ④ 每次执行: 直接跑         ← 零额外开销
+
+Swarm:
+  每台 Client:
+    ① pip install swarm        ← 一次性
+    ② swarm client start       ← 一次性
+    ③ 每次任务: git clone → venv → pip install → 执行
+    ④ 每次任务额外耗时 30-60s，但完全自动化
+```
+
+### 故障恢复
+
+| 场景 | pytest-xdist | Swarm |
+|---|---|---|
+| Worker 断开检测 | channel 关闭即时触发 | 30s 心跳超时后检测 |
+| 正在跑的测试 | 标记 FAILED + 自动重分配 | 无结果返回，状态不确定 |
+| 未跑的测试 | 自动回 pending 池 | 无追溯机制 |
+| Worker 替换 | `_clone_node()` 自动重建 | 重连即可，丢失上下文 |
+| 需要人工介入 | 不需要 | **需要** |
+
+### 报告与可观测性
+
+| | pytest-xdist | Swarm |
+|---|---|---|
+| 实时输出 | `[gw0] PASSED test_xxx` | WebSocket 推送到 Server |
+| 最终报告 | pytest 原生（JUnit XML 等） | 服务端汇总 Allure HTML |
+| Worker 日志 | 不可见（execnet 限制） | 集中查看 |
+| `-s` / `--capture=no` | ❌ 不支持 | ✅ |
+| Web 面板 | ❌ 纯 CLI | ✅ HTTP API |
+
+### 综合定位
+
+```mermaid
+flowchart LR
+    subgraph Q2 ["  调度精细度高  "]
+        A["pytest-xdist 远程"]
+    end
+    subgraph Q1 ["  理想: 两者兼得  "]
+        C["Swarm + -n auto"]
+    end
+    subgraph Q3 ["  简单场景  "]
+    end
+    subgraph Q4 ["  运维自动化程度高  "]
+        B["Swarm"]
+    end
+```
+
+## 选型指南
+
+```mermaid
+flowchart TD
+    Q1{机器数量会经常变化吗}
+    Q1 -->|固定几台| Q2{需要精细负载均衡吗}
+    Q1 -->|经常增减| Q4{需要自动环境搭建吗}
+
+    Q2 -->|测试耗时差异大| A1[pytest-xdist --dist=worksteal]
+    Q2 -->|测试耗时均匀| Q3{需要统一报告吗}
+
+    Q3 -->|需要| A3[Swarm]
+    Q3 -->|不需要| A2[pytest-xdist --dist=load]
+
+    Q4 -->|需要| A3
+    Q4 -->|不需要| Q5{需要Web管理面板吗}
+
+    Q5 -->|需要| A3
+    Q5 -->|不需要| Q2
+```
+
+## 结语
+
+pytest-xdist 的远程分布式模式本质上是一个**设计精巧的"远程遥控"系统**。它没有试图成为一个完整的测试平台，而是在 pytest 已有的生态里，用最小改动（一个 plugin、一个 remote 模块、一个 socket server）实现了多机器的协作。
+
+它的核心哲学：**Worker 不需要知道全局，只需要知道自己的 `session.items` 列表和 Controller 让它跑的第几个。Controller 负责所有协调。**
+
+Codebase 小（核心约 2200 行）、概念少（Controller + Worker + Channel）、和 pytest 生态零摩擦。代价是运维工作压在你身上——每台机器都要手动 clone、装依赖、起 socketserver。
+
+Swarm 走了另一条路：用独立服务接管运维，但牺牲了调度精细度。没有谁绝对更好——**场景说了算**。
+
+如果你想兼得两者优势：**Swarm 分发文件到客户端 + 客户端内部用 `pytest -n auto`**——这是目前最接近"理想"的方案。
+
+***
+
+*文中源码引用基于 pytest-xdist v3.8.0 和 Swarm v0.1.0。*
+
+
+
+---
+url: /blog/2026-09-22/doc.md
+---
+
+# Pytest 中那些"约定大于配置"的设计
+
+## 你为什么不需要写 main 函数
+
+很多 pytest 新手会有一个困惑：我明明只写了一个 `def test_foo()`，到底是"谁"找到了它、调用了它？
+
+答案是：**你不需要主动告诉 pytest 任何事。只要你按它的规矩来，它自己会找。**
+
+规矩很简单——文件名以 `test_` 开头就行。没有注册清单、没有 XML 配置文件、没有任何地方声明"下面这些是测试"。pytest 启动后从当前目录开始扫描，发现符合命名约定的文件就收集，发现文件里符合约定的函数就跑。
+
+这不是运气，这是一套精密的"约定大于配置"体系。它的哲学很简单：**如果这件事有一个显而易见的做法，那就把它变成默认，别让用户每次都要说一遍。**
+
+下面我们一层层拆开看，pytest 究竟藏了多少这样的约定。
+
+![](./image-01.png)
+
+***
+
+## 第一层：测试发现的命名约定
+
+### 三步法则
+
+你把测试文件放到项目目录下，pytest 就知道去哪找：
+
+```
+project/
+├── src/
+│   └── calculator.py
+└── tests/
+    ├── test_basic.py      ← test_ 开头 → 被收集
+    ├── helper.py          ← 不符合约定 → 被忽略
+    ├── unit/
+    │   ├── test_add.py    ← 子目录也会递归扫描
+    │   └── conftest.py    ← 约定名，自动加载（后面细讲）
+    └── data/
+        └── sample.json    ← 非 Python 文件 → 忽略
+```
+
+约定规则：
+
+| 规则 | 匹配 | 不匹配 |
+|------|------|--------|
+| 文件名 | `test_*.py` 或 `*_test.py` | `helper.py`, `utils.py` |
+| 函数名 | `test_*` | `init_db()`, `helper()` |
+| 类名 | `Test*` （且无 `__init__`） | `MyTest(Object)`, `class Foo` |
+| 包目录 | 需要 `__init__.py` 才被当作包扫描 | 普通目录不递归进包逻辑 |
+
+```python
+# tests/test_calculator.py — 约定示例
+def test_add():
+    """函数以 test_ 开头 → 自动成为测试用例"""
+    assert 1 + 1 == 2
+
+
+def helper_function():
+    """不以 test_ 开头 → 只是普通函数，不会被当成测试"""
+    return "I'm invisible to pytest"
+
+
+class TestSubtract:
+    """类以 Test 开头，且没有 __init__ → 类内方法自动收集"""
+
+    def test_positive(self):
+        assert 5 - 3 == 2
+
+    def test_negative(self):
+        assert 3 - 5 == -2
+
+    def helper(self):
+        """这个方法不以 test_ 开头 → 也不会被当成测试"""
+        pass
+```
+
+运行 `pytest tests/ -v`，输出会是：
+
+```
+tests/test_calculator.py::test_add PASSED
+tests/test_calculator.py::TestSubtract::test_positive PASSED
+tests/test_calculator.py::TestSubtract::test_negative PASSED
+```
+
+你没有在任何地方注册。你没有写 `@unittest.skip`。你没有继承 `TestCase`。你只是**把函数命名对了**。
+
+### 可配置，但几乎没人配
+
+当然，约定可以被覆盖：
+
+```ini
+# pytest.ini — 改变发现规则
+[pytest]
+python_files = check_*.py      # 改文件命名约定（不推荐）
+python_classes = Check*         # 改类命名约定（不推荐）
+python_functions = check_*      # 改函数命名约定（不推荐）
+```
+
+但说实话，在长达十年的 pytest 历史中，"自定义发现规则"这个功能几乎没人用。因为约定本身已经足够好，改它的代价是让后来加入的人一脸懵。
+
+***
+
+## 第二层：conftest.py 的级联约定
+
+### 比 import 更优雅的共享方式
+
+多个测试文件需要共享同样的 fixture 或者 hook，其他框架的做法是：
+
+```
+# unittest/JUnit 的做法：
+import shared_fixtures from some.module  # 显式导入
+setup_module()                            # 手动声明
+```
+
+pytest 呢？
+
+**你只需要把一个文件命名为 `conftest.py`，放在测试目录里。pytest 自动发现、自动加载、自动限定作用域。**
+
+```
+project/
+├── tests/
+│   ├── conftest.py           ← 作用域：tests/ 及所有子目录
+│   │
+│   ├── unit/
+│   │   ├── conftest.py       ← 作用域：仅 unit/ 及子目录
+│   │   ├── test_core.py      ← 能看到两个 conftest
+│   │   └── test_utils.py
+│   │
+│   └── integration/
+│       └── test_api.py       ← 只看 tests/conftest.py
+```
+
+```python
+# tests/conftest.py — 全局级
+import pytest
+
+@pytest.fixture(scope="session")
+def db_connection():
+    """会话级数据库连接，所有测试共享"""
+    conn = create_connection("postgres://...")
+    yield conn
+    conn.close()
+
+@pytest.fixture
+def sample_user(db_connection):
+    """函数级 fixture，每个测试拿到独立用户"""
+    user = db_connection.create_user(name="alice")
+    yield user
+    db_connection.delete_user(user.id)
+```
+
+```python
+# tests/unit/conftest.py — 仅单元测试专用
+import pytest
+
+@pytest.fixture
+def mock_http_client(mocker):
+    """懒得真发 HTTP，单元测试用 mock"""
+    return mocker.patch("src.http.Client")
+
+# 注意：这里没有 import tests/conftest.py
+# fixture 自动向上继承
+```
+
+```python
+# tests/unit/test_core.py — 随便用，不需要 import
+def test_user_creation(sample_user, mock_http_client):
+    # sample_user 来自 tests/conftest.py（继承）
+    # mock_http_client 来自 tests/unit/conftest.py（本地）
+    assert sample_user.name == "alice"
+```
+
+这里发生了什么：
+
+1. `test_core.py` 的参数 `sample_user` 和 `mock_http_client` —— pytest **通过参数名匹配** fixture 名称，而不是通过 import
+2. conftest.py 之间**自动级联**：子目录的测试能继承父目录 conftest 中定义的所有 fixture 和 hook
+3. 子目录的 conftest.py 可以**覆盖**父目录的同名 fixture（后加载的优先）
+
+这就是为什么 pytest 项目里你几乎看不到 `from some_fixture import ...` —— conftest 约定让导入变得多余。fixture 在哪里定义不重要，重要的是它在测试函数**目录层级中**的 conftest 链上。
+
+![](./image-02.png)
+
+### conftest 的另一个身份：Hook 实现
+
+conftest.py 不止能放 fixture，它还能直接实现 pytest 的 hook：
+
+```python
+# tests/conftest.py
+def pytest_collection_modifyitems(config, items):
+    """hook 函数：修改收集到的测试列表"""
+    # 函数名 = hook 名，不需要任何装饰器
+    for item in items:
+        item.add_marker("slow")  # 给每个测试打上 slow 标记
+
+def pytest_addoption(parser):
+    """hook 函数：添加命令行参数"""
+    parser.addoption("--env", action="store", default="dev")
+```
+
+没有任何注册步骤。只要函数名和 pytest 定义的 hook 名一致，conftest 加载时自动生效。
+
+***
+
+## 第三层：配置文件的自动查找
+
+pytest 不需要 `--config` 参数。你只需把文件命名对，放在对的位置：
+
+```
+pytest.ini      ← 优先级最高
+pyproject.toml  ← 现代项目首选
+tox.ini         ← 如果已经用了 tox
+setup.cfg       ← 旧项目常见
+```
+
+pytest 启动时**自动从当前目录向上查找**，找到第一个就停。
+
+```toml
+# pyproject.toml — 最推荐的方式
+[tool.pytest.ini_options]
+minversion = "8.0"           # 最低 pytest 版本
+testpaths = ["tests"]        # 扫描哪些目录
+addopts = "-ra -q -p no:warnings"  # 默认命令行参数
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: marks tests as integration",
+]
+filterwarnings = ["error"]
+```
+
+发现优先级：`pytest.ini > pyproject.toml > tox.ini > setup.cfg`
+
+pytest 按照这个顺序逐一查找，找到就停。所以你放在 `pyproject.toml` 里最安全——不会被同目录下的 `tox.ini` 意外覆盖。
+
+***
+
+## 第四层：插件——pip install 即生效
+
+这是最"约定大于配置"的一部分，也是 pluggy 在背后起关键作用的一层。
+
+### 为什么 pip install 完就能用？
+
+当你执行 `pip install pytest-cov`：
+
+1. pip 把 `pytest_cov` 安装到 site-packages
+2. pytest 启动时调用 `pm.load_setuptools_entrypoints("pytest11")`
+3. pluggy 扫描所有已安装包的 `entry_points`，找到 group 为 `pytest11` 的条目
+4. import 对应的模块并 `pm.register(module)` 注册为插件
+5. **插件中任何与 hook 同名的函数自动成为 hook 实现**
+
+整个过程：安装 → 自动发现 → 自动注册 → 自动生效。你不需要在 `pytest.ini` 中声明 `plugins = pytest-cov`，也不需要手动 `import`。
+
+```ini
+# pytest-cov 的 setup.cfg 里声明了这个：
+[options.entry_points]
+pytest11 =
+    pytest_cov = pytest_cov.plugin
+#               ↑ 模块路径    ↑ entry_point 名
+```
+
+### 三个插件来源
+
+pytest 会自动加载三种来源的插件：
+
+| 来源 | 加载方式 | 示例 |
+|------|---------|------|
+| entry\_points（主流） | `pytest11` group | `pip install pytest-xdist` |
+| conftest 中的 `pytest_plugins` | 变量约定 | `pytest_plugins = ["myplugins.foo"]` |
+| 模块名 `pytest_*` | `-p` 参数或 PYTEST\_PLUGINS 环境变量 | `-p pytest_custom` |
+
+```python
+# conftest.py — 显式声明额外插件
+pytest_plugins = [
+    "tests.plugins.auth",    # 加载自定义插件模块
+    "tests.plugins.db_fixtures",
+]
+```
+
+***
+
+## 第五层：Hook 函数的隐身术
+
+回到文章开头的问题——`def test_foo` 是怎么被找到的？实际上，所有 pytest 插件间的交互也都是通过同一种"隐身术"完成的。
+
+### 名字即契约
+
+以 `pytest_collection_modifyitems` 为例。一个第三方插件（比如 `pytest-ordering`）想要调整测试执行顺序，它只需要这样做：
+
+```python
+# pytest_ordering/plugin.py
+def pytest_collection_modifyitems(config, items):
+    """函数名等于 hook 名 → 自动Hook实现"""
+    items.sort(key=lambda item: item.get_marker_value("order", 0))
+```
+
+没有 `@hookimpl`？实际上 `conftest.py` 和 `entry_points` 加载的模块中，pytest 内部会**自动给所有符合 hook 名约定的函数打上 `@hookimpl` 标记**。这是 pytest 在 pluggy 基础上的第二层封装——你写普通函数就好，pytest 帮你做标记。
+
+如果回到 bare pluggy 代码，手动版本是这样的：
+
+```python
+# 如果直接使用 pluggy，需要手动标记
+import pluggy
+
+hookimpl = pluggy.HookimplMarker("pytest")
+
+class MyPlugin:
+    @hookimpl                           # ← 必须显式标记
+    def pytest_collection_modifyitems(self, config, items):
+        items.sort(key=lambda x: x.name)
+```
+
+pytest 把这个 `@hookimpl` 藏起来了——如果模块没有任何显式标记，pytest 会在注册阶段用前缀匹配自动补上。对插件作者来说，你只需要知道 hook 叫什么名字。
+
+### 调用顺序
+
+pytest 自身也是由几十个内置插件拼接而成——`_pytest.capture`、`_pytest.fixtures`、`_pytest.assertion` 等等。每个模块都作为插件注册到同一个 `PluginManager`。
+
+```
+测试执行时 hook 调用链（以 pytest_runtest_call 为例）：
+
+  1. _pytest.capture    (wrapper setup)   ← 开始捕获 stdout/stderr
+  2. _pytest.logging    (wrapper setup)   ← 设置日志捕获
+  3. _pytest.fixtures   (普通实现)         ← 注入 fixture
+  4. pytest-cov         (普通实现)         ← 覆盖率统计
+  5. 你的 conftest.py   (普通实现)         ← 你的自定义逻辑
+  6. _pytest.logging    (wrapper teardown) ← 还原日志
+  7. _pytest.capture    (wrapper teardown) ← 结束捕获
+```
+
+每个插件只关心自己的事，通过 hook 协议串联起来。**各模块之间不直接 import 调用**——这是 pluggy 提供的松耦合。
+
+***
+
+## 第六层：fixture 注入——参数即依赖
+
+所有测试框架都有 setup/teardown，但 pytest 把它们变成了参数注入：
+
+```python
+# 传统方式（unittest）
+class TestUser(unittest.TestCase):
+    def setUp(self):
+        self.db = create_db()      # 每一个测试方法都得写 self.db
+
+    def test_name(self):
+        assert self.db.get_user(1).name == "alice"
+```
+
+```python
+# pytest 方式
+def test_name(db):            # 参数名叫 db → pytest 去找名叫 db 的 fixture
+    assert db.get_user(1).name == "alice"
+```
+
+不需要 `setUp`、不需要 `self.xxx`、不需要继承。参数名就是依赖声明。
+
+![](./image-03.png)
+
+### 作用域约定
+
+fixture 支持四级作用域：
+
+```python
+@pytest.fixture(scope="function")  # 默认：每个测试函数一个实例
+def user(): ...
+
+@pytest.fixture(scope="class")     # 一个测试类内共享
+def class_db(): ...
+
+@pytest.fixture(scope="module")    # 一个测试文件内共享
+def module_config(): ...
+
+@pytest.fixture(scope="session")   # 一次 pytest 运行全程共享
+def session_db(): ...
+```
+
+pytest 按约定自动处理生命周期——你不需要手动在 `setUpClass` 里创建、`tearDownClass` 里销毁。用 `yield` 声明清理逻辑：
+
+```python
+@pytest.fixture(scope="module")
+def db_conn():
+    conn = create_connection()
+    yield conn          # ← 这里返回 fixture 值
+    conn.close()        # ← 模块所有测试跑完后自动执行
+```
+
+***
+
+## 第七层：断言——只用 assert
+
+这是 pytest 最"暴力"的约定：**别用 `self.assertEqual`，直接用 `assert`。**
+
+```python
+# unittest 风格
+self.assertEqual(a, b)
+self.assertIn(item, list)
+self.assertRaises(ValueError, func)
+
+# pytest 风格
+assert a == b
+assert item in list
+with pytest.raises(ValueError):
+    func()
+```
+
+pytest 在测试收集阶段对你的测试文件做了 AST 重写——把 `assert a == b` 改写成携带详细上下文信息的版本。当断言失败时，pytest 会自动展示失败的具体值和差异：
+
+```
+    def test_user():
+        user = {"name": "Alice", "age": 30}
+>       assert user == {"name": "Bob", "age": 30}
+E       AssertionError: assert {'name': 'Alice', 'age': 30} == {'name': 'Bob', 'age': 30}
+E         Differing items:
+E         {'name': 'Alice'} != {'name': 'Bob'}
+```
+
+不需要写 `self.assertEqual(user["name"], "Bob", msg="用户名不匹配")`。直接 `assert`，pytest 自己会把差异给你拆开。
+
+***
+
+## 拼起来
+
+最后我们用一套完整的示例，把上面每一层都串起来。
+
+假设你有一个 `user_service` 模块，你想给它写测试。同时你装了一个现成的测试覆盖率插件。
+
+### 目录结构
+
+```
+myproject/
+├── src/
+│   └── user_service.py
+├── tests/
+│   ├── conftest.py          ← 全局 fixture 和 hook
+│   ├── test_user.py         ← 测试文件（命名约定·第一层）
+│   └── integration/
+│       ├── conftest.py      ← 集成测试专用配置（级联约定·第二层）
+│       └── test_api.py
+└── pyproject.toml           ← 配置文件（自动查找·第三层）
+```
+
+### 各文件内容
+
+```python
+# src/user_service.py
+class UserService:
+    def __init__(self, db):
+        self.db = db
+
+    def get_user_name(self, user_id):
+        user = self.db.get_user(user_id)
+        return user["name"] if user else None
+```
+
+```toml
+# pyproject.toml
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v --tb=short"
+```
+
+```python
+# tests/conftest.py
+import pytest
+
+@pytest.fixture
+def db():
+    """模拟数据库"""
+    data = {}
+    def get_user(uid):
+        return data.get(uid)
+    class MockDB:
+        get_user = staticmethod(get_user)
+        def add_user(self, uid, name):
+            data[uid] = {"id": uid, "name": name}
+    return MockDB()
+
+@pytest.fixture
+def service(db):
+    """注入带模拟数据库的服务"""
+    from src.user_service import UserService
+    return UserService(db)
+
+def pytest_collection_modifyitems(config, items):
+    """Hook：所有测试打标记（第五层·Hook隐身术）"""
+    for item in items:
+        print(f"  收集到: {item.nodeid}")
+```
+
+```python
+# tests/test_user.py
+def test_get_existing_user(service, db):     # 参数 = fixture 名（第六层·参数注入）
+    db.add_user(1, "Alice")
+    assert service.get_user_name(1) == "Alice"  # 直接用 assert（第七层）
+
+def test_get_nonexistent_user(service):
+    name = service.get_user_name(999)
+    assert name is None  # 不是 self.assertIsNone
+```
+
+```python
+# tests/integration/conftest.py
+import pytest
+
+@pytest.fixture
+def db():
+    """覆盖父级 conftest：换成真实数据库"""
+    import sqlite3
+    conn = sqlite3.connect(":memory:")
+    conn.execute("CREATE TABLE users (id INT, name TEXT)")
+    yield conn
+    conn.close()
+
+# service fixture 从 tests/conftest.py 自动继承
+```
+
+```python
+# tests/integration/test_api.py
+def test_real_insert(service, db):
+    db.execute("INSERT INTO users VALUES (1, 'Alice')")
+    # service fixture 来自 tests/conftest.py（继承）
+    # db fixture 来自 tests/integration/conftest.py（覆盖）
+    assert service.get_user_name(1) == "Alice"
+```
+
+运行 `pytest -v`：
+
+```
+$ pip install pytest-cov        ← 自动加载（第四层·插件约定）
+$ pytest -v
+  收集到: tests/test_user.py::test_get_existing_user
+  收集到: tests/test_user.py::test_get_nonexistent_user
+  收集到: tests/integration/test_api.py::test_real_insert
+
+tests/test_user.py::test_get_existing_user PASSED
+tests/test_user.py::test_get_nonexistent_user PASSED
+tests/integration/test_api.py::test_real_insert PASSED
+```
+
+整个过程中，你没有写一行多余的配置代码：
+
+* 不需要 `TestRunner` / `TestSuite` / `@pytest.mark`
+* 不需要 `from tests.conftest import db`
+* 不需要在 `pytest.ini` 声明 `plugins = pytest_cov`
+* 不需要在 `tox.ini` 或 `setup.cfg` 加任何东西
+
+**约定本身即为配置。**
+
+***
+
+## 关键结论
+
+pytest 的"约定大于配置"，不是"设几条命名规则就够了"，而是一套由 pluggy 的 hook 协议支撑的、层层递进的匹配体系：
+
+| 层面 | 约定 | 匹配置信度 |
+|------|------|-----------|
+| 发现 | `test_*` 文件名/函数名/类名 | 固定前缀 |
+| 共享 | `conftest.py` 文件名 + 目录层级 | 固定文件名 |
+| 配置 | `pyproject.toml` / `pytest.ini` | 固定路径 |
+| 插件 | `pytest11` entry point group | 固定组名 |
+| Hook | 函数名 = hook 名 | 名称匹配 |
+| Fixture | 参数名 = fixture 名 | 名称匹配 |
+| 断言 | `assert` 语句 | Python 关键字 |
+
+如果你要设计一个自己框架的插件系统，pluggy 已经帮你做好了 hook 注册、验证、调用的全部重活——你只需要定义 hookspec，剩下的就是让插件作者享受命名即注册的快乐。
+
+
+
+---
+url: /blog/2026-09-15/doc.md
 ---
 
 # Wayland下键鼠模拟入门指南
@@ -36390,567 +37587,6 @@ X11 的开发者没想过要防恶意软件。他们想的是网络透明、远�
 * [mutter input loopback #4883](https://gitlab.gnome.org/GNOME/mutter/-/work_items/4883)
 * [mutter 修饰键 #3375](https://gitlab.gnome.org/GNOME/mutter/-/work_items/3375)
 * [xdg-desktop-portal handle\_token 修复 #1549](https://github.com/flatpak/xdg-desktop-portal/issues/1549)
-
-
-
----
-url: /blog/2026-09-22.md
----
-
-# Pytest 中那些"约定大于配置"的设计
-
-## 你为什么不需要写 main 函数
-
-很多 pytest 新手会有一个困惑：我明明只写了一个 `def test_foo()`，到底是"谁"找到了它、调用了它？
-
-答案是：**你不需要主动告诉 pytest 任何事。只要你按它的规矩来，它自己会找。**
-
-规矩很简单——文件名以 `test_` 开头就行。没有注册清单、没有 XML 配置文件、没有任何地方声明"下面这些是测试"。pytest 启动后从当前目录开始扫描，发现符合命名约定的文件就收集，发现文件里符合约定的函数就跑。
-
-这不是运气，这是一套精密的"约定大于配置"体系。它的哲学很简单：**如果这件事有一个显而易见的做法，那就把它变成默认，别让用户每次都要说一遍。**
-
-下面我们一层层拆开看，pytest 究竟藏了多少这样的约定。
-
-***
-
-## 第一层：测试发现的命名约定
-
-### 三步法则
-
-你把测试文件放到项目目录下，pytest 就知道去哪找：
-
-```
-project/
-├── src/
-│   └── calculator.py
-└── tests/
-    ├── test_basic.py      ← test_ 开头 → 被收集
-    ├── helper.py          ← 不符合约定 → 被忽略
-    ├── unit/
-    │   ├── test_add.py    ← 子目录也会递归扫描
-    │   └── conftest.py    ← 约定名，自动加载（后面细讲）
-    └── data/
-        └── sample.json    ← 非 Python 文件 → 忽略
-```
-
-约定规则：
-
-| 规则 | 匹配 | 不匹配 |
-|------|------|--------|
-| 文件名 | `test_*.py` 或 `*_test.py` | `helper.py`, `utils.py` |
-| 函数名 | `test_*` | `init_db()`, `helper()` |
-| 类名 | `Test*` （且无 `__init__`） | `MyTest(Object)`, `class Foo` |
-| 包目录 | 需要 `__init__.py` 才被当作包扫描 | 普通目录不递归进包逻辑 |
-
-```python
-# tests/test_calculator.py — 约定示例
-def test_add():
-    """函数以 test_ 开头 → 自动成为测试用例"""
-    assert 1 + 1 == 2
-
-
-def helper_function():
-    """不以 test_ 开头 → 只是普通函数，不会被当成测试"""
-    return "I'm invisible to pytest"
-
-
-class TestSubtract:
-    """类以 Test 开头，且没有 __init__ → 类内方法自动收集"""
-
-    def test_positive(self):
-        assert 5 - 3 == 2
-
-    def test_negative(self):
-        assert 3 - 5 == -2
-
-    def helper(self):
-        """这个方法不以 test_ 开头 → 也不会被当成测试"""
-        pass
-```
-
-运行 `pytest tests/ -v`，输出会是：
-
-```
-tests/test_calculator.py::test_add PASSED
-tests/test_calculator.py::TestSubtract::test_positive PASSED
-tests/test_calculator.py::TestSubtract::test_negative PASSED
-```
-
-你没有在任何地方注册。你没有写 `@unittest.skip`。你没有继承 `TestCase`。你只是**把函数命名对了**。
-
-### 可配置，但几乎没人配
-
-当然，约定可以被覆盖：
-
-```ini
-# pytest.ini — 改变发现规则
-[pytest]
-python_files = check_*.py      # 改文件命名约定（不推荐）
-python_classes = Check*         # 改类命名约定（不推荐）
-python_functions = check_*      # 改函数命名约定（不推荐）
-```
-
-但说实话，在长达十年的 pytest 历史中，"自定义发现规则"这个功能几乎没人用。因为约定本身已经足够好，改它的代价是让后来加入的人一脸懵。
-
-***
-
-## 第二层：conftest.py 的级联约定
-
-### 比 import 更优雅的共享方式
-
-多个测试文件需要共享同样的 fixture 或者 hook，其他框架的做法是：
-
-```
-# unittest/JUnit 的做法：
-import shared_fixtures from some.module  # 显式导入
-setup_module()                            # 手动声明
-```
-
-pytest 呢？
-
-**你只需要把一个文件命名为 `conftest.py`，放在测试目录里。pytest 自动发现、自动加载、自动限定作用域。**
-
-```
-project/
-├── tests/
-│   ├── conftest.py           ← 作用域：tests/ 及所有子目录
-│   │
-│   ├── unit/
-│   │   ├── conftest.py       ← 作用域：仅 unit/ 及子目录
-│   │   ├── test_core.py      ← 能看到两个 conftest
-│   │   └── test_utils.py
-│   │
-│   └── integration/
-│       └── test_api.py       ← 只看 tests/conftest.py
-```
-
-```python
-# tests/conftest.py — 全局级
-import pytest
-
-@pytest.fixture(scope="session")
-def db_connection():
-    """会话级数据库连接，所有测试共享"""
-    conn = create_connection("postgres://...")
-    yield conn
-    conn.close()
-
-@pytest.fixture
-def sample_user(db_connection):
-    """函数级 fixture，每个测试拿到独立用户"""
-    user = db_connection.create_user(name="alice")
-    yield user
-    db_connection.delete_user(user.id)
-```
-
-```python
-# tests/unit/conftest.py — 仅单元测试专用
-import pytest
-
-@pytest.fixture
-def mock_http_client(mocker):
-    """懒得真发 HTTP，单元测试用 mock"""
-    return mocker.patch("src.http.Client")
-
-# 注意：这里没有 import tests/conftest.py
-# fixture 自动向上继承
-```
-
-```python
-# tests/unit/test_core.py — 随便用，不需要 import
-def test_user_creation(sample_user, mock_http_client):
-    # sample_user 来自 tests/conftest.py（继承）
-    # mock_http_client 来自 tests/unit/conftest.py（本地）
-    assert sample_user.name == "alice"
-```
-
-这里发生了什么：
-
-1. `test_core.py` 的参数 `sample_user` 和 `mock_http_client` —— pytest **通过参数名匹配** fixture 名称，而不是通过 import
-2. conftest.py 之间**自动级联**：子目录的测试能继承父目录 conftest 中定义的所有 fixture 和 hook
-3. 子目录的 conftest.py 可以**覆盖**父目录的同名 fixture（后加载的优先）
-
-这就是为什么 pytest 项目里你几乎看不到 `from some_fixture import ...` —— conftest 约定让导入变得多余。fixture 在哪里定义不重要，重要的是它在测试函数**目录层级中**的 conftest 链上。
-
-### conftest 的另一个身份：Hook 实现
-
-conftest.py 不止能放 fixture，它还能直接实现 pytest 的 hook：
-
-```python
-# tests/conftest.py
-def pytest_collection_modifyitems(config, items):
-    """hook 函数：修改收集到的测试列表"""
-    # 函数名 = hook 名，不需要任何装饰器
-    for item in items:
-        item.add_marker("slow")  # 给每个测试打上 slow 标记
-
-def pytest_addoption(parser):
-    """hook 函数：添加命令行参数"""
-    parser.addoption("--env", action="store", default="dev")
-```
-
-没有任何注册步骤。只要函数名和 pytest 定义的 hook 名一致，conftest 加载时自动生效。
-
-***
-
-## 第三层：配置文件的自动查找
-
-pytest 不需要 `--config` 参数。你只需把文件命名对，放在对的位置：
-
-```
-pytest.ini      ← 优先级最高
-pyproject.toml  ← 现代项目首选
-tox.ini         ← 如果已经用了 tox
-setup.cfg       ← 旧项目常见
-```
-
-pytest 启动时**自动从当前目录向上查找**，找到第一个就停。
-
-```toml
-# pyproject.toml — 最推荐的方式
-[tool.pytest.ini_options]
-minversion = "8.0"           # 最低 pytest 版本
-testpaths = ["tests"]        # 扫描哪些目录
-addopts = "-ra -q -p no:warnings"  # 默认命令行参数
-markers = [
-    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
-    "integration: marks tests as integration",
-]
-filterwarnings = ["error"]
-```
-
-发现优先级：`pytest.ini > pyproject.toml > tox.ini > setup.cfg`
-
-pytest 按照这个顺序逐一查找，找到就停。所以你放在 `pyproject.toml` 里最安全——不会被同目录下的 `tox.ini` 意外覆盖。
-
-***
-
-## 第四层：插件——pip install 即生效
-
-这是最"约定大于配置"的一部分，也是 pluggy 在背后起关键作用的一层。
-
-### 为什么 pip install 完就能用？
-
-当你执行 `pip install pytest-cov`：
-
-1. pip 把 `pytest_cov` 安装到 site-packages
-2. pytest 启动时调用 `pm.load_setuptools_entrypoints("pytest11")`
-3. pluggy 扫描所有已安装包的 `entry_points`，找到 group 为 `pytest11` 的条目
-4. import 对应的模块并 `pm.register(module)` 注册为插件
-5. **插件中任何与 hook 同名的函数自动成为 hook 实现**
-
-整个过程：安装 → 自动发现 → 自动注册 → 自动生效。你不需要在 `pytest.ini` 中声明 `plugins = pytest-cov`，也不需要手动 `import`。
-
-```ini
-# pytest-cov 的 setup.cfg 里声明了这个：
-[options.entry_points]
-pytest11 =
-    pytest_cov = pytest_cov.plugin
-#               ↑ 模块路径    ↑ entry_point 名
-```
-
-### 三个插件来源
-
-pytest 会自动加载三种来源的插件：
-
-| 来源 | 加载方式 | 示例 |
-|------|---------|------|
-| entry\_points（主流） | `pytest11` group | `pip install pytest-xdist` |
-| conftest 中的 `pytest_plugins` | 变量约定 | `pytest_plugins = ["myplugins.foo"]` |
-| 模块名 `pytest_*` | `-p` 参数或 PYTEST\_PLUGINS 环境变量 | `-p pytest_custom` |
-
-```python
-# conftest.py — 显式声明额外插件
-pytest_plugins = [
-    "tests.plugins.auth",    # 加载自定义插件模块
-    "tests.plugins.db_fixtures",
-]
-```
-
-***
-
-## 第五层：Hook 函数的隐身术
-
-回到文章开头的问题——`def test_foo` 是怎么被找到的？实际上，所有 pytest 插件间的交互也都是通过同一种"隐身术"完成的。
-
-### 名字即契约
-
-以 `pytest_collection_modifyitems` 为例。一个第三方插件（比如 `pytest-ordering`）想要调整测试执行顺序，它只需要这样做：
-
-```python
-# pytest_ordering/plugin.py
-def pytest_collection_modifyitems(config, items):
-    """函数名等于 hook 名 → 自动Hook实现"""
-    items.sort(key=lambda item: item.get_marker_value("order", 0))
-```
-
-没有 `@hookimpl`？实际上 `conftest.py` 和 `entry_points` 加载的模块中，pytest 内部会**自动给所有符合 hook 名约定的函数打上 `@hookimpl` 标记**。这是 pytest 在 pluggy 基础上的第二层封装——你写普通函数就好，pytest 帮你做标记。
-
-如果回到 bare pluggy 代码，手动版本是这样的：
-
-```python
-# 如果直接使用 pluggy，需要手动标记
-import pluggy
-
-hookimpl = pluggy.HookimplMarker("pytest")
-
-class MyPlugin:
-    @hookimpl                           # ← 必须显式标记
-    def pytest_collection_modifyitems(self, config, items):
-        items.sort(key=lambda x: x.name)
-```
-
-pytest 把这个 `@hookimpl` 藏起来了——如果模块没有任何显式标记，pytest 会在注册阶段用前缀匹配自动补上。对插件作者来说，你只需要知道 hook 叫什么名字。
-
-### 调用顺序
-
-pytest 自身也是由几十个内置插件拼接而成——`_pytest.capture`、`_pytest.fixtures`、`_pytest.assertion` 等等。每个模块都作为插件注册到同一个 `PluginManager`。
-
-```
-测试执行时 hook 调用链（以 pytest_runtest_call 为例）：
-
-  1. _pytest.capture    (wrapper setup)   ← 开始捕获 stdout/stderr
-  2. _pytest.logging    (wrapper setup)   ← 设置日志捕获
-  3. _pytest.fixtures   (普通实现)         ← 注入 fixture
-  4. pytest-cov         (普通实现)         ← 覆盖率统计
-  5. 你的 conftest.py   (普通实现)         ← 你的自定义逻辑
-  6. _pytest.logging    (wrapper teardown) ← 还原日志
-  7. _pytest.capture    (wrapper teardown) ← 结束捕获
-```
-
-每个插件只关心自己的事，通过 hook 协议串联起来。**各模块之间不直接 import 调用**——这是 pluggy 提供的松耦合。
-
-***
-
-## 第六层：fixture 注入——参数即依赖
-
-所有测试框架都有 setup/teardown，但 pytest 把它们变成了参数注入：
-
-```python
-# 传统方式（unittest）
-class TestUser(unittest.TestCase):
-    def setUp(self):
-        self.db = create_db()      # 每一个测试方法都得写 self.db
-
-    def test_name(self):
-        assert self.db.get_user(1).name == "alice"
-```
-
-```python
-# pytest 方式
-def test_name(db):            # 参数名叫 db → pytest 去找名叫 db 的 fixture
-    assert db.get_user(1).name == "alice"
-```
-
-不需要 `setUp`、不需要 `self.xxx`、不需要继承。参数名就是依赖声明。
-
-### 作用域约定
-
-fixture 支持四级作用域：
-
-```python
-@pytest.fixture(scope="function")  # 默认：每个测试函数一个实例
-def user(): ...
-
-@pytest.fixture(scope="class")     # 一个测试类内共享
-def class_db(): ...
-
-@pytest.fixture(scope="module")    # 一个测试文件内共享
-def module_config(): ...
-
-@pytest.fixture(scope="session")   # 一次 pytest 运行全程共享
-def session_db(): ...
-```
-
-pytest 按约定自动处理生命周期——你不需要手动在 `setUpClass` 里创建、`tearDownClass` 里销毁。用 `yield` 声明清理逻辑：
-
-```python
-@pytest.fixture(scope="module")
-def db_conn():
-    conn = create_connection()
-    yield conn          # ← 这里返回 fixture 值
-    conn.close()        # ← 模块所有测试跑完后自动执行
-```
-
-***
-
-## 第七层：断言——只用 assert
-
-这是 pytest 最"暴力"的约定：**别用 `self.assertEqual`，直接用 `assert`。**
-
-```python
-# unittest 风格
-self.assertEqual(a, b)
-self.assertIn(item, list)
-self.assertRaises(ValueError, func)
-
-# pytest 风格
-assert a == b
-assert item in list
-with pytest.raises(ValueError):
-    func()
-```
-
-pytest 在测试收集阶段对你的测试文件做了 AST 重写——把 `assert a == b` 改写成携带详细上下文信息的版本。当断言失败时，pytest 会自动展示失败的具体值和差异：
-
-```
-    def test_user():
-        user = {"name": "Alice", "age": 30}
->       assert user == {"name": "Bob", "age": 30}
-E       AssertionError: assert {'name': 'Alice', 'age': 30} == {'name': 'Bob', 'age': 30}
-E         Differing items:
-E         {'name': 'Alice'} != {'name': 'Bob'}
-```
-
-不需要写 `self.assertEqual(user["name"], "Bob", msg="用户名不匹配")`。直接 `assert`，pytest 自己会把差异给你拆开。
-
-***
-
-## 拼起来
-
-最后我们用一套完整的示例，把上面每一层都串起来。
-
-假设你有一个 `user_service` 模块，你想给它写测试。同时你装了一个现成的测试覆盖率插件。
-
-### 目录结构
-
-```
-myproject/
-├── src/
-│   └── user_service.py
-├── tests/
-│   ├── conftest.py          ← 全局 fixture 和 hook
-│   ├── test_user.py         ← 测试文件（命名约定·第一层）
-│   └── integration/
-│       ├── conftest.py      ← 集成测试专用配置（级联约定·第二层）
-│       └── test_api.py
-└── pyproject.toml           ← 配置文件（自动查找·第三层）
-```
-
-### 各文件内容
-
-```python
-# src/user_service.py
-class UserService:
-    def __init__(self, db):
-        self.db = db
-
-    def get_user_name(self, user_id):
-        user = self.db.get_user(user_id)
-        return user["name"] if user else None
-```
-
-```toml
-# pyproject.toml
-[tool.pytest.ini_options]
-testpaths = ["tests"]
-addopts = "-v --tb=short"
-```
-
-```python
-# tests/conftest.py
-import pytest
-
-@pytest.fixture
-def db():
-    """模拟数据库"""
-    data = {}
-    def get_user(uid):
-        return data.get(uid)
-    class MockDB:
-        get_user = staticmethod(get_user)
-        def add_user(self, uid, name):
-            data[uid] = {"id": uid, "name": name}
-    return MockDB()
-
-@pytest.fixture
-def service(db):
-    """注入带模拟数据库的服务"""
-    from src.user_service import UserService
-    return UserService(db)
-
-def pytest_collection_modifyitems(config, items):
-    """Hook：所有测试打标记（第五层·Hook隐身术）"""
-    for item in items:
-        print(f"  收集到: {item.nodeid}")
-```
-
-```python
-# tests/test_user.py
-def test_get_existing_user(service, db):     # 参数 = fixture 名（第六层·参数注入）
-    db.add_user(1, "Alice")
-    assert service.get_user_name(1) == "Alice"  # 直接用 assert（第七层）
-
-def test_get_nonexistent_user(service):
-    name = service.get_user_name(999)
-    assert name is None  # 不是 self.assertIsNone
-```
-
-```python
-# tests/integration/conftest.py
-import pytest
-
-@pytest.fixture
-def db():
-    """覆盖父级 conftest：换成真实数据库"""
-    import sqlite3
-    conn = sqlite3.connect(":memory:")
-    conn.execute("CREATE TABLE users (id INT, name TEXT)")
-    yield conn
-    conn.close()
-
-# service fixture 从 tests/conftest.py 自动继承
-```
-
-```python
-# tests/integration/test_api.py
-def test_real_insert(service, db):
-    db.execute("INSERT INTO users VALUES (1, 'Alice')")
-    # service fixture 来自 tests/conftest.py（继承）
-    # db fixture 来自 tests/integration/conftest.py（覆盖）
-    assert service.get_user_name(1) == "Alice"
-```
-
-运行 `pytest -v`：
-
-```
-$ pip install pytest-cov        ← 自动加载（第四层·插件约定）
-$ pytest -v
-  收集到: tests/test_user.py::test_get_existing_user
-  收集到: tests/test_user.py::test_get_nonexistent_user
-  收集到: tests/integration/test_api.py::test_real_insert
-
-tests/test_user.py::test_get_existing_user PASSED
-tests/test_user.py::test_get_nonexistent_user PASSED
-tests/integration/test_api.py::test_real_insert PASSED
-```
-
-整个过程中，你没有写一行多余的配置代码：
-
-* 不需要 `TestRunner` / `TestSuite` / `@pytest.mark`
-* 不需要 `from tests.conftest import db`
-* 不需要在 `pytest.ini` 声明 `plugins = pytest_cov`
-* 不需要在 `tox.ini` 或 `setup.cfg` 加任何东西
-
-**约定本身即为配置。**
-
-***
-
-## 关键结论
-
-pytest 的"约定大于配置"，不是"设几条命名规则就够了"，而是一套由 pluggy 的 hook 协议支撑的、层层递进的匹配体系：
-
-| 层面 | 约定 | 匹配置信度 |
-|------|------|-----------|
-| 发现 | `test_*` 文件名/函数名/类名 | 固定前缀 |
-| 共享 | `conftest.py` 文件名 + 目录层级 | 固定文件名 |
-| 配置 | `pyproject.toml` / `pytest.ini` | 固定路径 |
-| 插件 | `pytest11` entry point group | 固定组名 |
-| Hook | 函数名 = hook 名 | 名称匹配 |
-| Fixture | 参数名 = fixture 名 | 名称匹配 |
-| 断言 | `assert` 语句 | Python 关键字 |
-
-如果你要设计一个自己框架的插件系统，pluggy 已经帮你做好了 hook 注册、验证、调用的全部重活——你只需要定义 hookspec，剩下的就是让插件作者享受命名即注册的快乐。
 
 
 

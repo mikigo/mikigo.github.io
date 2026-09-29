@@ -12,6 +12,8 @@
 
 下面我们一层层拆开看，pytest 究竟藏了多少这样的约定。
 
+![](./image-01.png)
+
 ***
 
 ## 第一层：测试发现的命名约定
@@ -172,6 +174,8 @@ def test_user_creation(sample_user, mock_http_client):
 3. 子目录的 conftest.py 可以**覆盖**父目录的同名 fixture（后加载的优先）
 
 这就是为什么 pytest 项目里你几乎看不到 `from some_fixture import ...` —— conftest 约定让导入变得多余。fixture 在哪里定义不重要，重要的是它在测试函数**目录层级中**的 conftest 链上。
+
+![](./image-02.png)
 
 ### conftest 的另一个身份：Hook 实现
 
@@ -344,6 +348,8 @@ def test_name(db):            # 参数名叫 db → pytest 去找名叫 db 的 f
 ```
 
 不需要 `setUp`、不需要 `self.xxx`、不需要继承。参数名就是依赖声明。
+
+![](./image-03.png)
 
 ### 作用域约定
 
