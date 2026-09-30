@@ -6,6 +6,7 @@ const projects = [
   { title: 'PyLinuxAuto', details: '一个用于 Linux 桌面 GUI 自动化测试的 Python 模块，支持多种元素定位方法和键鼠操作。', icon: '🐧', link: 'https://youqu.uniontech.com/pylinuxauto/' },
   { title: 'PyWaylandAuto', details: '一个用于 Wayland 环境下键鼠模拟操作的 Python 库。', icon: '🖱️', link: 'https://github.com/mikigo/pywaylandauto' },
   { title: 'Swarm', details: '🐝 Swarm - 分布式自动化测试执行框架。', icon: '🐝', link: '/project/swarm.html' },
+  { title: 'SkillHub-SelfHost', details: '自托管的 AI Agent 技能市场。搜索、上传、版本管理、分享 —— 一条命令完成部署。', icon: '🛒', link: 'https://mikigo.github.io/skillhub-selfhost/' },
   { title: 'FastAPI-Self-Hosting-Docs', details: '一个用于 FastAPI 应用程序的自托管文档解决方案，提供本地化的 Swagger UI 和 ReDoc 文档界面。', icon: '📚', link: '/project/fastapi-self-hosting-docs.html' },
   { title: 'Web-Counter', details: '轻量、隐私优先、开箱即用的网站访问计数器。', icon: '📊', link: '/project/web-counter.html' },
   { title: 'RepoPress', details: '基于 Git 的文档 CMS。在线编辑 Markdown/MDX 并实时预览，提交并推送到文档仓库。支持 VitePress、Rspress、Docusaurus、MkDocs。', icon: '📝', link: '/project/repopress.html' },
