@@ -106,7 +106,7 @@
 ## ✍️博客
 
 - [mikigo's blog](/blog/index.md)
-- [给你的 AI Agent 搭一个技能商店：SkillHub 从零到上线全记录](/blog/2026-09-29.md): 从零搭建一个自托管的 AI Skill 集市：设计思路、与 skills.sh 的对比、技术踩坑和部署全流程。
+- [不用 Postgres，也不用 Redis：我给内网写了个轻量的 AI Skill 集市](/blog/2026-09-29.md): 一个轻量自托管 AI Skill 集市：设计取舍、同类方案对比，以及部署到内网踩过的坑。
 - [Pytest-Xdist 多机器分布式执行是如何实现的](/blog/2026-09-23/doc.md): 从零拆解 pytest-xdist 多机器分布式架构：execnet 通信、Worker 生命周期、五大调度策略、崩溃恢复机制，并与 Swarm 做全方位对比
 - [Pytest 中那些"约定大于配置"的设计](/blog/2026-09-22/doc.md): 从文件名到断言，pytest 用一套"约定大于配置"的设计让你少写 80% 的样板代码。详细介绍测试发现、conftest 级联、fixture 注入、插件自动加载等六大约定体系，附可实操的完整示例。
 - [Wayland下键鼠模拟入门指南](/blog/2026-09-15/doc.md): Wayland下键鼠模拟入门指南
