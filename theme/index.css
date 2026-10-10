@@ -1,9 +1,34 @@
-/* Simulate the centering behavior when sidebar: false  */
-/* Avoid having the visual center too far to the right */
-@media (min-width: 1280px) {
-  .rp-doc-layout__sidebar-placeholder {
-    width: 12vw !important;
-  }
+/* ===== pageType: doc-wide 页面的居中 =====
+ *
+ * 别给 .rp-doc-layout__sidebar-placeholder 加 !important 宽度。
+ * rspress 对 doc-wide 页面会把左右两个占位元素的宽度设成 inline 的 0
+ * （见 @rspress/core 的 DocLayout：isDocWide ? { width: '0' } : {}），
+ * 本意就是让内容占满整行。用 !important 覆盖掉这个 0，左侧会凭空多出
+ * 一段空白，整栏内容被挤到右边，卡片区和标题的左右间距就不一致了。
+ *
+ * 需要处理的只有另一件事：.rp-doc-layout__doc--wide 自带 max-width，
+ * 而容器默认 justify-content: flex-start，视口比 max-width 宽时内容会
+ * 贴左、右侧空一大块。让这一行居中即可（占位元素此时宽度为 0，
+ * 顺带把继承来的 margin-left / margin-right 清零，否则仍会偏）。
+ */
+.rp-doc-layout__container:has(> .rp-doc-layout__doc--wide) {
+  justify-content: center;
+}
+
+.rp-doc-layout__container:has(> .rp-doc-layout__doc--wide)
+  > .rp-doc-layout__sidebar-placeholder,
+.rp-doc-layout__container:has(> .rp-doc-layout__doc--wide)
+  > .rp-doc-layout__outline-placeholder {
+  margin: 0;
+}
+
+/* 项目页的内容别跟着视口无限变宽。
+   doc-wide 的默认上限是 1588px，高分屏下卡片会横铺一屏、两侧空空荡荡。
+   这里按 Mintlify 的内容区宽度收一下：1360px 减去容器左右各 80px 内边距，
+   正文净宽 1200px。h1、简介和卡片区同宽，左边缘对齐，两侧留白对称。
+   用 :has(.project-list) 限定只作用于项目页，不动其它 doc-wide 页面。 */
+.rp-doc-layout__container:has(.project-list) > .rp-doc-layout__doc {
+  max-width: min(100%, 1360px);
 }
 
 /* 隐藏 Rspress 原生 features，用 ProjectCarousel 替代 */

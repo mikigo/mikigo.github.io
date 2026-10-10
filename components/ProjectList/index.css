@@ -1,0 +1,156 @@
+/* 项目列表页 —— Mintlify 设计语言
+ *
+ * 设计系统提供的是结构和比例（16px 卡片圆角、24px 内边距、
+ * 5% 极淡描边、紧字距的标题），颜色一律走 rspress 的 --rp-c-* 变量，
+ * 这样亮色 / 暗色自动切换，不用额外维护一套暗色值。
+ */
+.project-list {
+  --pl-brand: var(--rp-c-brand);
+  --pl-brand-tint: var(--rp-c-brand-tint);
+  --pl-text-1: var(--rp-c-text-1);
+  --pl-text-2: var(--rp-c-text-2);
+  --pl-text-3: var(--rp-c-text-3);
+  --pl-card-bg: var(--rp-c-bg-soft);
+  --pl-border: rgba(0, 0, 0, 0.05);
+  --pl-border-hover: rgba(0, 0, 0, 0.08);
+  --pl-shadow-hover: rgba(0, 0, 0, 0.03) 0 2px 4px;
+
+  /* 左右不留内边距：横向留白由 .rp-doc-layout__doc-container 对称提供，
+     这样卡片区和上面的标题左边缘对齐，也不会和父级各留一份间距 */
+  position: relative;
+  padding: 8px 0 96px;
+}
+
+html.rp-dark .project-list {
+  --pl-border: rgba(255, 255, 255, 0.08);
+  --pl-border-hover: rgba(255, 255, 255, 0.14);
+  --pl-shadow-hover: rgba(0, 0, 0, 0.4) 0 2px 4px;
+}
+
+/* 顶部那一层绿色雾气，压在标题后面 */
+.project-list::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -220px;
+  height: 420px;
+  background: radial-gradient(
+    ellipse 65% 100% at 50% 100%,
+    var(--pl-brand-tint) 0%,
+    transparent 70%
+  );
+  pointer-events: none;
+}
+
+.project-list > * {
+  position: relative;
+}
+
+.project-list__meta {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 0 0 24px;
+}
+
+.project-list__eyebrow {
+  margin: 0;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.65px;
+  text-transform: uppercase;
+  color: var(--pl-brand);
+  white-space: nowrap;
+}
+
+.project-list__rule {
+  flex: 1;
+  height: 1px;
+  background: var(--pl-border);
+}
+
+.project-list__grid {
+  display: grid;
+  /* 自适应列数：卡片宽度不低于 280px，剩下的空间均分，左右自然对称 */
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.project-list__card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 24px;
+  border-radius: 16px;
+  border: 1px solid var(--pl-border);
+  background: var(--pl-card-bg);
+  text-decoration: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.project-list__card:hover {
+  border-color: var(--pl-border-hover);
+  box-shadow: var(--pl-shadow-hover);
+  transform: translateY(-2px);
+}
+
+.project-list__card-icon {
+  font-size: 1.75rem;
+  line-height: 1;
+}
+
+.project-list__card-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.2px;
+  color: var(--pl-text-1);
+}
+
+.project-list__card-desc {
+  flex: 1;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--pl-text-2);
+}
+
+.project-list__card-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--pl-text-3);
+  transition: color 0.2s ease;
+}
+
+.project-list__card-arrow {
+  transition: transform 0.2s ease;
+}
+
+.project-list__card:hover .project-list__card-more {
+  color: var(--pl-brand);
+}
+
+.project-list__card:hover .project-list__card-arrow {
+  transform: translateX(2px);
+}
+
+@media (max-width: 640px) {
+  .project-list {
+    padding: 8px 0 64px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .project-list__card,
+  .project-list__card-more,
+  .project-list__card-arrow {
+    transition: none;
+  }
+
+  .project-list__card:hover {
+    transform: none;
+  }
+}

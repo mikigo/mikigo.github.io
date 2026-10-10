@@ -5,11 +5,6 @@
     "activeMatch": "/index/"
   },
   {
-    "text": "\uD83D\uDCBB编程",
-    "link": "/program/index",
-    "activeMatch": "/program/"
-  },
-  {
     "text": "🤓技术文档",
     "link": "/tech_doc/index",
     "activeMatch": "/tech_doc/"
@@ -23,5 +18,10 @@
     "text": "\uD83E\uDDD1\u200D\uD83C\uDF73菜谱",
     "link": "/cookbook/index",
     "activeMatch": "/cookbook/"
+  },
+  {
+    "text": "\uD83D\uDCBB开源项目",
+    "link": "/open_source_project/index",
+    "activeMatch": "/open_source_project/"
   }
 ]
