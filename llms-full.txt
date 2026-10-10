@@ -1,5 +1,5 @@
 ---
-url: /program/index.md
+url: /tech_doc/index.md
 ---
 
 
@@ -7,7 +7,7 @@ url: /program/index.md
 
 
 ---
-url: /program/autotest/index.md
+url: /tech_doc/autotest/index.md
 ---
 
 
@@ -15,7 +15,7 @@ url: /program/autotest/index.md
 
 
 ---
-url: /program/autotest/自动化测试框架/Pytest从入门到起飞.md
+url: /tech_doc/autotest/自动化测试框架/Pytest从入门到起飞.md
 ---
 
 # Pytest 从入门到起飞
@@ -1320,7 +1320,7 @@ print(results)
 
 
 ---
-url: /program/autotest/自动化测试框架/unittest—3小时入门版.md
+url: /tech_doc/autotest/自动化测试框架/unittest—3小时入门版.md
 ---
 
 # unittest—3小时入门版
@@ -1494,7 +1494,7 @@ class TestCrmLogin(unittest.TestCase):
 
 
 ---
-url: /program/autotest/UI自动化/Appium—6小时入门版.md
+url: /tech_doc/autotest/UI自动化/Appium—6小时入门版.md
 ---
 
 # Appium—6小时入门版
@@ -2146,7 +2146,7 @@ driver.perform()
 
 
 ---
-url: /program/autotest/UI自动化/Playwright—8小时入门版.md
+url: /tech_doc/autotest/UI自动化/Playwright—8小时入门版.md
 ---
 
 # Playwright—8小时入门版
@@ -2470,7 +2470,7 @@ to\_be\_empty
 
 
 ---
-url: /program/autotest/UI自动化/Selenium—8小时入门版.md
+url: /tech_doc/autotest/UI自动化/Selenium—8小时入门版.md
 ---
 
 # Selenium—8小时入门版
@@ -2928,7 +2928,7 @@ driver.add_cookie(cookie_dict)
 
 
 ---
-url: /program/autotest/UI自动化/智能化功能测试.md
+url: /tech_doc/autotest/UI自动化/智能化功能测试.md
 ---
 
 # 智能化功能测试
@@ -3592,7 +3592,7 @@ Acessibility 属性定位存在偶尔失效的情况
 
 
 ---
-url: /program/autotest/UI自动化/智能化性能测试.md
+url: /tech_doc/autotest/UI自动化/智能化性能测试.md
 ---
 
 # 智能化性能测试
@@ -4399,7 +4399,7 @@ sudo docker-compose up -d --build	# 仅重新构建 Docker 镜像
 
 
 ---
-url: /program/autotest/性能自动化/JMeter—10小时入门版.md
+url: /tech_doc/autotest/性能自动化/JMeter—10小时入门版.md
 ---
 
 # JMeter—10小时入门版
@@ -4858,7 +4858,7 @@ x轴代表并发用户数，Y轴代表资源利用率、吞吐量、响应时间
 
 
 ---
-url: /program/autotest/性能自动化/Locust—2小时入门版.md
+url: /tech_doc/autotest/性能自动化/Locust—2小时入门版.md
 ---
 
 # Locust—2小时入门版
@@ -5101,7 +5101,7 @@ Worker uos-PC_4880a337c8ed49769a9995d6a14950af (index 0) reported as ready. 1 wo
 
 
 ---
-url: /program/autotest/接口自动化/HttpRunner-2小时入门版.md
+url: /tech_doc/autotest/接口自动化/HttpRunner-2小时入门版.md
 ---
 
 # HttpRunner—2小时入门版
@@ -5707,7 +5707,7 @@ runner = HttpRunner().test_start()
 
 
 ---
-url: /program/autotest/自动化思想理念/PageObjects.md
+url: /tech_doc/autotest/自动化思想理念/PageObjects.md
 ---
 
 # PageObjects（PO）
@@ -5904,7 +5904,7 @@ driver.quit()
 
 
 ---
-url: /program/autotest/自动化思想理念/RPA测试技术.md
+url: /tech_doc/autotest/自动化思想理念/RPA测试技术.md
 ---
 
 # RPA测试技术
@@ -6160,7 +6160,7 @@ RPA 是一种自动化的技术理念，RPA 测试的核心是将过去手工测
 
 
 ---
-url: /program/Python/index.md
+url: /tech_doc/Python/index.md
 ---
 
 
@@ -6168,7 +6168,7 @@ url: /program/Python/index.md
 
 
 ---
-url: /program/Python/Httpx.md
+url: /tech_doc/Python/Httpx.md
 ---
 
 # Httpx
@@ -6334,7 +6334,7 @@ class AsyncClient:
 
 
 ---
-url: /program/Python/Linux上如何选择用pip3还是sudopip3.md
+url: /tech_doc/Python/Linux上如何选择用pip3还是sudopip3.md
 ---
 
 # Linux 上如何选择用 pip3 还是 sudo pip3
@@ -6452,7 +6452,7 @@ import { Badge } from '@rspress/core/theme';
 
 
 ---
-url: /program/Python/Linux上安装Python3.9.9.md
+url: /tech_doc/Python/Linux上安装Python3.9.9.md
 ---
 
 # Linux 上安装 Python 3.9.9
@@ -6501,7 +6501,7 @@ sudo ln -s /usr/local/python${python_into}/bin/python${python_into}-config /usr/
 
 
 ---
-url: /program/Python/MMDetection入门基础.md
+url: /tech_doc/Python/MMDetection入门基础.md
 ---
 
 # MMDetection 入门基础
@@ -6783,7 +6783,7 @@ run.py 整合了以上所有的操作。
 
 
 ---
-url: /program/Python/OpenCV(Python)基础—9小时入门版.md
+url: /tech_doc/Python/OpenCV(Python)基础—9小时入门版.md
 ---
 
 # OpenCV(Python)基础—9小时入门版
@@ -7343,7 +7343,7 @@ cv.imwrite('res.png',img_rgb)
 
 
 ---
-url: /program/Python/Python从进阶到高级—通俗易懂版.md
+url: /tech_doc/Python/Python从进阶到高级—通俗易懂版.md
 ---
 
 # Python从进阶到高级—通俗易懂版
@@ -9103,7 +9103,7 @@ zip 返回的是一个对象，实际上是一个迭代器对象。
 
 
 ---
-url: /program/Python/Python最强静态代码检查格式化工具Ruff.md
+url: /tech_doc/Python/Python最强静态代码检查格式化工具Ruff.md
 ---
 
 # Python最强代码检查&格式化工具Ruff
@@ -9277,7 +9277,7 @@ ignore = ["F401"]
 
 
 ---
-url: /program/Python/Python包构建和发布.md
+url: /tech_doc/Python/Python包构建和发布.md
 ---
 
 # Python包构建和发布
@@ -9447,7 +9447,7 @@ twine upload dist/*
 
 
 ---
-url: /program/Python/Python基础语法—8小时入门版.md
+url: /tech_doc/Python/Python基础语法—8小时入门版.md
 ---
 
 # Python基础语法—8小时入门版
@@ -10082,7 +10082,7 @@ with open("test.txt","a+",encoding="utf-8") as f:
 
 
 ---
-url: /program/Python/Python环境与依赖管理.md
+url: /tech_doc/Python/Python环境与依赖管理.md
 ---
 
 # Python环境与依赖管理
@@ -10596,7 +10596,7 @@ Python 环境和依赖管理工具各有特色，选择合适的工具取决于�
 
 
 ---
-url: /program/Python/Python风格指南.md
+url: /tech_doc/Python/Python风格指南.md
 ---
 
 # Python风格指南
@@ -11018,7 +11018,7 @@ class Test(object)：
 
 
 ---
-url: /program/Python/Requests.md
+url: /tech_doc/Python/Requests.md
 ---
 
 # Requests
@@ -11378,7 +11378,7 @@ print(resp.text)
 
 
 ---
-url: /program/Python/Scrapy.md
+url: /tech_doc/Python/Scrapy.md
 ---
 
 # Scrapy
@@ -12045,7 +12045,7 @@ Scrapy 由于封装得比较好，启动爬虫是通过命令行启动，但是�
 
 
 ---
-url: /program/Python/常用的获取随机字符串的方法.md
+url: /tech_doc/Python/常用的获取随机字符串的方法.md
 ---
 
 # 常用的获取随机字符串的方法
@@ -12117,7 +12117,7 @@ print(a)
 
 
 ---
-url: /program/Python/配置Python源的几种方法.md
+url: /tech_doc/Python/配置Python源的几种方法.md
 ---
 
 # 配置 Python 源的几种方法
@@ -12261,7 +12261,7 @@ pip3 config set global.timeout 10000
 
 
 ---
-url: /program/Linux/index.md
+url: /tech_doc/Linux/index.md
 ---
 
 
@@ -12269,7 +12269,7 @@ url: /program/Linux/index.md
 
 
 ---
-url: /program/Linux/dde-dconfig使用.md
+url: /tech_doc/Linux/dde-dconfig使用.md
 ---
 
 # dde-config使用
@@ -12363,7 +12363,7 @@ dde-dconfig --watch -a org.deepin.dde.file-manager -r org.deepin.dde.file-manage
 
 
 ---
-url: /program/Linux/deb安装包制作.md
+url: /tech_doc/Linux/deb安装包制作.md
 ---
 
 # deb安装包制作
@@ -12521,7 +12521,7 @@ links文件用于创建符号链接（symbolic links）。符号链接是一种�
 
 
 ---
-url: /program/Linux/Docker入门.md
+url: /tech_doc/Linux/Docker入门.md
 ---
 
 # Docker入门
@@ -12871,7 +12871,7 @@ sudo systemctl restart docker.service
 
 
 ---
-url: /program/Linux/FFmpeg常用命令与参数解释.md
+url: /tech_doc/Linux/FFmpeg常用命令与参数解释.md
 ---
 
 # FFmpeg常用命令与参数解释
@@ -13026,7 +13026,7 @@ ffmpeg -i $INPUT -c:v mpeg4 output.mpeg4.mp4
 
 
 ---
-url: /program/Linux/FTP服务搭建.md
+url: /tech_doc/Linux/FTP服务搭建.md
 ---
 
 # FTP服务搭建
@@ -13179,7 +13179,7 @@ sudo systemctl restart vsftpd.service
 
 
 ---
-url: /program/Linux/KVM安装配置及使用说明.md
+url: /tech_doc/Linux/KVM安装配置及使用说明.md
 ---
 
 # KVM安装配置及使用说明
@@ -13287,7 +13287,7 @@ sudo virsh net-autostart default
 
 
 ---
-url: /program/Linux/Linux上sudo免密.md
+url: /tech_doc/Linux/Linux上sudo免密.md
 ---
 
 # Linux 上 sudo 免密
@@ -13327,7 +13327,7 @@ sudo vim /etc/sudoers
 
 
 ---
-url: /program/Linux/Linux上远程桌面VNC配置.md
+url: /tech_doc/Linux/Linux上远程桌面VNC配置.md
 ---
 
 # Linux 上远程桌面 VNC 服务配置
@@ -13401,7 +13401,7 @@ krfb --nodialog --dpwd 1 --upwd 1 --nosharedialog
 
 
 ---
-url: /program/Linux/Linux基础.md
+url: /tech_doc/Linux/Linux基础.md
 ---
 
 # Linux\&Shell基础
@@ -14252,7 +14252,7 @@ else
 
 
 ---
-url: /program/Linux/Nginx入门使用.md
+url: /tech_doc/Linux/Nginx入门使用.md
 ---
 
 # Nginx入门使用
@@ -14518,7 +14518,7 @@ http {
 
 
 ---
-url: /program/Linux/NVIDIA驱动CUDAcuDNN安装.md
+url: /tech_doc/Linux/NVIDIA驱动CUDAcuDNN安装.md
 ---
 
 # NVIDIA驱动\&CUDA\&cuDNN安装
@@ -14627,7 +14627,7 @@ sudo dpkg -i cudnn-local-repo-ubuntu2004-8.9.7.29_1.0-1_amd64.deb
 
 
 ---
-url: /program/Linux/U盘新建分区和文件系统.md
+url: /tech_doc/Linux/U盘新建分区和文件系统.md
 ---
 
 # U盘新建分区和文件系统
@@ -14661,7 +14661,7 @@ sudo mkfs.vfat -I /dev/sdb1
 
 
 ---
-url: /program/Linux/vim配置和插件选择.md
+url: /tech_doc/Linux/vim配置和插件选择.md
 ---
 
 # vim配置和插件使用
@@ -14999,7 +14999,7 @@ Vundle可以进行插件安装卸载，及列出插件列表，对应命令：Pl
 
 
 ---
-url: /program/Linux/配置开机自启服务.md
+url: /tech_doc/Linux/配置开机自启服务.md
 ---
 
 # 配置开机自启服务
@@ -15062,7 +15062,7 @@ sudo systemctl status test.service
 
 
 ---
-url: /program/Shell/index.md
+url: /tech_doc/Shell/index.md
 ---
 
 
@@ -15070,7 +15070,7 @@ url: /program/Shell/index.md
 
 
 ---
-url: /program/Shell/Shell参数传递.md
+url: /tech_doc/Shell/Shell参数传递.md
 ---
 
 # Shell参数传递
@@ -15337,7 +15337,7 @@ getopt是一个外部工具，可以通过`man getopt`查看具体用法。
 
 
 ---
-url: /program/Shell/Shell变量使用.md
+url: /tech_doc/Shell/Shell变量使用.md
 ---
 
 # Shell变量使用
@@ -15914,7 +15914,7 @@ ABCDEFFGH
 
 
 ---
-url: /program/Shell/Shell字符串处理.md
+url: /tech_doc/Shell/Shell字符串处理.md
 ---
 
 # Shell字符串处理
@@ -15954,7 +15954,7 @@ test@test-PC:~/share/5$ printf "%d\n" "'${chr}"
 
 
 ---
-url: /program/Shell/Shell数学运算.md
+url: /tech_doc/Shell/Shell数学运算.md
 ---
 
 # Shell数学运算
@@ -16391,7 +16391,7 @@ Hash value is :[680273]
 
 
 ---
-url: /program/Shell/Shell编码规范错误参考手册.md
+url: /tech_doc/Shell/Shell编码规范错误参考手册.md
 ---
 
 # Shell编码规范错误参考手册
@@ -17089,7 +17089,7 @@ SC2126
 
 
 ---
-url: /program/Shell/Shell进程控制.md
+url: /tech_doc/Shell/Shell进程控制.md
 ---
 
 # Shell进程调用
@@ -17924,7 +17924,7 @@ test@test-PC:~/work/study/shell/share$
 
 
 ---
-url: /program/Shell/Shell风格指南.md
+url: /tech_doc/Shell/Shell风格指南.md
 ---
 
 # Shell风格指南
@@ -18552,7 +18552,7 @@ set -- 1 "2 two" "3 three tres"; echo $# ; set -- "$@"; echo "$#, $@"
 
 
 ---
-url: /program/前后端/index.md
+url: /tech_doc/前后端/index.md
 ---
 
 
@@ -18560,7 +18560,7 @@ url: /program/前后端/index.md
 
 
 ---
-url: /program/前后端/CSS基础.md
+url: /tech_doc/前后端/CSS基础.md
 ---
 
 # CSS 基础
@@ -19095,7 +19095,7 @@ p{
 
 
 ---
-url: /program/前后端/Django基础知识.md
+url: /tech_doc/前后端/Django基础知识.md
 ---
 
 # Django基础知识
@@ -19410,7 +19410,7 @@ python3 manage.py migrate        迁移
 
 
 ---
-url: /program/前后端/Django进阶技巧.md
+url: /tech_doc/前后端/Django进阶技巧.md
 ---
 
 # Django进阶技巧
@@ -19715,7 +19715,7 @@ curl -X POST -H "Content-Type: application/json" -d '{"title": "My Title", "auth
 
 
 ---
-url: /program/前后端/FastAPI—8小时入门版.md
+url: /tech_doc/前后端/FastAPI—8小时入门版.md
 ---
 
 # FastAPI—8小时入门版
@@ -20880,7 +20880,7 @@ uvicorn sql_app.main:app --reload
 
 
 ---
-url: /program/前后端/html基础.md
+url: /tech_doc/前后端/html基础.md
 ---
 
 # HTML 基础
@@ -21694,7 +21694,7 @@ reversed是倒叙排列
 
 
 ---
-url: /program/前后端/JS基础.md
+url: /tech_doc/前后端/JS基础.md
 ---
 
 # JS基础教程
@@ -22968,7 +22968,7 @@ let specificDate = new Date(2023, 10, 18, 12, 30, 45, 0); // 注意月份是从0
 
 
 ---
-url: /program/前后端/Linux上安装Nodejs.md
+url: /tech_doc/前后端/Linux上安装Nodejs.md
 ---
 
 # Linux 上安装 Nodejs
@@ -23032,7 +23032,7 @@ pnpm -v
 
 
 ---
-url: /program/前后端/MySQL基础.md
+url: /tech_doc/前后端/MySQL基础.md
 ---
 
 # MySQL基础
@@ -23684,7 +23684,7 @@ Values (404,’明天’,’男’)
 
 
 ---
-url: /program/前后端/Vue基础.md
+url: /tech_doc/前后端/Vue基础.md
 ---
 
 # Vue基础
@@ -24448,7 +24448,7 @@ Vue.component('my-component', my-component);
 
 
 ---
-url: /program/前后端/Web基础.md
+url: /tech_doc/前后端/Web基础.md
 ---
 
 # web基础
@@ -25098,7 +25098,7 @@ $.ajax({
 
 
 ---
-url: /program/前后端/测开前端学习基础分享.md
+url: /tech_doc/前后端/测开前端学习基础分享.md
 ---
 
 # 测开前端学习基础分享
@@ -25409,7 +25409,7 @@ function onChileRefresh() {
 
 
 ---
-url: /program/前后端/研测平台权限管理前端设计.md
+url: /tech_doc/前后端/研测平台权限管理前端设计.md
 ---
 
 # 平台权限管理前端设计
@@ -25539,7 +25539,7 @@ export function hasPerm(pm) {
 
 
 ---
-url: /program/Jenkins/index.md
+url: /tech_doc/Jenkins/index.md
 ---
 
 
@@ -25547,7 +25547,7 @@ url: /program/Jenkins/index.md
 
 
 ---
-url: /program/Jenkins/Jenkins环境搭建以及任务创建.md
+url: /tech_doc/Jenkins/Jenkins环境搭建以及任务创建.md
 ---
 
 # Jenkins环境搭建以及任务创建
@@ -25717,7 +25717,7 @@ docker exec Jenkins_rongqi cat /var/Jenkins_home/secrets/initialAdminPassword
 
 
 ---
-url: /program/Jenkins/Pipeline语法介绍.md
+url: /tech_doc/Jenkins/Pipeline语法介绍.md
 ---
 
 # Pipeline语法介绍
@@ -26219,7 +26219,7 @@ pipeline {
 
 
 ---
-url: /program/AI/SKILL进化论/skill-evolution.md
+url: /tech_doc/AI/SKILL进化论/skill-evolution.md
 ---
 
 # SKILL进化论：测试工程师如何让AI越用越聪明
@@ -26779,14 +26779,6 @@ AI 写用例时能感知项目实时状态——知道当前在哪个分支、�
 当 AI 帮你搞定了用例编写这类重复劳动之后，你的时间就可以花在真正需要测试智慧的事情上——设计更巧妙的测试策略、挖掘更深层次的缺陷、优化整个质量保障流程。
 
 **这才是测试工程师的升级之路。SKILL 进化，共勉。**
-
-
-
----
-url: /tech_doc/index.md
----
-
-
 
 
 
@@ -35816,10 +35808,74 @@ import { BlogList } from '../../components/Blog';
 
 
 ---
+url: /blog/2026-10-11.md
+---
+
+# SkillHub 追更：进内网之后，我改了这三件事
+
+上一篇写的是为什么做这个集市、跟同类方案比取舍在哪。那时候它还是我自己的东西，怎么设计我说了算。
+
+放进内网、真有人开始用之后，有几件事跟我预想的不一样。这篇不讲设计，讲我改了什么。一共三件：仓库关联上传从备用路径变成了主路径，多了一个谁都能往里放 skill 的默认仓库，加了原创标签和原创 tab。
+
+## 仓库关联上传：我以为没人用，结果它成了主路径
+
+上一篇写过这条路径：填仓库地址、分支、skill 路径三个字段，SkillHub 不克隆不落盘，详情页通过 GitLab API 实时取 `SKILL.md` 回来渲染。
+
+上线之后我发现，我一开始把它的位置摆错了。
+
+我原本以为主力是拖拽上传——"把文件夹拖进来就完事"，听起来最省事。但内网里绝大多数人的 skill 本来就维护在 GitLab 上。让人先 clone 下来、拖进浏览器、再往集市传一份，等于把 Git 里已经有的东西复制了一遍，之后两边还得各自更新。真正用起来，拖拽反而是少数路径。
+
+所以这次把仓库关联扶正了，它现在是上传 skill 的默认方式。表单只留三个字段：仓库 url、branch、skill\_path。skill\_path 之所以不能省，是因为仓库里未必只有一个 skill，skill 也未必在根目录，`skills/code-review` 和 `code-review` 都是常见放法，让传的人指清楚比在后端猜要可靠。
+
+详情页会把仓库里的 `SKILL.md` 渲染出来。这一点比看起来重要：别人打开一个 skill，第一眼该看到的是它能干什么、怎么用，而不是一个下载按钮。何况这条路径下的 skill 是活的，仓库改了集市上跟着就是新的，读到的文档和拿到的代码永远是同一份。
+
+代价上一篇说过，这里再重复一次：这类 skill 不跟版本号，跟分支走。要严格按版本回滚的，还是走上传那条路。
+
+## 默认仓库：会提 MR，就能往集市里放 skill
+
+第二件事是给 SkillHub 配了一个默认的 GitLab 仓库，`skillhub-skills`。
+
+起因很实际：不是每个人都有兴趣为了传一个 skill 去开一个新的 Git 仓库。那就在集市旁边备一个公共仓库，谁都能往里放，SkillHub 自动扫描这个仓库，把里面的 skill 全部扫出来显示在集市上。
+
+这么一来，上传 skill 就不只有"用 SkillHub 的表单"这一种方式了。你可以走团队本来就在用的那套 GitLab 流程：拉分支、提 MR、讨论、合并。这个 skill 该不该进集市、写得对不对，在 MR 里就谈完了，SkillHub 只负责把合并后的结果呈现出来。对一个内网团队来说，这大概是最省事的一条路——想让 skill 上集市的人不需要学任何一个新东西，会提 MR 就够了。
+
+它和"关联自己的仓库"用的是同一套扫描和取文件的机制，区别在归属：默认仓库是"我懒得单独建仓库，顺手放公共的地方"，自己的仓库是"我有一套东西要长期维护，不想跟别人的混在一起"。
+
+## 原创标签：把搬运的和自己写的分开
+
+第三件事是原创标签。
+
+集市上的 skill 大部分是搬运来的——从外网上看到的、别的团队写的、同事分享的。之前它们和团队自己写的 skill 混在一起，除了详情页会显示原作者，列表上没有任何区别。
+
+现在的规则是：上传时填了原作者和来源链接的，算搬运，不打原创标签；作者就是上传者本人的，才带这个标签。首页也多了一个原创 tab，把带标签的集中在一起。
+
+我没有把判定做成"用户自己勾选'这是我原创的'"。勾选原创是空口一句话，谁都能勾；而填原作者和来源链接是件麻烦事，愿意填的人多半是真的在搬运。举证的责任放在搬运那一侧，原创标签才有意义。
+
+标签本身不创造价值，能用标签筛出东西才行。原创 tab 要解决的具体问题是：搬运来的 skill 数量上天然占优，团队自己写的那几个会被淹没。给它们一个单独的入口，是为了让"我们自己产出了什么"这件事看得见。
+
+## 三件事其实是一件事
+
+前两件是一件事的两面：让 skill 留在 GitLab 上，SkillHub 少当仓库、多当索引。第三件事恰好是在这个前提下才更必要——当"搬运一个 skill"变得几乎没有成本时，谁在原创就得说清楚。
+
+有一点得说清楚：上面这三样改动目前只跑在内网那一套上。内网的代码没法导出到外网，所以开源仓库暂时还是早先那一版，这些功能都还没进去——现在装到的还是老版本。
+
+源码在 [github.com/mikigo/skillhub-selfhost](https://github.com/mikigo/skillhub-selfhost)，Apache-2.0。
+
+## 用的人最少的那条路
+
+有件事值得记一下：最初想的那条路——拖拽上传、带版本管理——现在反而是用的人最少的一条。
+
+做之前我以为版本管理是这个集市的核心，理由也说得通：skill 会一直更新，总得能回滚。真用起来才发现，内网的 skill 大多跟着仓库走，大家要的是"仓库改了，集市上自动就是新的"，而不是"我能回到上一版"。
+
+需求是从用户使用里长出来的，不是想出来的。想出来的那部分，得等真有人用了，才知道它到底算不算需求。
+
+
+
+---
 url: /blog/2026-09-29.md
 ---
 
-# 不用 Postgres，也不用 Redis：我给内网写了个轻量的 AI Skill 集市
+# 不用 Postgres，也不用 Redis：我给内网写了个轻量的 AI SkillHub
 
 最近大家都在给 AI Agent 写 skill。写完一个又一个，放在 `~/.agents/skills/` 目录里，隔壁同事问你要你就打个 zip 发过去。过两周你的 skill 更新了，又得重新发一遍。
 
@@ -35922,22 +35978,6 @@ skill 的名字只在**同一个作者名下唯一**，不同人可以各自拥�
 ### 主题与语言
 
 亮色暗色一键切。中英文界面，默认中文。`config.json` 里换个 Logo、换个 favicon、换个标题，不用动代码——内网部署做品牌定制够用了。
-
-## 踩坑：一条 CSS 导致的暗色模式翻车
-
-shadcn/ui 默认的 CSS 变量是用 `hsl()` 包裹 `oklch()` 色值的，比如：
-
-```css
-.bg-primary {
-  background-color: hsl(var(--primary));
-}
-```
-
-`--primary` 的值是 `oklch(0.21 0.006 285.885)`，浏览器看到的最终表达式是 `hsl(oklch(...))`。这在标准里不合法。Chrome 对不带透明度的用法还能容错渲染，一旦加上透明度（`bg-primary/10`）就直接放弃——表现为一片空白。
-
-骨架屏（Skeleton 组件）的默认样式恰好是 `bg-primary/10`。于是暗色模式下，页面初始加载时本该显示的灰色占位块完全不渲染，看起来像白屏。
-
-修起来很简单，绕开 CSS 变量别名，直接用十六进制色值就行。教训是：工具链的默认配置不一定在生产环境能稳稳跑，Tailwind 的 `hsl()` 包装和新一代 CSS 颜色空间之间就隔着这么一个隐形的坑。
 
 ## 三条命令跑起来
 
@@ -49192,18 +49232,16 @@ import { Steps } from '@rspress/core/theme';
 
 
 ---
-url: /index.md
+url: /open_source_project/index.md
 ---
 
+# 我创建的开源项目
 
+从自动化测试框架到自托管工具，都是自己在写、自己在用的东西，顺手开源出来。
 
+import { ProjectList } from '../../components/ProjectList';
 
-
----
-url: /leaderboard.md
----
-
-<div data-pv-top="" style="max-width:900px;margin:0 auto;"></div>
+<ProjectList />
 
 
 
@@ -52552,5 +52590,21 @@ web-counter start
 ## License
 
 MIT
+
+
+
+---
+url: /index.md
+---
+
+
+
+
+
+---
+url: /leaderboard.md
+---
+
+<div data-pv-top="" style="max-width:900px;margin:0 auto;"></div>
 
 
