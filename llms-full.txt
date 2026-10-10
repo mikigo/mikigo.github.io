@@ -49208,7 +49208,7 @@ url: /leaderboard.md
 
 
 ---
-url: /project/allure-markdown.md
+url: /open_source_project/intro/allure-markdown.md
 ---
 
 # 📋 allure-markdown — Allure 转 Markdown 报告工具
@@ -49419,7 +49419,7 @@ Apache 2.0
 
 
 ---
-url: /project/allure3-server.md
+url: /open_source_project/intro/allure3-server.md
 ---
 
 # 📊 allure3-server — Allure3 测试报告服务
@@ -49599,7 +49599,7 @@ Apache 2.0
 
 
 ---
-url: /project/autotest-basic-template.md
+url: /open_source_project/intro/autotest-basic-template.md
 ---
 
 # 🧪 Autotest-Basic-Template — Pytest 自动化测试工程模板
@@ -49762,7 +49762,7 @@ Apache 2.0
 
 
 ---
-url: /project/django-blog.md
+url: /open_source_project/intro/django-blog.md
 ---
 
 # 📝 django-blog — 基于 Django 的博客系统
@@ -49923,7 +49923,7 @@ Apache 2.0
 
 
 ---
-url: /project/fastapi-self-hosting-docs.md
+url: /open_source_project/intro/fastapi-self-hosting-docs.md
 ---
 
 # 📚 fastapi-self-hosting-docs — FastAPI 自托管文档
@@ -50079,7 +50079,7 @@ Apache 2.0
 
 
 ---
-url: /project/funnylog.md
+url: /open_source_project/intro/funnylog.md
 ---
 
 # 📜 Funnylog — Python 类方法自动日志装饰器
@@ -50328,7 +50328,7 @@ Apache Software License
 
 
 ---
-url: /project/letmego.md
+url: /open_source_project/intro/letmego.md
 ---
 
 # 🔄 letmego（任我行）— 测试用例断电续跑方案
@@ -50583,7 +50583,7 @@ Apache 2.0
 
 
 ---
-url: /project/pdocr-rpc.md
+url: /open_source_project/intro/pdocr-rpc.md
 ---
 
 # 👁️ pdocr-rpc — PaddleOCR RPC 服务
@@ -50820,7 +50820,7 @@ Apache 2.0
 
 
 ---
-url: /project/pypkg.md
+url: /open_source_project/intro/pypkg.md
 ---
 
 # 📦 PyPKG — Python 包一键生成器
@@ -51008,7 +51008,7 @@ GPL-2.0
 
 
 ---
-url: /project/relative-position.md
+url: /open_source_project/intro/relative-position.md
 ---
 
 # 📐 relative-position — 跨平台 UI 元素相对定位库
@@ -51248,7 +51248,7 @@ Apache 2.0
 
 
 ---
-url: /project/repopress.md
+url: /open_source_project/intro/repopress.md
 ---
 
 # 📝 RepoPress — 文档仓库在线编辑 CMS
@@ -51506,7 +51506,7 @@ Apache 2.0
 
 
 ---
-url: /project/safe-vitepress.md
+url: /open_source_project/intro/safe-vitepress.md
 ---
 
 # 🔒 safe-vitepress — 带身份认证的 VitePress 文档站
@@ -51733,7 +51733,7 @@ Apache 2.0
 
 
 ---
-url: /project/swarm.md
+url: /open_source_project/intro/swarm.md
 ---
 
 # 🐝 Swarm - 分布式自动化测试执行框架
@@ -52080,7 +52080,7 @@ MIT
 
 
 ---
-url: /project/test-runner.md
+url: /open_source_project/intro/test-runner.md
 ---
 
 # 🏃 TestRunner — 自动化测试任务可视化管理平台
@@ -52302,7 +52302,7 @@ MIT
 
 
 ---
-url: /project/web-counter.md
+url: /open_source_project/intro/web-counter.md
 ---
 
 # 📊 web-counter — 自托管网站访问计数器
