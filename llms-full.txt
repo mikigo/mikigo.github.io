@@ -46355,6 +46355,133 @@ if __name__ == "__main__":
 
 
 ---
+url: /blog/2026-10-15.md
+---
+
+# 给 dufs 换张脸：一个"不该这么好看"的文件服务器主题
+
+dufs 是个好东西——一个用 Rust 写的单二进制文件服务器，`./dufs ./path` 就跑起来了。但它的默认界面，怎么说呢，属于那种"能用就行"的审美流派。
+
+于是我做了一个主题：**dufs-shadcn-assets**。它就是 `dufs --assets ./dir` 要的那个 `dir`。一个 HTML 文件搞定一切。
+
+## 不是什么，才是什么
+
+在讲做了什么之前，先说它不是什么。
+
+它不是 dufs 的 fork，不是 dufs 的替代品，不需要改 dufs 一行代码。它就是一个前端主题包，跟 WordPress 主题、VS Code 主题是同一种东西。你下载一个 zip，解压，告诉 dufs 用这个目录当界面，就生效了。
+
+这个设计决策背后的逻辑很简单：dufs 负责"文件服务器"这件事已经做到极致了，不应该为了界面好看去 fork 一个版本，否则 dufs 每更新一次你都要追。主题和服务器解耦，各自独立演进，各自做到最好。
+
+## VS Code 里有啥图标，这里就有啥图标
+
+做文件管理界面，第一个问题是：文件图标从哪来。
+
+网上现成的图标库要么不够全，要么风格不统一。然后我想起来 VS Code 里装的 vscode-icons 扩展——它有一个 318KB 的 JSON 映射文件，里面记录了 599 种扩展名、1923 种文件名、524 种文件夹名，对应 1664 个手工绘制的 SVG 图标。
+
+我写了一个构建脚本，在打包阶段解析这个映射，按需拷贝引用的 1132 个图标到项目里，生成完整的 TypeScript 查找表。匹配逻辑分了 5 层：
+
+1. 完整文件名（`.gitignore` → `file_type_git`）
+2. 双扩展名（`.tar.gz` → `file_type_zip`）
+3. 单扩展名（`.js` → `file_type_js`）
+4. 常用扩展名硬编码回退（65 个）
+5. 默认文件图标
+
+你打开一个项目目录，每种文件都有自己专属的图标——不是"这个长得差不多凑合用的"，而是 VS Code 里一模一样的那一个。
+
+![首页截图](https://mikigo.github.io/dufs-shadcn-assets/public/home.png)
+
+## 超过 30 种格式的在线预览
+
+dufs 原生的预览体验是：文本文件能看，其他文件得下载。
+
+这个主题接了 Open File Viewer，一套把各种渲染引擎打包在一起的库。现在你能直接在浏览器里看：
+
+* **Office 三件套**：Word、Excel、PowerPoint
+* **PDF**：完整工具栏，翻页搜索批注都有
+* **代码**：highlight.js 语法高亮，30+ 语言
+* **3D 模型**：glTF / GLB 在线旋转缩放
+* **CAD**：DWG / DXF 工程图
+* **GIS**：GeoJSON / KML 地图叠在 Leaflet 上
+* **压缩包**：zip / tar / 7z / gz / xz / bz2
+* **音视频**：mp3 / mp4 / mkv / mov / avi
+* **电子书**：epub
+* **邮件**：eml
+
+![Office 预览](https://mikigo.github.io/dufs-shadcn-assets/public/%E9%A2%84%E8%A7%88-word.png)
+
+还有一个小细节：文本文件打开时会自动检测编码。先试 UTF-8，如果出现乱码替换字符（`\uFFFD`），自动回退到 GBK。这对中日韩用户很重要。
+
+可编辑的文本文件还能直接在浏览器里改，Ctrl+S 保存、Esc 取消——不用下载、改完再上传。
+
+![在线编辑](https://mikigo.github.io/dufs-shadcn-assets/public/%E5%9C%A8%E7%BA%BF%E7%BC%96%E8%BE%91.png)
+
+## 上传这件事，可以做得更靠谱
+
+原版 dufs 的上传是"能传"级别。我把它提到了"企业级"——听起来夸张，但每一项都是实际踩过的坑：
+
+* **队列串行**：不是一股脑全发出去，而是一个接一个排队。避免了并发导致的浏览器资源枯竭和服务端瞬时压力。
+* **断点续传**：失败了点重试，会先 HEAD 一下看看服务端已经收到了多少字节，然后用 `PATCH` + `X-Update-Range: append` 从断点续传。大文件终于不用从头再来。
+* **文件夹拖拽**：拖一个文件夹进来，递归遍历（`webkitGetAsEntry`），自动用 MKCOL 创建目录结构，再把所有文件传上去。
+* **离开保护**：上传进行中，关闭标签页会弹警告。
+* **认证预检**：开了 HTTP Basic Auth 的环境，上传前先走 `CHECKAUTH`，没认证就先认证，不白传。
+
+这些功能单独聊都不复杂，但全放在一起，就成了一套让人安心的上传机制。
+
+## "离线可用"不是营销词
+
+这是真正让这个主题站住脚的一点。
+
+构建用的是 `vite-plugin-singlefile`，把所有的 JS、CSS、Font、SVG 图标全部内联进一个 HTML 文件。打开浏览器的 Network 面板，你会发现除了 dufs 的数据 API 请求，没有任何额外的资源请求。
+
+PDF 预览需要 cmaps（字符映射表）和 standard\_fonts（标准字体），这两个资源原本是从 jsDelivr CDN 加载的。构建脚本在打包后直接从 `node_modules/pdfjs-dist/` 复制到 `dist/` 目录下。Leaflet CSS 也是从本地 npm 包导入，不碰 CDN。
+
+结果是：断网环境下，把 dufs 和这个主题包放在一台机器上，就是一个完全工作的文件管理系统。内网部署、离线演示、安全审计场景下，零外部依赖是硬需求。
+
+## 其他值得提的东西
+
+做完上面这些之后，还有一些顺手做的改进：
+
+**侧边栏文件树**：虚拟滚动 + 懒加载，目录再大也不卡。从主面板导航到子目录时，树会自动展开并选中对应节点——不需要手动找到底在哪。
+
+**双视图 + 双主题**：图标网格和表格列表一键切换；明暗主题手动切换或跟随系统。偏好保存在 localStorage 里，刷新不丢。
+
+![深色模式](https://mikigo.github.io/dufs-shadcn-assets/public/dark-home.png)
+
+**SPA 路由**：`pushState` + `popstate` 处理所有导航，浏览器前进后退完整可用。
+
+**config.json 驱动**：Logo、标题、字体大小、默认视图模式、默认主题——全部可配，不需要改代码。
+
+## 怎么用
+
+去 [GitHub Releases](https://github.com/mikigo/dufs-shadcn-assets/releases) 下载 `dufs-shadcn-assets.zip`，解压，然后：
+
+```bash
+dufs ./serve-path --assets ./assets
+```
+
+如果你想自定义品牌：
+
+```json
+{
+  "logo_text": "我的团队文件",
+  "theme": "dark",
+  "view_mode": "list"
+}
+```
+
+放到 `assets/config.json` 里，重启 dufs 就行。
+
+## 写在最后
+
+这个项目的动机其实很简单：dufs 是我见过的最干净的文件服务器，但它的默认界面让很多人以为它"功能有限"。实际上 dufs 本身功能很全——只是没有一个匹配的界面把它们展示出来。
+
+所以这不是一个"美化"项目。它是一个"补齐"项目：补齐 dufs 本来就该有的使用体验。
+
+全部代码在 [github.com/mikigo/dufs-shadcn-assets](https://github.com/mikigo/dufs-shadcn-assets)，MIT 协议，随便用。
+
+
+
+---
 url: /cookbook/index.md
 ---
 
