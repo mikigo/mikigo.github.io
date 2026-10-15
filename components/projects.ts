@@ -28,4 +28,5 @@ export const projects: Project[] = [
   { title: 'pdocr-rpc', details: '基于 PaddleOCR 封装的 RPC 服务，包含客户端和服务端。', icon: '👁️', link: '/open_source_project/intro/pdocr-rpc.html' },
   { title: 'LetMeGo', details: '一个控制 Python 函数执行的技术方案。', icon: '🎛️', link: '/open_source_project/intro/letmego.html' },
   { title: 'PyPKG', details: '一键创建 Python 工程，自动生成 Python 包文件目录结构、PyPI 发布相关配置文件，支持一键发布。', icon: '📦', link: '/open_source_project/intro/pypkg.html' },
+  { title: 'dufs-shadcn-assets', details: '基于 shadcn/ui 和 vscode-icons 的 dufs 前端主题，1132 个文件图标、30+ 格式预览、双视图模式、完全离线可用。', icon: '📁', link: 'https://mikigo.github.io/dufs-shadcn-assets/' },
 ];
