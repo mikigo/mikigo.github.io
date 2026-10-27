@@ -41,9 +41,9 @@ html.rp-dark body::before {
 
 .custom-hero {
   display: grid;
-  grid-template-columns: 1fr 380px;
-  gap: 64px;
-  max-width: 1100px;
+  grid-template-columns: 1fr 420px;
+  gap: 56px;
+  max-width: 1240px;
   margin: 80px auto 0;
   padding: 0 24px;
   align-items: start;
