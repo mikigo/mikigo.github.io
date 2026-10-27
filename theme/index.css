@@ -10,9 +10,6 @@
   left: 50%;
   transform: translateX(-50%);
 }
-.rp-nav__right {
-  position: relative;
-}
 /* 径向渐变纸纹 — 1px 点阵 + mix-blend-mode */
 body::before {
   content: '';
