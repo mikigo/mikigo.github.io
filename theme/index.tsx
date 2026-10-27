@@ -2,35 +2,52 @@ import {
   Layout as BasicLayout,
   getCustomMDXComponent as basicGetCustomMDXComponent,
 } from '@rspress/core/theme-original';
+import { usePageData } from '@rspress/core/runtime';
 import { PatentGrid } from '../components/Patent';
 import { HomeTabs } from '../components/HomeTabs';
 import { ProjectCarousel } from '../components/ProjectCarousel';
+import CustomHero from './components/CustomHero';
 import './index.css';
 
-const Layout = () => (
-  <BasicLayout
-    beforeFeatures={<HomeTabs />}
-    afterFeatures={
-          <>
-            <ProjectCarousel />
-            <PatentGrid />
-          </>
-        }
-    beforeDocContent={
-            <div align="left" style={{fontSize: "0.85em", color: "gray", marginBottom: "24px"}}>
-                <span style={{display:"none"}} className="counter-container">
-                  阅读量 <span data-pv-page=""></span> 次
-                </span>
-            </div>
-        }
-    afterDocContent={
-            <div align="left" style={{fontSize: "0.8em", color: "gray"}}>
-                声明：本站所有文章，均为本站原创发布。任何个人或组织，在未征得本站同意时，禁止复制、盗用、采集、发布本站内容到任何网站、书籍等各类媒体平台。
-                <a href="https://github.com/mikigo/" style={{color: "#1cc088"}}>-- mikigo</a>
-            </div>
-        }
-  />
-);
+const Layout = () => {
+  const pageData = usePageData();
+  const isHome = pageData?.page?.pageType === 'home';
+  const hero = pageData?.page?.frontmatter?.hero;
+
+  return (
+    <BasicLayout
+      beforeHero={
+        isHome && hero ? (
+          <CustomHero
+            name={hero.name || ''}
+            text={hero.text || ''}
+            tagline={hero.tagline || ''}
+          />
+        ) : undefined
+      }
+      beforeFeatures={<HomeTabs />}
+      afterFeatures={
+        <>
+          <ProjectCarousel />
+          <PatentGrid />
+        </>
+      }
+      beforeDocContent={
+        <div align="left" style={{fontSize: "0.85em", color: "gray", marginBottom: "24px"}}>
+          <span style={{display:"none"}} className="counter-container">
+            阅读量 <span data-pv-page=""></span> 次
+          </span>
+        </div>
+      }
+      afterDocContent={
+        <div align="left" style={{fontSize: "0.8em", color: "gray"}}>
+          声明：本站所有文章，均为本站原创发布。任何个人或组织，在未征得本站同意时，禁止复制、盗用、采集、发布本站内容到任何网站、书籍等各类媒体平台。
+          <a href="https://github.com/mikigo/" style={{color: "#1cc088"}}>-- mikigo</a>
+        </div>
+      }
+    />
+  );
+};
 
 export { Layout };
 export * from '@rspress/core/theme-original';

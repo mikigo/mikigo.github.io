@@ -1,3 +1,229 @@
+/* ===== 自定义双栏 Hero (lixiaolai.com 风格) ===== */
+
+/* 有自定义 hero 时隐藏默认 hero */
+.custom-hero ~ .rp-home-hero {
+  display: none !important;
+}
+
+.custom-hero {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 64px;
+  max-width: 1100px;
+  margin: 80px auto 0;
+  padding: 0 24px;
+  align-items: start;
+}
+
+/* ---- 左侧：身份陈述 ---- */
+.custom-hero__main {
+  padding-top: 24px;
+}
+
+.custom-hero__title {
+  font-family: 'Georgia', 'Noto Serif SC', 'Source Han Serif SC', serif;
+  font-size: 2.75rem;
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--rp-c-text-1);
+  margin: 0 0 16px;
+}
+
+.custom-hero__sub {
+  font-family: 'Georgia', 'Noto Serif SC', 'Source Han Serif SC', serif;
+  font-size: 1.25rem;
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--rp-c-text-2);
+  margin: 0 0 8px;
+}
+
+.custom-hero__desc {
+  font-size: 0.938rem;
+  line-height: 1.7;
+  color: var(--rp-c-text-3);
+  margin: 0 0 32px;
+  max-width: 480px;
+}
+
+/* 元数据列表 */
+.custom-hero__meta {
+  display: grid;
+  grid-template-columns: 64px 1fr;
+  gap: 6px 16px;
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.7;
+}
+
+.custom-hero__meta dt {
+  color: var(--rp-c-text-3);
+  font-weight: 400;
+}
+
+.custom-hero__meta dd {
+  color: var(--rp-c-text-2);
+  margin: 0;
+}
+
+.custom-hero__meta a {
+  color: var(--rp-c-brand);
+  text-decoration: none;
+}
+.custom-hero__meta a:hover {
+  text-decoration: underline;
+}
+
+/* ---- 右侧：状态卡片 ---- */
+.custom-hero__card {
+  background: var(--rp-c-bg-soft);
+  border: 1px solid var(--rp-c-border);
+  border-radius: 10px;
+  padding: 24px;
+  font-size: 0.813rem;
+  line-height: 1.6;
+}
+
+/* 地图区域 */
+.co-head {
+  margin-bottom: 16px;
+}
+
+.co-head svg {
+  display: block;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  background: #f4f6f8;
+}
+
+.co-dl {
+  margin: 0;
+  display: flex;
+  gap: 12px;
+  font-size: 0.75rem;
+}
+
+.co-dl dt {
+  color: var(--rp-c-text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+}
+
+.co-dl dd {
+  color: var(--rp-c-brand);
+  margin: 0;
+  font-weight: 500;
+}
+
+/* 分隔线 */
+.co-rule {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 18px 0;
+  color: var(--rp-c-text-3);
+  font-size: 0.875rem;
+}
+
+.co-rule::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--rp-c-divider);
+}
+
+/* 信息行 */
+.co-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.co-line {
+  display: grid;
+  grid-template-columns: 12px 48px 1fr;
+  gap: 8px;
+  align-items: baseline;
+}
+
+.co-bullet {
+  color: var(--rp-c-text-3);
+  font-size: 0.7rem;
+}
+
+.co-label {
+  color: var(--rp-c-text-3);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.co-value {
+  color: var(--rp-c-text-2);
+}
+
+.co-value a {
+  color: var(--rp-c-text-1);
+  text-decoration: none;
+  font-weight: 500;
+}
+.co-value a:hover {
+  color: var(--rp-c-brand);
+}
+
+.co-value em {
+  color: var(--rp-c-text-3);
+  font-style: normal;
+}
+
+/* 卡片页脚 */
+.co-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 14px;
+  border-top: 1px solid var(--rp-c-divider);
+  color: var(--rp-c-text-3);
+  font-size: 0.688rem;
+}
+
+.co-foot em {
+  font-style: italic;
+}
+
+.co-stamp {
+  font-family: 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace;
+  letter-spacing: 0.04em;
+}
+
+/* ---- 响应式 ---- */
+@media (max-width: 860px) {
+  .custom-hero {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    margin-top: 48px;
+  }
+  .custom-hero__card {
+    max-width: 400px;
+  }
+}
+
+@media (max-width: 480px) {
+  .custom-hero__title {
+    font-size: 2rem;
+  }
+  .custom-hero__sub {
+    font-size: 1.05rem;
+  }
+  .custom-hero__meta {
+    grid-template-columns: 56px 1fr;
+    gap: 4px 12px;
+  }
+}
+
 /* ===== pageType: doc-wide 页面的居中 =====
  *
  * 别给 .rp-doc-layout__sidebar-placeholder 加 !important 宽度。
