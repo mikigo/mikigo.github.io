@@ -1,3 +1,19 @@
+/* ===== 纸纹颗粒背景 ===== */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Ccircle cx='2' cy='2' r='0.5' fill='rgba(20,22,28,0.03)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+}
+
+#__rspress_root {
+  position: relative;
+  z-index: 1;
+}
+
 /* ===== 自定义双栏 Hero (lixiaolai.com 风格) ===== */
 
 /* 有自定义 hero 时隐藏默认 hero */
