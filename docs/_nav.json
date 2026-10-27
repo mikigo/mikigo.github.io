@@ -1,26 +1,26 @@
 [
   {
-    "text": "\uD83C\uDFE0首页",
+    "text": "Home",
     "link": "/index",
     "activeMatch": "/index/"
   },
   {
-    "text": "🤓技术文档",
+    "text": "TechDocs",
     "link": "/tech_doc/index",
     "activeMatch": "/tech_doc/"
   },
   {
-    "text": "✍\uFE0F博客",
+    "text": "Blog",
     "link": "/blog/index",
     "activeMatch": "/blog/"
   },
   {
-    "text": "\uD83E\uDDD1\u200D\uD83C\uDF73菜谱",
+    "text": "Cook",
     "link": "/cookbook/index",
     "activeMatch": "/cookbook/"
   },
   {
-    "text": "\uD83D\uDCBB开源项目",
+    "text": "OpenSource",
     "link": "/open_source_project/index",
     "activeMatch": "/open_source_project/"
   }
