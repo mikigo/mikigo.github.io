@@ -1,37 +1,11 @@
 import {
   Layout as BasicLayout,
-  getCustomMDXComponent as basicGetCustomMDXComponent,
 } from '@rspress/core/theme-original';
-import { usePageData } from '@rspress/core/runtime';
-import { PatentGrid } from '../components/Patent';
-import { HomeTabs } from '../components/HomeTabs';
-import { ProjectCarousel } from '../components/ProjectCarousel';
-import CustomHero from './components/CustomHero';
 import './index.css';
 
 const Layout = () => {
-  const pageData = usePageData();
-  const isHome = pageData?.page?.pageType === 'home';
-  const hero = pageData?.page?.frontmatter?.hero;
-
   return (
     <BasicLayout
-      beforeHero={
-        isHome && hero ? (
-          <CustomHero
-            name={hero.name || ''}
-            text={hero.text || ''}
-            tagline={hero.tagline || ''}
-          />
-        ) : undefined
-      }
-      beforeFeatures={<HomeTabs />}
-      afterFeatures={
-        <>
-          <ProjectCarousel />
-          <PatentGrid />
-        </>
-      }
       beforeDocContent={
         <div align="left" style={{fontSize: "0.85em", color: "gray", marginBottom: "24px"}}>
           <span style={{display:"none"}} className="counter-container">

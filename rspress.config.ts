@@ -29,7 +29,7 @@ export default defineConfig({
         enableAppearanceAnimation: true,
         enableScrollToTop: true,
         lastUpdated: true,
-
+        search: false,
         footer: {
             message: `
         <span style="display:none" class="counter-container" data-counter-style="badge">

@@ -180,7 +180,7 @@ export const ChinaMap: React.FC = () => (
       />
     </circle>
     <circle cx="501" cy="471" r="3" fill="#fff" />
-    <text x="501" y="490" textAnchor="middle" fontSize="11" fill="#5e6ad2" fontWeight="500">
+    <text x="501" y="492" textAnchor="middle" fontSize="14" fill="#5e6ad2" fontWeight="600">
       成都
     </text>
   </svg>
