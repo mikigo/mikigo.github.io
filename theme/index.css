@@ -101,7 +101,7 @@ html.rp-dark body::before {
 /* ---- 右侧：状态卡片 ---- */
 .custom-hero__card {
   background: var(--rp-c-bg-soft);
-  border: 1px solid var(--rp-c-border);
+  border: 1px solid var(--rp-c-divider);
   border-radius: 10px;
   padding: 24px;
   font-size: 0.813rem;
@@ -117,7 +117,7 @@ html.rp-dark body::before {
   display: block;
   border-radius: 6px;
   margin-bottom: 12px;
-  background: #f4f6f8;
+  background: var(--rp-c-bg-mute);
 }
 
 .co-dl {
@@ -335,7 +335,7 @@ html.rp-dark body::before {
   gap: 12px;
   padding: 20px 24px;
   border-radius: var(--radius, 0.75rem);
-  border: 1px solid var(--rp-c-border);
+  border: 1px solid var(--rp-c-divider);
   background: var(--rp-c-bg-soft);
   text-decoration: none;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
