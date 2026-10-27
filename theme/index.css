@@ -1,12 +1,19 @@
-/* ===== 纸纹颗粒背景 ===== */
+/* ===== 纸纹颗粒背景（对齐 lixiaolai.com） ===== */
+/* 径向渐变纸纹 — 1px 点阵 + mix-blend-mode */
 body::before {
   content: '';
   position: fixed;
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Ccircle cx='2' cy='2' r='0.5' fill='rgba(20,22,28,0.03)'/%3E%3C/svg%3E");
-  background-repeat: repeat;
+  background-image: radial-gradient(rgba(20,22,28,0.03) 1px, transparent 1px);
+  background-size: 3px 3px;
+  mix-blend-mode: multiply;
+}
+
+html.rp-dark body::before {
+  mix-blend-mode: screen;
+  background-image: radial-gradient(rgba(255,250,240,0.025) 1px, transparent 1px);
 }
 
 #__rspress_root {
