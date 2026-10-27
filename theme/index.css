@@ -4,13 +4,14 @@
   display: none !important;
 }
 
-/* ===== 导航菜单居中 ===== */
-.rp-nav {
-  justify-content: center !important;
-}
-.rp-nav__left {
+/* ===== 导航菜单居中（仅 nav menu，不动右侧 socialLinks） ===== */
+.rp-nav-menu--right {
   position: absolute;
-  left: var(--rp-nav-padding-x, 20px);
+  left: 50%;
+  transform: translateX(-50%);
+}
+.rp-nav__right {
+  position: relative;
 }
 /* 径向渐变纸纹 — 1px 点阵 + mix-blend-mode */
 body::before {
