@@ -31,7 +31,7 @@ const CustomHero: React.FC<CustomHeroProps> = ({ name, text, tagline, blogCount,
           </div>
           <div className="custom-hero__meta-line">
             <span className="custom-hero__meta-label">Since</span>
-            <span className="custom-hero__meta-val">2020</span>
+            <span className="custom-hero__meta-val">2020 <em style={{fontStyle:'normal',opacity:0.5,fontSize:'0.75rem'}}>(this site)</em></span>
           </div>
         </div>
 
