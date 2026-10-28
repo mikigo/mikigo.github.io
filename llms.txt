@@ -1,8 +1,8 @@
-# mikigo.site
+# @mikigo
 
 > mikigo.site
 
-## 🤓技术文档
+## TechDocs
 
 - [章节预览](/tech_doc/index.md)
 - [章节预览](/tech_doc/autotest/index.md)
@@ -99,7 +99,7 @@
 - [Python调用动态库运行时报静态TLS块不能分配内存根因分析报告](/tech_doc/根因分析/Python调用动态库运行时报静态TLS块不能分配内存根因分析报告.md)
 - [rootfs进入MATE桌面后打开终端不能执行reboot指令根因分析](/tech_doc/根因分析/rootfs进入MATE桌面后打开终端不能执行reboot指令根因分析.md)
 
-## ✍️博客
+## Blog
 
 - [mikigo's blog](/blog/index.md)
 - [SkillHub 追更：进内网之后，我改了这三件事](/blog/2026-10-11.md): SkillHub 上线内网之后的三个改动：仓库关联上传扶正、默认仓库自动扫描、原创标签与原创 tab。
@@ -156,7 +156,7 @@
 - [Qwen3.5-9B 本地部署与 Claude Code 接入：协议不兼容？手搓一个代理就好啦](/blog/2026-06-01.md): Qwen3.5-9B本地部署全记录：Ollama、CC Switch、Claude Code集成，以及一个为了绕开协议鸿沟手搓Anthropic↔OpenAI代理的故事
 - [给 dufs 换张脸：一个"不该这么好看"的文件服务器主题](/blog/2026-10-15.md): dufs 自带的 UI 太朴素了，于是我用 shadcn/ui 给它换了一张脸。1132 个 VS Code 图标、30+ 格式预览、单文件构建、完全离线——这是一个文件服务器该有的样子。
 
-## 🧑‍🍳菜谱
+## Cook
 
 - [菜谱-预览](/cookbook/index.md)
 - [东坡肘子](/cookbook/特色菜/东坡肘子.md): 准备材料： 猪肘子 1 个（约 3 斤）姜 3 片葱 3 根料酒 3 勺生抽 3 勺老抽 1 勺白糖 1 勺八角 2 个桂皮 1 小块香叶 2 片盐 适量 第 2 步 猪肘子洗净，放入锅中焯水去血水捞出后在表面划几刀，方便入味 第 3 步 锅中加入清水，放入猪肘子、姜、葱、料酒、八角、桂皮、香叶大火煮开后转小火炖 3 小时，至猪肘子熟透加入生抽、老抽、白糖、盐调味继续炖 30 分钟，至汤汁浓稠 第 4 步 将猪肘子捞出，放入盘中淋上锅中的汤汁即可
@@ -227,7 +227,7 @@
 - [鸡汤](/cookbook/营养汤/鸡汤.md)
 - [鸽子汤](/cookbook/营养汤/鸽子汤.md)
 
-## 💻开源项目
+## OpenSource
 
 - [我创建的开源项目](/open_source_project/index.md): 从自动化测试框架到自托管工具，都是自己在写、自己在用的东西，顺手开源出来。
 - [📋 allure-markdown — Allure 转 Markdown 报告工具](/open_source_project/intro/allure-markdown.md): "零依赖，一行命令将 Allure 测试结果转为 Markdown 报告。"

@@ -1,1 +1,57 @@
+import { usePages } from '@rspress/core/runtime';
+import { HomeTabs } from '../theme/components/HomeTabs';
+import { ProjectCarousel } from '../theme/components/ProjectCarousel';
+import { PatentGrid, patents } from '../theme/components/Patent';
+import CustomHero from '../theme/components/CustomHero';
+import { projects } from '../theme/components/projects';
 
+export const HeroSection = () => {
+  const { pages } = usePages();
+
+  const blogPages = pages.filter(p =>
+    p.routePath.startsWith('/blog/') && !p.routePath.endsWith('/')
+  );
+  const tutorialPages = pages.filter(p =>
+    p.routePath.startsWith('/tech_doc/') && !p.routePath.endsWith('/')
+  );
+
+  return <>
+    <CustomHero
+      name="mikigo"
+      text="日拱一卒，功在不舍。"
+      tagline="所有的坚持都会在冰封的土地上，开出十万朵怒放的蔷薇。"
+      blogCount={blogPages.length}
+      projectCount={projects.length}
+      tutorialCount={tutorialPages.length}
+      patentCount={patents.length}
+    />
+    <HomeTabs />
+    <ProjectCarousel />
+    <PatentGrid />
+  </>;
+};
+
+<div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px' }}>
+  <HeroSection />
+</div>
+
+<footer
+  style={{
+borderTop: '1px solid var(--rp-c-divider-light, rgba(0,0,0,0.08))',
+padding: '32px 24px',
+textAlign: 'center',
+fontSize: '0.813rem',
+color: 'var(--rp-c-text-3, #666)',
+marginTop: 64,
+}}
+>
+  <span style={{display:'none'}} className="counter-container" data-counter-style="badge">
+    本站访问量 <span data-pv-site /> 次 ·
+    本站访客数 <span data-uv-site /> 人 ·
+    今日访问量 <span data-pv-today /> 次 ·
+    今日访客数 <span data-uv-today /> 人
+  </span>
+
+  <a style={{textDecoration:'underline', color: 'inherit'}} href="https://beian.miit.gov.cn/" target="_blank">蜀ICP备2024104386号</a>
+  版权所有 © 2020-{new Date().getFullYear()} <a style={{textDecoration:'underline', color: 'inherit'}} href="https://github.com/mikigo" target="_blank">mikigo</a>
+</footer>
