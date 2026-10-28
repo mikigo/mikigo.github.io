@@ -30,14 +30,8 @@ const CustomHero: React.FC<CustomHeroProps> = ({ name, text, tagline, blogCount,
             <span className="custom-hero__meta-val">自动化测试 · Python · Linux</span>
           </div>
           <div className="custom-hero__meta-line">
-            <span className="custom-hero__meta-label">Open Source</span>
-            <span className="custom-hero__meta-val">
-              <a href="https://youqu.uniontech.com/" target="_blank" rel="noopener noreferrer">YouQu</a>
-              {' · '}
-              <a href="https://github.com/mikigo/pylinuxauto" target="_blank" rel="noopener noreferrer">pylinuxauto</a>
-              {' · '}
-              <a href="https://github.com/mikigo" target="_blank" rel="noopener noreferrer">+更多</a>
-            </span>
+            <span className="custom-hero__meta-label">Role</span>
+            <span className="custom-hero__meta-val">Automation Engineer · Developer · Open Source</span>
           </div>
           <div className="custom-hero__meta-line">
             <span className="custom-hero__meta-label">Since</span>
