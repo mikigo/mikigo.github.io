@@ -131,6 +131,7 @@ html.rp-dark body::before {
 /* 数据行 */
 .custom-hero__stats {
   display: flex;
+  flex-wrap: wrap;
   gap: 32px;
   margin-bottom: 24px;
 }
