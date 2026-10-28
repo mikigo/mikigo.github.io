@@ -145,25 +145,6 @@ html.rp-dark body::before {
   color: var(--rp-c-brand);
 }
 
-/* 分隔线（lixiaolai § 风格，用 ⌘ 做视觉锚点） */
-.custom-hero__rule {
-  display: flex;
-  align-items: center;
-  color: var(--rp-c-divider);
-  margin: 28px 0 24px;
-}
-.custom-hero__rule::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: var(--rp-c-divider);
-  margin-left: 12px;
-}
-.custom-hero__rule span {
-  font-size: 0.75rem;
-  opacity: 0.5;
-}
-
 /* 数据行 */
 .custom-hero__stats {
   display: flex;

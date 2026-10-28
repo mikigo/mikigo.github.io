@@ -35,10 +35,6 @@ const CustomHero: React.FC<CustomHeroProps> = ({ name, text, tagline, blogCount,
           </div>
         </div>
 
-        <div className="custom-hero__rule">
-          <span>⌘</span>
-        </div>
-
         <div className="custom-hero__stats">
           <div className="custom-hero__stat">
             <span className="custom-hero__stat-num">{blogCount}</span>
