@@ -5,10 +5,11 @@ interface CustomHeroProps {
   name: string;
   text: string;
   tagline: string;
+  projectCount: number;
 }
 
 /** lixiaolai.com 风格双栏 Hero */
-const CustomHero: React.FC<CustomHeroProps> = ({ name, text, tagline }) => {
+const CustomHero: React.FC<CustomHeroProps> = ({ name, text, tagline, projectCount }) => {
   return (
     <div className="custom-hero">
       {/* 左侧：身份陈述 */}
@@ -44,7 +45,7 @@ const CustomHero: React.FC<CustomHeroProps> = ({ name, text, tagline }) => {
             <span className="custom-hero__stat-label">博客随笔</span>
           </div>
           <div className="custom-hero__stat">
-            <span className="custom-hero__stat-num">20+</span>
+            <span className="custom-hero__stat-num">{projectCount}+</span>
             <span className="custom-hero__stat-label">开源项目</span>
           </div>
           <div className="custom-hero__stat">
@@ -93,7 +94,7 @@ const CustomHero: React.FC<CustomHeroProps> = ({ name, text, tagline }) => {
             <span className="co-label">项目</span>
             <span className="co-value">
               <a href="/open_source_project/">开源项目</a>
-              <em> · 20+ repos</em>
+              <em> · {projectCount}+ repos</em>
             </span>
           </div>
           <div className="co-line">
