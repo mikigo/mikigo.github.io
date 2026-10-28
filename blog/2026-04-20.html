@@ -2,8 +2,8 @@
 <html lang="zh">
   <head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>当你想让代码&quot;慢下来&quot;：一个 Python 装饰器的踩坑实录 - @mikigo</title>
-<script src="/counter.js">
+<title>当你想让代码&quot;慢下来&quot;：一个 Python 装饰器的踩坑实录 - mikigo</title>
+<script src="/counter.js"><script >
   <script>{;const saved = localStorage.getItem('rspress-theme-appearance');const preferDark = window.matchMedia('(prefers-color-scheme: dark)').matches;const defaultTheme = 'auto';const theme = saved === 'light' || saved === 'dark' || saved === 'auto' ? saved : defaultTheme;const isDark = theme === 'auto' ? preferDark : theme === 'dark';document.documentElement.classList.toggle('dark', isDark);document.documentElement.classList.toggle('rp-dark', isDark);document.documentElement.style.colorScheme = isDark ? 'dark' : 'light';}</script>
 <link href="/static/css/styles.e7898fc43f.css" rel="stylesheet">
 <link rel="preload" href="/static/js/async/route-41588db95f26.082eb93840.js" as="script">
@@ -11,12 +11,12 @@
 <script defer src="/static/js/lib-react.0927453390.js"></script>
 <script defer src="/static/js/lib-router.ef7342bb8a.js"></script>
 <script defer src="/static/js/6623.56f488d31c.js"></script>
-<script defer src="/static/js/index.9217e0c3c3.js"></script>
+<script defer src="/static/js/index.d9b93031cd.js"></script>
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="generator" content="Rspress v2.0.21">
 <link rel="icon" href="/favicon.ico">
 <meta property="og:type" content="website">
-<meta property="og:title" content="当你想让代码&quot;慢下来&quot;：一个 Python 装饰器的踩坑实录 - @mikigo">
+<meta property="og:title" content="当你想让代码&quot;慢下来&quot;：一个 Python 装饰器的踩坑实录 - mikigo">
 <meta name="description" content="本文记录了实现一个 Python 类装饰器 @relax 的踩坑过程，从 __getattribute__ 方案到包装方法/属性方案，再到支持实例属性延迟，最终解决 pytest 重跑时的闭包变量状态不一致问题。文章详细分析了装饰器闭包变量陷阱、property 与实例属性的时机问题、初始化与访问的区别等技术细节。">
 <meta property="og:description" content="本文记录了实现一个 Python 类装饰器 @relax 的踩坑过程，从 __getattribute__ 方案到包装方法/属性方案，再到支持实例属性延迟，最终解决 pytest 重跑时的闭包变量状态不一致问题。文章详细分析了装饰器闭包变量陷阱、property 与实例属性的时机问题、初始化与访问的区别等技术细节。"></head>
 
