@@ -41,7 +41,7 @@ const CustomHero: React.FC<CustomHeroProps> = ({ name, text, tagline }) => {
         <div className="custom-hero__stats">
           <div className="custom-hero__stat">
             <span className="custom-hero__stat-num">50+</span>
-            <span className="custom-hero__stat-label">技术文章</span>
+            <span className="custom-hero__stat-label">博客随笔</span>
           </div>
           <div className="custom-hero__stat">
             <span className="custom-hero__stat-num">20+</span>
@@ -49,7 +49,7 @@ const CustomHero: React.FC<CustomHeroProps> = ({ name, text, tagline }) => {
           </div>
           <div className="custom-hero__stat">
             <span className="custom-hero__stat-num">100+</span>
-            <span className="custom-hero__stat-label">技术文档</span>
+            <span className="custom-hero__stat-label">技术教程</span>
           </div>
         </div>
 
