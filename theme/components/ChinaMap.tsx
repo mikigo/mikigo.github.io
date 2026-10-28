@@ -171,16 +171,16 @@ export const ChinaMap: React.FC = () => (
     />
 
     {/* 成都 — 脉冲标记 */}
-    <circle cx="501" cy="471" r="6" fill="#5e6ad2">
+    <circle cx="501" cy="471" r="9" fill="#5e6ad2">
       <animate
         attributeName="r"
-        values="6;10;6"
+        values="9;16;9"
         dur="2s"
         repeatCount="indefinite"
       />
     </circle>
-    <circle cx="501" cy="471" r="3" fill="#fff" />
-    <text x="501" y="492" textAnchor="middle" fontSize="14" fill="#5e6ad2" fontWeight="600">
+    <circle cx="501" cy="471" r="4" fill="#fff" />
+    <text x="501" y="496" textAnchor="middle" fontSize="18" fill="#5e6ad2" fontWeight="600">
       成都
     </text>
   </svg>
