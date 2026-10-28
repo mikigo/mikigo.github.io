@@ -26,10 +26,6 @@ const CustomHero: React.FC<CustomHeroProps> = ({ name, text, tagline, blogCount,
 
         <div className="custom-hero__meta">
           <div className="custom-hero__meta-line">
-            <span className="custom-hero__meta-label">Location</span>
-            <span className="custom-hero__meta-val">自动化测试 · Python · Linux</span>
-          </div>
-          <div className="custom-hero__meta-line">
             <span className="custom-hero__meta-label">Role</span>
             <span className="custom-hero__meta-val">Automation Engineer · Developer · Open Source</span>
           </div>
