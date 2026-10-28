@@ -109,6 +109,86 @@ html.rp-dark body::before {
   text-decoration: underline;
 }
 
+/* 分隔线（lixiaolai § 风格，用 ⌘ 做视觉锚点） */
+.custom-hero__rule {
+  display: flex;
+  align-items: center;
+  color: var(--rp-c-divider);
+  margin: 28px 0 24px;
+}
+.custom-hero__rule::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--rp-c-divider);
+  margin-left: 12px;
+}
+.custom-hero__rule span {
+  font-size: 0.75rem;
+  opacity: 0.5;
+}
+
+/* 数据行 */
+.custom-hero__stats {
+  display: flex;
+  gap: 32px;
+  margin-bottom: 24px;
+}
+
+.custom-hero__stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.custom-hero__stat-num {
+  font-family: 'Georgia', 'Noto Serif SC', serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--rp-c-text-1);
+}
+
+.custom-hero__stat-label {
+  font-size: 0.75rem;
+  color: var(--rp-c-text-3);
+  letter-spacing: 0.04em;
+}
+
+/* 快速链接 */
+.custom-hero__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.custom-hero__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 14px;
+  border-radius: 9999px;
+  border: 1px solid var(--rp-c-divider);
+  font-size: 0.813rem;
+  color: var(--rp-c-text-2);
+  text-decoration: none;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.custom-hero__link:hover {
+  border-color: var(--rp-c-brand);
+  color: var(--rp-c-brand);
+}
+
+.custom-hero__link-arrow {
+  font-size: 0.75rem;
+  transition: transform 0.2s;
+}
+
+.custom-hero__link:hover .custom-hero__link-arrow {
+  transform: translateX(2px);
+}
+
 /* ---- 右侧：状态卡片 ---- */
 .custom-hero__card {
   background: var(--rp-c-bg-soft);

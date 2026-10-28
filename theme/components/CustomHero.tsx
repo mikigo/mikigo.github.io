@@ -33,6 +33,37 @@ const CustomHero: React.FC<CustomHeroProps> = ({ name, text, tagline }) => {
           <dt>Since</dt>
           <dd>2020</dd>
         </dl>
+
+        <div className="custom-hero__rule">
+          <span>⌘</span>
+        </div>
+
+        <div className="custom-hero__stats">
+          <div className="custom-hero__stat">
+            <span className="custom-hero__stat-num">50+</span>
+            <span className="custom-hero__stat-label">技术文章</span>
+          </div>
+          <div className="custom-hero__stat">
+            <span className="custom-hero__stat-num">20+</span>
+            <span className="custom-hero__stat-label">开源项目</span>
+          </div>
+          <div className="custom-hero__stat">
+            <span className="custom-hero__stat-num">100+</span>
+            <span className="custom-hero__stat-label">技术文档</span>
+          </div>
+        </div>
+
+        <div className="custom-hero__links">
+          <a href="/blog/" className="custom-hero__link">
+            阅读博客 <span className="custom-hero__link-arrow">→</span>
+          </a>
+          <a href="/open_source_project/" className="custom-hero__link">
+            开源项目 <span className="custom-hero__link-arrow">→</span>
+          </a>
+          <a href="https://github.com/mikigo" target="_blank" rel="noopener noreferrer" className="custom-hero__link">
+            GitHub <span className="custom-hero__link-arrow">↗</span>
+          </a>
+        </div>
       </div>
 
       {/* 右侧：状态卡片 */}
