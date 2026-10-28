@@ -91,32 +91,48 @@ html.rp-dark body::before {
   max-width: 480px;
 }
 
-/* 元数据列表 */
+/* 元数据（colophon 风格） */
 .custom-hero__meta {
-  display: grid;
-  grid-template-columns: 64px 1fr;
-  gap: 6px 16px;
-  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0 0 28px;
+}
+
+.custom-hero__meta-line {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
   font-size: 0.875rem;
-  line-height: 1.7;
+  line-height: 1.6;
 }
 
-.custom-hero__meta dt {
+.custom-hero__meta-label {
+  flex-shrink: 0;
+  width: 88px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 0.688rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
   color: var(--rp-c-text-3);
-  font-weight: 400;
+  opacity: 0.6;
 }
 
-.custom-hero__meta dd {
+.custom-hero__meta-val {
   color: var(--rp-c-text-2);
-  margin: 0;
 }
 
-.custom-hero__meta a {
-  color: var(--rp-c-brand);
+.custom-hero__meta-val a {
+  color: inherit;
   text-decoration: none;
+  border-bottom: 1px solid var(--rp-c-divider);
+  transition: border-color 0.15s;
 }
-.custom-hero__meta a:hover {
-  text-decoration: underline;
+
+.custom-hero__meta-val a:hover {
+  border-color: var(--rp-c-brand);
+  color: var(--rp-c-brand);
 }
 
 /* 分隔线（lixiaolai § 风格，用 ⌘ 做视觉锚点） */

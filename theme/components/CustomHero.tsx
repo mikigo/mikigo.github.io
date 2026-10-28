@@ -24,20 +24,26 @@ const CustomHero: React.FC<CustomHeroProps> = ({ name, text, tagline, blogCount,
         <p className="custom-hero__sub">{text}</p>
         <p className="custom-hero__desc">{tagline}</p>
 
-        <dl className="custom-hero__meta">
-          <dt>定位</dt>
-          <dd>自动化测试 · Python · Linux</dd>
-          <dt>开源</dt>
-          <dd>
-            <a href="https://youqu.uniontech.com/" target="_blank" rel="noopener noreferrer">YouQu</a>
-            {' · '}
-            <a href="https://github.com/mikigo/pylinuxauto" target="_blank" rel="noopener noreferrer">pylinuxauto</a>
-            {' · '}
-            <a href="https://github.com/mikigo" target="_blank" rel="noopener noreferrer">+更多</a>
-          </dd>
-          <dt>Since</dt>
-          <dd>2020</dd>
-        </dl>
+        <div className="custom-hero__meta">
+          <div className="custom-hero__meta-line">
+            <span className="custom-hero__meta-label">Location</span>
+            <span className="custom-hero__meta-val">自动化测试 · Python · Linux</span>
+          </div>
+          <div className="custom-hero__meta-line">
+            <span className="custom-hero__meta-label">Open Source</span>
+            <span className="custom-hero__meta-val">
+              <a href="https://youqu.uniontech.com/" target="_blank" rel="noopener noreferrer">YouQu</a>
+              {' · '}
+              <a href="https://github.com/mikigo/pylinuxauto" target="_blank" rel="noopener noreferrer">pylinuxauto</a>
+              {' · '}
+              <a href="https://github.com/mikigo" target="_blank" rel="noopener noreferrer">+更多</a>
+            </span>
+          </div>
+          <div className="custom-hero__meta-line">
+            <span className="custom-hero__meta-label">Since</span>
+            <span className="custom-hero__meta-val">2020</span>
+          </div>
+        </div>
 
         <div className="custom-hero__rule">
           <span>⌘</span>
