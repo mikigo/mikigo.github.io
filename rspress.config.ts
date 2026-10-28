@@ -11,10 +11,15 @@ export default defineConfig({
     globalStyles: path.join(__dirname, 'theme/var.css'),
     head: [
         ['script', { src: '/counter.js' }],
+        ['script', {}, `(function(){
+          var el=document.querySelector('title');
+          function fix(){var t=document.title;if(!t)return;if(t==='mikigo'){document.title='首页 | mikigo'}else if(t.endsWith(' - mikigo')){document.title=t.replace(' - mikigo',' | mikigo')}}
+          fix();if(el)new MutationObserver(fix).observe(el,{childList:true,characterData:true})
+        })()`],
     ],
     root: 'docs',
     base: '/',
-    title: '@mikigo',
+    title: 'mikigo',
     description: 'mikigo.site',
     icon: '/favicon.ico',
     // logo: '/logo.png',
