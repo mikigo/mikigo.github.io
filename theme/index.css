@@ -15,6 +15,11 @@
 .rp-doc-layout__sidebar {
   background: transparent !important;
 }
+
+/* 左上角 logoText 使用 Hero name 同款 Georgia 衬线字体 */
+.rp-nav__title__link {
+  font-family: 'Georgia', 'Noto Serif SC', 'Source Han Serif SC', serif !important;
+}
 /* 径向渐变纸纹 — 1px 点阵 + mix-blend-mode */
 body::before {
   content: '';

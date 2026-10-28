@@ -14,7 +14,7 @@ export default defineConfig({
     ],
     root: 'docs',
     base: '/',
-    title: 'mikigo.site',
+    title: '@mikigo',
     description: 'mikigo.site',
     icon: '/favicon.ico',
     // logo: '/logo.png',
