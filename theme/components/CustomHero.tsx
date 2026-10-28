@@ -1,5 +1,6 @@
 import React from 'react';
 import ChinaMap from './ChinaMap';
+import { visitedCities } from '../../components/visited-cities';
 
 interface CustomHeroProps {
   name: string;
@@ -71,7 +72,7 @@ const CustomHero: React.FC<CustomHeroProps> = ({ name, text, tagline, blogCount,
       <aside className="custom-hero__card">
         {/* 地图区域 */}
         <div className="co-head">
-          <ChinaMap />
+          <ChinaMap cities={visitedCities} />
           <dl className="co-dl">
             <dt>BASE</dt>
             <dd>成都</dd>

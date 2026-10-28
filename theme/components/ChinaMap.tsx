@@ -1,11 +1,35 @@
 import React from 'react';
+import type { City } from '../../components/visited-cities';
 
 /**
  * 中国地图 SVG（基于阿里 DataV GeoJSON 真实地理数据）
  * 投影：Mercator，简化为约 715 点大陆轮廓 + 海南+台湾
  * 数据源：https://geo.datav.aliyun.com/areas_v3/bound/geojson?code=100000
  */
-export const ChinaMap: React.FC = () => (
+
+/** Mercator 投影 → SVG viewBox (0 0 1000 700) */
+function project(lng: number, lat: number): [number, number] {
+  const MAP_LNG_MIN = 73.5, MAP_LNG_MAX = 135;
+  const MAP_LAT_MIN = 18, MAP_LAT_MAX = 52;
+
+  const x = ((lng - MAP_LNG_MIN) / (MAP_LNG_MAX - MAP_LNG_MIN)) * 1000;
+
+  const merc = (lat: number) => Math.log(Math.tan(Math.PI / 4 + (lat * Math.PI) / 360));
+  const yMin = merc(MAP_LAT_MIN);
+  const yMax = merc(MAP_LAT_MAX);
+  const y = 700 * (1 - (merc(lat) - yMin) / (yMax - yMin));
+
+  return [Math.round(x), Math.round(y)];
+}
+
+interface ChinaMapProps {
+  cities: City[];
+}
+
+export const ChinaMap: React.FC<ChinaMapProps> = ({ cities }) => {
+  const isBase = (name: string) => name === '成都';
+
+  return (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 1000 700"
@@ -170,20 +194,33 @@ export const ChinaMap: React.FC = () => (
       strokeLinejoin="round"
     />
 
-    {/* 成都 — 脉冲标记 */}
-    <circle cx="501" cy="471" r="9" fill="#5e6ad2">
-      <animate
-        attributeName="r"
-        values="9;16;9"
-        dur="2s"
-        repeatCount="indefinite"
-      />
-    </circle>
-    <circle cx="501" cy="471" r="4" fill="#fff" />
-    <text x="501" y="496" textAnchor="middle" fontSize="18" fill="#5e6ad2" fontWeight="600">
-      成都
-    </text>
+    {/* 城市标记 */}
+    {cities.map(city => {
+      const [cx, cy] = project(city.lng, city.lat);
+      if (isBase(city.name)) {
+        return (
+          <g key={city.name}>
+            <circle cx={cx} cy={cy} r="9" fill="#5e6ad2">
+              <animate attributeName="r" values="9;16;9" dur="2s" repeatCount="indefinite" />
+            </circle>
+            <circle cx={cx} cy={cy} r="4" fill="#fff" />
+            <text x={cx} y={cy + 25} textAnchor="middle" fontSize="18" fill="#5e6ad2" fontWeight="600">
+              {city.name}
+            </text>
+          </g>
+        );
+      }
+      return (
+        <g key={city.name}>
+          <circle cx={cx} cy={cy} r="4" fill="#6b7280" opacity="0.6" />
+          <text x={cx} y={cy + 18} textAnchor="middle" fontSize="12" fill="#6b7280" fontWeight="500" opacity="0.7">
+            {city.name}
+          </text>
+        </g>
+      );
+    })}
   </svg>
 );
+};
 
 export default ChinaMap;
