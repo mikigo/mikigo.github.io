@@ -282,6 +282,11 @@ html.rp-dark body::before {
   margin: 0;
 }
 
+/* blog 详情页 & open_source_project：sidebar=false + doc-wide 时隐藏 outline */
+.rp-doc-layout__container--no-menu:has(.rp-doc-layout__doc--wide) > .rp-doc-layout__outline {
+  display: none;
+}
+
 /* 项目页的内容别跟着视口无限变宽。
    doc-wide 的默认上限是 1588px，高分屏下卡片会横铺一屏、两侧空空荡荡。
    这里按 Mintlify 的内容区宽度收一下：1360px 减去容器左右各 80px 内边距，
