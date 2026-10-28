@@ -5,11 +5,14 @@ interface CustomHeroProps {
   name: string;
   text: string;
   tagline: string;
+  blogCount: number;
   projectCount: number;
+  tutorialCount: number;
+  patentCount: number;
 }
 
 /** lixiaolai.com 风格双栏 Hero */
-const CustomHero: React.FC<CustomHeroProps> = ({ name, text, tagline, projectCount }) => {
+const CustomHero: React.FC<CustomHeroProps> = ({ name, text, tagline, blogCount, projectCount, tutorialCount, patentCount }) => {
   return (
     <div className="custom-hero">
       {/* 左侧：身份陈述 */}
@@ -41,19 +44,19 @@ const CustomHero: React.FC<CustomHeroProps> = ({ name, text, tagline, projectCou
 
         <div className="custom-hero__stats">
           <div className="custom-hero__stat">
-            <span className="custom-hero__stat-num">50+</span>
+            <span className="custom-hero__stat-num">{blogCount}</span>
             <span className="custom-hero__stat-label">博客随笔</span>
           </div>
           <div className="custom-hero__stat">
-            <span className="custom-hero__stat-num">{projectCount}+</span>
+            <span className="custom-hero__stat-num">{projectCount}</span>
             <span className="custom-hero__stat-label">开源项目</span>
           </div>
           <div className="custom-hero__stat">
-            <span className="custom-hero__stat-num">100+</span>
+            <span className="custom-hero__stat-num">{tutorialCount}</span>
             <span className="custom-hero__stat-label">技术教程</span>
           </div>
           <div className="custom-hero__stat">
-            <span className="custom-hero__stat-num">6</span>
+            <span className="custom-hero__stat-num">{patentCount}</span>
             <span className="custom-hero__stat-label">发明专利</span>
           </div>
         </div>
@@ -94,7 +97,7 @@ const CustomHero: React.FC<CustomHeroProps> = ({ name, text, tagline, projectCou
             <span className="co-label">项目</span>
             <span className="co-value">
               <a href="/open_source_project/">开源项目</a>
-              <em> · {projectCount}+ repos</em>
+              <em> · {projectCount} repos</em>
             </span>
           </div>
           <div className="co-line">

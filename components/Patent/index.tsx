@@ -1,4 +1,4 @@
-const patents = [
+export const patents = [
   {
     patent_num: 'CN113190455B',
     title: '一种元素定位方法及计算设备',
