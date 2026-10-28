@@ -10,6 +10,11 @@
   left: 50%;
   transform: translateX(-50%);
 }
+
+/* sidebar 去掉实色背景，让纸张颗粒透过来 */
+.rp-doc-layout__sidebar {
+  background: transparent !important;
+}
 /* 径向渐变纸纹 — 1px 点阵 + mix-blend-mode */
 body::before {
   content: '';
