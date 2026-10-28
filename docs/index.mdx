@@ -13,10 +13,10 @@ export const HeroSection = () => {
   const { pages } = usePages();
 
   const blogPages = pages.filter(p =>
-    p.routePath.startsWith('/blog/') && p.routePath !== '/blog/'
+    p.routePath.startsWith('/blog/') && !p.routePath.endsWith('/')
   );
   const tutorialPages = pages.filter(p =>
-    p.routePath.startsWith('/tech_doc/') && p.routePath !== '/tech_doc/'
+    p.routePath.startsWith('/tech_doc/') && !p.routePath.endsWith('/')
   );
 
   return <>
