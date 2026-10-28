@@ -9,16 +9,24 @@ import type { City } from './visited-cities';
  */
 
 /** Mercator 投影 → SVG viewBox (0 0 1000 700) */
+/** 参数基于地图路径数据的实际边界拟合，确保标记与地理轮廓对齐 */
 function project(lng: number, lat: number): [number, number] {
-  const MAP_LNG_MIN = 73.5, MAP_LNG_MAX = 135;
-  const MAP_LAT_MIN = 18, MAP_LAT_MAX = 52;
+  /* 路径数据在 viewBox 中的实际坐标范围 */
+  const PATH_X_MIN = 58, PATH_X_MAX = 951;
+  const PATH_Y_MIN = 58, PATH_Y_MAX = 697;
 
-  const x = ((lng - MAP_LNG_MIN) / (MAP_LNG_MAX - MAP_LNG_MIN)) * 1000;
+  /* 经纬度范围（中国疆域） */
+  const LNG_MIN = 73.5, LNG_MAX = 135;
+  const LAT_MIN = 18, LAT_MAX = 53.5;
 
+  /* x 线性映射 */
+  const x = PATH_X_MIN + ((lng - LNG_MIN) / (LNG_MAX - LNG_MIN)) * (PATH_X_MAX - PATH_X_MIN);
+
+  /* y Mercator 映射 */
   const merc = (lat: number) => Math.log(Math.tan(Math.PI / 4 + (lat * Math.PI) / 360));
-  const yMin = merc(MAP_LAT_MIN);
-  const yMax = merc(MAP_LAT_MAX);
-  const y = 700 * (1 - (merc(lat) - yMin) / (yMax - yMin));
+  const yMin = merc(LAT_MIN);
+  const yMax = merc(LAT_MAX);
+  const y = PATH_Y_MAX - ((merc(lat) - yMin) / (yMax - yMin)) * (PATH_Y_MAX - PATH_Y_MIN);
 
   return [Math.round(x), Math.round(y)];
 }
