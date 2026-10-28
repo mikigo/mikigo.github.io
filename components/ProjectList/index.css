@@ -79,11 +79,6 @@ html.rp-dark .project-list {
   transform: translateY(-2px);
 }
 
-.project-list__card-icon {
-  font-size: 1.75rem;
-  line-height: 1;
-}
-
 .project-list__card-title {
   font-size: 1.125rem;
   font-weight: 600;

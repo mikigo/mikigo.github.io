@@ -291,6 +291,10 @@ html.rp-dark body::before {
   max-width: min(100%, 1360px);
 }
 
+.rp-doc-layout__container:has(.project-list) .rp-doc-layout__doc-container {
+  padding-top: 0;
+}
+
 /* 隐藏 Rspress 原生 features，用 ProjectCarousel 替代 */
 .rp-home-feature {
   display: none !important;

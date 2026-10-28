@@ -23,7 +23,6 @@ export function ProjectList() {
               target={external ? '_blank' : undefined}
               rel={external ? 'noopener noreferrer' : undefined}
             >
-              <span className="project-list__card-icon">{project.icon}</span>
               <span className="project-list__card-title">{project.title}</span>
               <span className="project-list__card-desc">{project.details}</span>
               <span className="project-list__card-more">
