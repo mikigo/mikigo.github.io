@@ -5,6 +5,7 @@ import type { City } from './visited-cities';
  * 中国地图 SVG（基于阿里 DataV GeoJSON 真实地理数据）
  * 投影：Mercator，简化为约 715 点大陆轮廓 + 海南+台湾
  * 数据源：https://geo.datav.aliyun.com/areas_v3/bound/geojson?code=100000
+ * 城市标记参考 worldmap 设计风格：光晕圆点 + paint-order 文字描边
  */
 
 /** Mercator 投影 → SVG viewBox (0 0 1000 700) */
@@ -36,6 +37,34 @@ export const ChinaMap: React.FC<ChinaMapProps> = ({ cities }) => {
     aria-label="中国地图 · 基于成都"
     style={{ width: '100%', height: 'auto' }}
   >
+    <defs>
+      <style>
+        {`
+          .city-label {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', sans-serif;
+            font-size: 12px;
+            font-weight: 500;
+            paint-order: stroke fill;
+            stroke: #fff;
+            stroke-width: 3.5px;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            text-anchor: middle;
+          }
+          .base-label {
+            font-family: 'Georgia', 'Noto Serif SC', serif;
+            font-size: 17px;
+            font-weight: 600;
+            paint-order: stroke fill;
+            stroke: #fff;
+            stroke-width: 5px;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            text-anchor: middle;
+          }
+        `}
+      </style>
+    </defs>
     {/* 大陆轮廓 */}
     <path
       d="M797.8 298.8 L804.6 294.2 L807.5 291.7 L810.9 290.6 L813.8 289 L816.7 287.1
@@ -200,11 +229,16 @@ export const ChinaMap: React.FC<ChinaMapProps> = ({ cities }) => {
       if (isBase(city.name)) {
         return (
           <g key={city.name}>
-            <circle cx={cx} cy={cy} r="9" fill="#5e6ad2">
-              <animate attributeName="r" values="9;16;9" dur="2s" repeatCount="indefinite" />
+            {/* 脉冲光晕 */}
+            <circle cx={cx} cy={cy} r="10" fill="#5e6ad2" opacity="0.15">
+              <animate attributeName="r" values="10;20;10" dur="2.5s" repeatCount="indefinite" />
+              <animate attributeName="opacity" values="0.15;0;0.15" dur="2.5s" repeatCount="indefinite" />
             </circle>
-            <circle cx={cx} cy={cy} r="4" fill="#fff" />
-            <text x={cx} y={cy + 25} textAnchor="middle" fontSize="18" fill="#5e6ad2" fontWeight="600">
+            {/* 实心锚点 */}
+            <circle cx={cx} cy={cy} r="6" fill="#5e6ad2" />
+            <circle cx={cx} cy={cy} r="2.5" fill="#fff" />
+            {/* 标签 */}
+            <text x={cx} y={cy + 30} className="base-label" fill="#5e6ad2">
               {city.name}
             </text>
           </g>
@@ -212,8 +246,12 @@ export const ChinaMap: React.FC<ChinaMapProps> = ({ cities }) => {
       }
       return (
         <g key={city.name}>
-          <circle cx={cx} cy={cy} r="4" fill="#6b7280" opacity="0.6" />
-          <text x={cx} y={cy + 18} textAnchor="middle" fontSize="12" fill="#6b7280" fontWeight="500" opacity="0.7">
+          {/* 白色光晕底 */}
+          <circle cx={cx} cy={cy} r="7" fill="#fff" opacity="0.35" />
+          {/* 实心圆点 */}
+          <circle cx={cx} cy={cy} r="4.5" fill="#374151" />
+          {/* 标签 */}
+          <text x={cx} y={cy + 20} className="city-label" fill="#374151">
             {city.name}
           </text>
         </g>
