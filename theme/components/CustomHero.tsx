@@ -20,6 +20,7 @@ const CustomHero: React.FC<CustomHeroProps> = ({ name, text, tagline, blogCount,
         <h1 className="custom-hero__title">
           {name}
         </h1>
+        <p className="custom-hero__en">Small steps daily, greatness through persistence.</p>
         <p className="custom-hero__sub">{text}</p>
         <p className="custom-hero__desc">{tagline}</p>
 
