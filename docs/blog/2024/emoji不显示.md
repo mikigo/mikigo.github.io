@@ -3,7 +3,7 @@ date: 2024-01-01
 authors: ['mikigo']
 description: emoji 不显示
 sidebar: false
-pageType: doc-wide
+pageType: doc
 ---
 # emoji 不显示
 

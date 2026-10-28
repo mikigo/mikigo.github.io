@@ -3,7 +3,7 @@ date: 2026-09-22
 authors: ['mikigo']
 description: '从文件名到断言，pytest 用一套"约定大于配置"的设计让你少写 80% 的样板代码。详细介绍测试发现、conftest 级联、fixture 注入、插件自动加载等六大约定体系，附可实操的完整示例。'
 sidebar: false
-pageType: doc-wide
+pageType: doc
 cover: ./cover.png
 ---
 

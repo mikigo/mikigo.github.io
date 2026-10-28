@@ -3,7 +3,7 @@ date: 2024-01-01
 authors: ['mikigo']
 description: Wayland下sniff命令报错~/.Xauthorty文件不存在
 sidebar: false
-pageType: doc-wide
+pageType: doc
 ---
 
 # Wayland下sniff命令报错~/.Xauthorty文件不存在

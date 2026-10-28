@@ -3,7 +3,7 @@ date: 2024-01-01
 authors: ['mikigo']
 description: Shell问题随记
 sidebar: false
-pageType: doc-wide
+pageType: doc
 ---
 
 # Shell问题随记

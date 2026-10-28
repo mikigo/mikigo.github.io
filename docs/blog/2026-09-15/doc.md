@@ -3,7 +3,7 @@ date: 2026-09-15
 authors: ['mikigo']
 description: 'Wayland下键鼠模拟入门指南'
 sidebar: false
-pageType: doc-wide
+pageType: doc
 ---
 
 # Wayland下键鼠模拟入门指南

@@ -3,7 +3,7 @@ date: 2024-01-01
 authors: ['mikigo']
 description: AT 用例筛选指北
 sidebar: false
-pageType: doc-wide
+pageType: doc
 ---
 
 # AT 用例筛选指北

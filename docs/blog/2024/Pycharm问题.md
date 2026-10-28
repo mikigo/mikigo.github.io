@@ -3,7 +3,7 @@ date: 2024-01-01
 authors: ['mikigo']
 description: Pycharm 问题
 sidebar: false
-pageType: doc-wide
+pageType: doc
 ---
 
 # Pycharm 问题

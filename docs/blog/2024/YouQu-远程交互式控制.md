@@ -3,7 +3,7 @@ date: 2024-01-01
 authors: ['mikigo']
 description: YouQu - 远程交互式控制
 sidebar: false
-pageType: doc-wide
+pageType: doc
 ---
 
 # YouQu - 远程交互式控制

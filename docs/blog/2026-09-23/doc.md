@@ -3,7 +3,7 @@ date: 2026-09-23
 authors: ['mikigo']
 description: '从零拆解 pytest-xdist 多机器分布式架构：execnet 通信、Worker 生命周期、五大调度策略、崩溃恢复机制，并与 Swarm 做全方位对比'
 sidebar: false
-pageType: doc-wide
+pageType: doc
 cover: ./cover.png
 ---
 

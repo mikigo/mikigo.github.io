@@ -3,7 +3,7 @@ date: 2024-01-01
 authors: ['mikigo']
 description: ftp服务器无法连接问题
 sidebar: false
-pageType: doc-wide
+pageType: doc
 ---
 
 # ftp服务器无法连接问题

@@ -3,7 +3,7 @@ date: 2024-01-01
 authors: ['mikigo']
 description: 生成式AI：人工智能的未来
 sidebar: false
-pageType: doc-wide
+pageType: doc
 ---
 
 # 生成式AI：人工智能的未来
