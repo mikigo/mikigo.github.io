@@ -1,5 +1,5 @@
 import React from 'react';
-import type { City } from '../../components/visited-cities';
+import type { City } from './visited-cities';
 
 /**
  * 中国地图 SVG（基于阿里 DataV GeoJSON 真实地理数据）

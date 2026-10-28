@@ -1,6 +1,6 @@
 import React from 'react';
 import ChinaMap from './ChinaMap';
-import { visitedCities } from '../../components/visited-cities';
+import { visitedCities } from './visited-cities';
 
 interface CustomHeroProps {
   name: string;
