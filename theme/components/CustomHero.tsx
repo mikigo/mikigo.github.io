@@ -86,20 +86,11 @@ const CustomHero: React.FC<CustomHeroProps> = ({ name, text, tagline, blogCount,
 
         {/* 动态信息 */}
         <div className="co-body">
-          <p className="co-line">
-            <a href="/blog/">博客</a>&ensp;—&thinsp;技术随笔 · <em>{blogCount} 篇</em>
-          </p>
-          <p className="co-line">
-            <a href="/open_source_project/">开源</a>&ensp;—&thinsp;<em>{projectCount} 个仓库</em> · 持续维护
-          </p>
-          <p className="co-line">
-            <a href="/tech_doc/">文档</a>&ensp;—&thinsp;技术教程 · 持续更新
-          </p>
+          <p className="co-line">自动化测试 · Python · Linux</p>
+          <p className="co-line">写作 · 开源 · 学习分享</p>
+          <p className="co-line">Built with Rspress &amp; React</p>
         </div>
-
-        {/* 页脚 */}
         <div className="co-foot">
-          <span>Built with <em>Rspress</em> &amp; React</span>
           <span className="co-stamp">{new Date().toLocaleDateString('zh-CN')}</span>
         </div>
       </aside>

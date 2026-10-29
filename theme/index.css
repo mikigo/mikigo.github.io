@@ -297,17 +297,11 @@ html.rp-dark body::before {
 
 /* 卡片页脚 */
 .co-foot {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  text-align: right;
   padding-top: 14px;
   border-top: 1px solid var(--rp-c-divider);
   color: var(--rp-c-text-3);
   font-size: 0.688rem;
-}
-
-.co-foot em {
-  font-style: italic;
 }
 
 .co-stamp {
