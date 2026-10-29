@@ -35,18 +35,6 @@
   --rp-c-brand-tint: rgba(0, 0, 0, 0.06);
 
   --rp-home-hero-secondary-color: #030303;
-
-  --shiki-foreground: #e1e4e8;
-  --shiki-background: #24292e;
-  --shiki-token-constant: #79b8ff;
-  --shiki-token-string: #9ecbff;
-  --shiki-token-comment: #6a737d;
-  --shiki-token-keyword: #f97583;
-  --shiki-token-parameter: #ffab70;
-  --shiki-token-function: #b392f0;
-  --shiki-token-string-expression: #9ecbff;
-  --shiki-token-punctuation: #6a737d;
-  --shiki-token-link: #dbedff;
 }
 
 .medium-zoom-image,
