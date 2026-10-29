@@ -86,30 +86,15 @@ const CustomHero: React.FC<CustomHeroProps> = ({ name, text, tagline, blogCount,
 
         {/* 动态信息 */}
         <div className="co-body">
-          <div className="co-line">
-            <span className="co-bullet">•</span>
-            <span className="co-label">项目</span>
-            <span className="co-value">
-              <a href="/open_source_project/">开源项目</a>
-              <em> · {projectCount} repos</em>
-            </span>
-          </div>
-          <div className="co-line">
-            <span className="co-bullet">•</span>
-            <span className="co-label">文档</span>
-            <span className="co-value">
-              <a href="/tech_doc/">技术文档</a>
-              <em> · 持续更新</em>
-            </span>
-          </div>
-          <div className="co-line">
-            <span className="co-bullet">•</span>
-            <span className="co-label">博客</span>
-            <span className="co-value">
-              <a href="/blog/">阅读</a>
-              <em> · 技术笔记</em>
-            </span>
-          </div>
+          <p className="co-line">
+            <a href="/blog/">博客</a>&ensp;—&thinsp;技术随笔 · <em>{blogCount} 篇</em>
+          </p>
+          <p className="co-line">
+            <a href="/open_source_project/">开源</a>&ensp;—&thinsp;<em>{projectCount} 个仓库</em> · 持续维护
+          </p>
+          <p className="co-line">
+            <a href="/tech_doc/">文档</a>&ensp;—&thinsp;技术教程 · 持续更新
+          </p>
         </div>
 
         {/* 页脚 */}
