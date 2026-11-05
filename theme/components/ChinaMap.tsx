@@ -43,7 +43,7 @@ export const ChinaMap: React.FC<ChinaMapProps> = ({ cities }) => {
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 1000 700"
     aria-label="中国地图 · 基于成都"
-    style={{ width: '100%', height: 'auto' }}
+    style={{ width: '110%', height: 'auto', marginLeft: '-5%' }}
   >
     <defs>
       <style>

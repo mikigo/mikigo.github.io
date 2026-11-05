@@ -215,11 +215,13 @@ html.rp-dark body::before {
   padding: 24px;
   font-size: 0.813rem;
   line-height: 1.6;
+  overflow: visible;
 }
 
 /* 地图区域 */
 .co-head {
   margin-bottom: 16px;
+  overflow: visible;
 }
 
 .co-head svg {
@@ -247,6 +249,13 @@ html.rp-dark body::before {
   color: var(--rp-c-brand);
   margin: 0;
   font-weight: 500;
+}
+
+.co-travel-count {
+  margin-left: auto;
+  font-size: 0.85em;
+  color: var(--rp-c-text-3);
+  font-weight: 400;
 }
 
 /* 分隔线 */

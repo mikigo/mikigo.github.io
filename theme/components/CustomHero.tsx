@@ -76,6 +76,7 @@ const CustomHero: React.FC<CustomHeroProps> = ({ name, text, tagline, blogCount,
           <dl className="co-dl">
             <dt>BASE</dt>
             <dd>成都</dd>
+            <span className="co-travel-count">· 已至 {visitedCities.filter(c => c.name !== '成都').length} 城</span>
           </dl>
         </div>
 
@@ -88,7 +89,7 @@ const CustomHero: React.FC<CustomHeroProps> = ({ name, text, tagline, blogCount,
         <div className="co-body">
           <p className="co-line">自动化测试 · Python · Linux</p>
           <p className="co-line">写作 · 开源 · 学习分享</p>
-          <p className="co-line">Built with Rspress &amp; React</p>
+          
         </div>
         <div className="co-foot">
           <span className="co-stamp">{new Date().toLocaleDateString('zh-CN')}</span>
