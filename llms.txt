@@ -102,6 +102,7 @@
 ## Blog
 
 - [mikigo's blog](/blog/index.md)
+- [我把六种运行时塞进了同一个文件夹](/blog/2026-11-18.md): 换一台电脑就要把 Python、Node、Go 重装一遍，每次都在做同样的事。于是写了个工具，把这些官方绿色版全塞进 ~/.envxx，删掉目录就等于卸载。顺手记录几个只有实际跑过才会撞上的坑。
 - [SkillHub 追更：进内网之后，我改了这三件事](/blog/2026-10-11.md): SkillHub 上线内网之后的三个改动：仓库关联上传扶正、默认仓库自动扫描、原创标签与原创 tab。
 - [不用 Postgres，也不用 Redis：我给内网写了个轻量的 AI SkillHub](/blog/2026-09-29.md): 一个轻量自托管 AI Skill 集市：设计取舍、同类方案对比。
 - [Pytest-Xdist 多机器分布式执行是如何实现的](/blog/2026-09-23/doc.md): 从零拆解 pytest-xdist 多机器分布式架构：execnet 通信、Worker 生命周期、五大调度策略、崩溃恢复机制，并与 Swarm 做全方位对比
