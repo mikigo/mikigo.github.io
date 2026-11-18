@@ -28,4 +28,5 @@ export const projects: Project[] = [
   { title: 'LetMeGo', details: '一个控制 Python 函数执行的技术方案。', link: '/open_source_project/intro/letmego.html' },
   { title: 'PyPKG', details: '一键创建 Python 工程，自动生成 Python 包文件目录结构、PyPI 发布相关配置文件，支持一键发布。', link: '/open_source_project/intro/pypkg.html' },
   { title: 'dufs-shadcn-assets', details: '基于 shadcn/ui 和 vscode-icons 的 dufs 前端主题，1132 个文件图标、30+ 格式预览、双视图模式、完全离线可用。', link: 'https://mikigo.github.io/dufs-shadcn-assets/' },
+  { title: 'EnvXX', details: '免安装的运行时管理器，把 Python、Node.js、Go、JDK、uv、Bun 的官方绿色版下到 ~/.envxx 按需调用，删掉目录就等于卸载。', link: 'https://github.com/mikigo/EnvXX' },
 ];
